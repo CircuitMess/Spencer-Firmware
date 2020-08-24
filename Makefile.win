@@ -11,14 +11,14 @@ headerFiles = $(shell dir  /s /b *.h | findstr /e .h) $(shell dir  /s /b *.hpp |
 upload: build $(DIR)/build/$(NAME).bin
 	
 	cd $(DIR)
-	$(ACLI) upload --fqbn esp8266:esp8266:nodemcu:baud=921600 -p $(PORT) --input-dir build
+	$(ACLI) upload --fqbn esp32:esp32:d32 -p $(PORT) --input-dir build
 
 build: $(DIR)/build/$(NAME).bin
 
 $(DIR)/build/$(NAME).bin: $(srcFiles) $(headerFiles) $(DIR)/$(NAME).ino
 	"mkdir" -p ".\build"
 	cd $(DIR)
-	$(ACLI) compile --fqbn esp8266:esp8266:nodemcu --optimize-for-debug --output-dir build $(NAME).ino
+	$(ACLI) compile --fqbn esp32:esp32:d32 --optimize-for-debug --output-dir build $(NAME).ino
 
 
 clean:
