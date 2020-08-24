@@ -1,0 +1,26 @@
+NAME = Spencer
+DIR = .
+PORT = COM422
+
+ACLI = C:\Program Files (x86)\GnuWin32\bin\arduino-cli.exe
+
+srcFiles = $(shell dir  /s /b *.c | findstr /e .c) $(shell dir  /s /b *.cpp | findstr /e .cpp)
+headerFiles = $(shell dir  /s /b *.h | findstr /e .h) $(shell dir  /s /b *.hpp | findstr /e .hpp)
+.PHONY: upload clean
+
+upload: build $(DIR)/build/$(NAME).bin
+	
+	cd $(DIR)
+	$(ACLI) upload --fqbn esp8266:esp8266:nodemcu:baud=921600 -p $(PORT) --input-dir build
+
+build: $(DIR)/build/$(NAME).bin
+
+$(DIR)/build/$(NAME).bin: $(srcFiles) $(headerFiles) $(DIR)/$(NAME).ino
+	"mkdir" -p ".\build"
+	cd $(DIR)
+	$(ACLI) compile --fqbn esp8266:esp8266:nodemcu --optimize-for-debug --output-dir build $(NAME).ino
+
+
+clean:
+	cd $(DIR)
+	del /Q build
