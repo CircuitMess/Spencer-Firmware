@@ -1,6 +1,6 @@
 NAME = Spencer
 DIR = .
-PORT = COM422
+PORT = COM4
 
 ACLI = C:\Program Files (x86)\GnuWin32\bin\arduino-cli.exe
 
@@ -11,14 +11,14 @@ headerFiles = $(shell dir  /s /b *.h | findstr /e .h) $(shell dir  /s /b *.hpp |
 upload: build $(DIR)/build/$(NAME).bin
 	
 	cd $(DIR)
-	$(ACLI) upload --fqbn esp32:esp32:d32 -p $(PORT) --input-dir build
+	$(ACLI) upload --fqbn cm:esp32:ringo -p $(PORT) --input-dir build
 
 build: $(DIR)/build/$(NAME).bin
 
 $(DIR)/build/$(NAME).bin: $(srcFiles) $(headerFiles) $(DIR)/$(NAME).ino
 	"mkdir" -p ".\build"
 	cd $(DIR)
-	$(ACLI) compile --fqbn esp32:esp32:d32 --optimize-for-debug --output-dir build $(NAME).ino
+	$(ACLI) compile --fqbn cm:esp32:ringo --optimize-for-debug --output-dir build $(NAME).ino
 
 
 clean:
