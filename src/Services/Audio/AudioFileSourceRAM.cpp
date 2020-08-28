@@ -39,7 +39,7 @@ uint32_t AudioFileSourceRAM::read(void *data, uint32_t rdlen)
 		if (pos >= fileSize) return 0;
 		rdlen = fileSize - pos;
 	}
-	memcpy(data, f, rdlen);
+	memcpy(data, f + pos, rdlen);
 	pos += rdlen;
 	return rdlen;
 }
