@@ -28,6 +28,7 @@ include_directories(~/Arduino/libraries/Adafruit_Zero_I2S)
 AUX_SOURCE_DIRECTORY(src SOURCES)
 AUX_SOURCE_DIRECTORY(src/Services SOURCES)
 AUX_SOURCE_DIRECTORY(src/Services/Audio SOURCES)
+AUX_SOURCE_DIRECTORY(src/Util SOURCES)
 
 add_definitions(-DDEBUG)
 
