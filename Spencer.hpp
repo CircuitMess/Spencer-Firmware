@@ -2,7 +2,7 @@
 #define SPENCER_HPP
 
 #define NEOPIXEL_PIN 2
-#define FLASH_CS_PIN 19
+#define FLASH_CS_PIN 26
 
 
 #endif
