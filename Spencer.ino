@@ -5,7 +5,10 @@
 #include <AudioGeneratorWAV.h>
 #include <AudioGeneratorMP3.h>
 #include "Spencer.hpp"
+#include <CircuitOS.h>
+#include <Input/InputGPIO.h>
 
+InputGPIO input;
 AudioGeneratorWAV *wav;
 AudioGeneratorMP3 *mp3;
 AudioOutputI2S *out;
@@ -20,61 +23,85 @@ void spaces(int num) {
 
 void setup(){
 	Serial.begin(115200);
+
+	
 	SPIClass spi(3);
 	spi.begin(18, 19, 23, 26);
 	if(!SerialFlash.begin(spi, 26))
 	{
 		Serial.println("flash error");
 	}
-	// audio.begin();
-	// audio.record([](byte* data, size_t size){
 
-	// });
-	// i2s_stop(I2S_NUM_0);
+	SerialFlash.eraseAll();
+	while (!SerialFlash.ready());
+	Serial.println("ready");
+	input.setBtnPressCallback(17, [](){
+		audio.begin();
+		Serial.println("start recording!");
+		audio.record([](byte* data, size_t size){
 
-	// create the file on the Flash chip and copy data
-	// SerialFlash.opendir();
-	// char* filename = "test.txt";
-	// uint length = 255;
-    if (SerialFlash.exists("1.mp3")) {
-		Serial.println("exists");
-    }
-	else
-	{
-		Serial.println("doesnt exist");
-	}
+		});
+		Serial.println("record done");
+		i2s_stop(I2S_NUM_0);
+
+		if(SerialFlash.exists("recording.wav"))
+		{
+			Serial.println("exists");
+		}
+		else
+		{
+			Serial.println("doesnt exist");
+		}
+		SerialFlashFile readfile = SerialFlash.open("recording.wav");
+		Serial.println(readfile.getFlashAddress());		
+		char buffer[10] = {0};
+		uint32_t readBytes = sizeof(buffer);
+		for(uint8_t i = 0; i < 5; i++)
+		{
+			readBytes = readfile.read(buffer, 10);
+			for(uint8_t i = 0; i < readBytes; i++)
+			{
+				Serial.print(buffer[i]);
+			}
+		}
+		Serial.println();
+		readfile.close();
+
+		wav = new AudioGeneratorWAV();
+		// mp3 = new AudioGeneratorMP3();
+		out = new AudioOutputI2S(0,0,16,-1);
+		file = new AudioFileSourceSerialFlash();
+		if(!file->open("recording.wav"))
+		{
+			Serial.println("error opening file");
+			// delay(10000);
+		}
+		out->SetRate(16000);
+		out->SetPinout(16, 21, 4);
+		out->SetBitsPerSample(32);
+		out->SetChannels(1);
+		out->SetOutputModeMono(1);
+		out->SetGain(1);
+		wav->begin(file, out);
+	});
+	
+
 	
 	
-
-	// SerialFlash.opendir();
-	// SerialFlash.readdir(buffer, buflen, filelen);
-	file = new AudioFileSourceSerialFlash();
-	if(!file->open("1.mp3"))
-	{
-		Serial.println("error opening file");
-		delay(10000);
-	}
-	// wav = new AudioGeneratorWAV();
-	mp3 = new AudioGeneratorMP3();
-	out = new AudioOutputI2S(0,0,16,-1);
-	out->SetRate(16000);
-	out->SetPinout(16, 21, 4);
-	out->SetBitsPerSample(32);
-	out->SetChannels(1);
-	out->SetOutputModeMono(1);
-	out->SetGain(1);
 	
-	mp3->begin(file, out);
+
+	
 }
 
 void loop(){
-	if (mp3->isRunning()) {
-		if (!mp3->loop()){
-			mp3->stop();
-		}
-	}
-	else {
-		Serial.printf("WAV done\n");
-		delay(1000);
-	}
+	input.loop(micros());
+	// if (wav->isRunning()) {
+	// 	if (!wav->loop()){
+	// 		wav->stop();
+	// 	}
+	// }
+	// else {
+	// 	Serial.printf("WAV done\n");
+	// 	delay(1000);
+	// }
 }

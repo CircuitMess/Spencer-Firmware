@@ -39,13 +39,13 @@ void Audio::record(void (*callback)(byte*, size_t))
 			Serial.println("failed to remove file");
 		}
 	}
-	SerialFlash.create("recording.wav", 70000);
+	SerialFlash.createErasable("recording.wav", 70000);
 	SerialFlashFile f = SerialFlash.open("recording.wav");
 	Serial.println((bool)f ? "file open" : "file error");
 
 	for(uint8_t i = 0; i < wavDataSize/dividedWavDataSize + 1; i++)
 	{
-		f.write(wavData[i], sizeof(wavData[i]));
+		f.write(wavData[i], i == 0 ? 44 : 1500);
 	}
 	f.close();
 }
