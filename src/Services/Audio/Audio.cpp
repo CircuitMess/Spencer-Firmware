@@ -24,25 +24,30 @@ void Audio::record(void (*callback)(byte*, size_t))
 	
 	for (uint32_t j = 1; j < wavDataSize/dividedWavDataSize + 1; j++) {
 		i2s->Read(i2sBuffer, i2sBufferSize);
+		// Serial.println(((int32_t*)i2sBuffer)[0]);
 		for (int i = 0; i < i2sBufferSize/8; i++) {
-			wavData[j][2*i] = i2sBuffer[4*i + 2];
-			wavData[j][2*i + 1] = i2sBuffer[4*i + 3];
+			wavData[j][2*i] = i2sBuffer[8*i + 2];
+			wavData[j][2*i + 1] = i2sBuffer[8*i + 3];
 		}
 	}
-	if(SerialFlash.exists("recording.wav")){
-		Serial.println("removing recording.wav...");
-		if(SerialFlash.remove("recording.wav"))
-		{
-			Serial.println("removed file");
-		}
-		else{
-			Serial.println("failed to remove file");
-		}
+	// if(SerialFlash.exists("recording.wav")){
+	// 	Serial.println("removing recording.wav...");
+	// 	if(SerialFlash.remove("recording.wav"))
+	// 	{
+	// 		Serial.println("removed file");
+	// 	}
+	// 	else{
+	// 		Serial.println("failed to remove file");
+	// 	}
+	// }
+	if(!SerialFlash.createErasable("recording.wav", 70000))
+	{
+		Serial.println("cannot create recording.wav");
 	}
-	SerialFlash.createErasable("recording.wav", 70000);
+
 	SerialFlashFile f = SerialFlash.open("recording.wav");
 	Serial.println((bool)f ? "file open" : "file error");
-
+	f.erase();
 	for(uint8_t i = 0; i < wavDataSize/dividedWavDataSize + 1; i++)
 	{
 		f.write(wavData[i], i == 0 ? 44 : 1500);

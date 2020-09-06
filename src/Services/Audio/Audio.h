@@ -22,7 +22,7 @@ private:
 	void CreateWavHeader(byte* header, int waveDataSize);
 
 	static const int wavDataSize = 60000;                   // It must be multiple of dividedWavDataSize. Recording time is about 1.875s.
-	static const int dividedWavDataSize = i2sBufferSize/4;
+	static const int dividedWavDataSize = 1500;
 	char** wavData;                                         // It's divided. Because large continuous memory area can't be allocated in esp32.
 	// byte paddedHeader[headerSize + 4] = {0};                // The size must be multiple of 3 for Base64 encoding. Additional byte size must be even because wave data is 16bit.
 
