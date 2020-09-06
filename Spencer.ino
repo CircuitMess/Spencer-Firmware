@@ -58,6 +58,7 @@ void setup(){
 	// Serial.println();
 
 	input.setBtnPressCallback(17, [](){
+		audio.begin();
 		Serial.println("start recording!");
 		audio.record([](byte* data, size_t size){
 
@@ -72,20 +73,20 @@ void setup(){
 		{
 			Serial.println("doesnt exist");
 		}
-		SerialFlashFile readfile = SerialFlash.open("recording.wav");
-		Serial.println(readfile.getFlashAddress());		
-		char buffer[10] = {0};
-		uint32_t readBytes = sizeof(buffer);
-		for(uint8_t i = 0; i < 5; i++)
-		{
-			readBytes = readfile.read(buffer, 10);
-			for(uint8_t i = 0; i < readBytes; i++)
-			{
-				Serial.print(buffer[i]);
-			}
-		}
-		Serial.println();
-		readfile.close();
+		// SerialFlashFile readfile = SerialFlash.open("recording.wav");
+		// Serial.println(readfile.getFlashAddress());		
+		// char buffer[10] = {0};
+		// uint32_t readBytes = sizeof(buffer);
+		// for(uint8_t i = 0; i < 5; i++)
+		// {
+		// 	readBytes = readfile.read(buffer, 10);
+		// 	for(uint8_t i = 0; i < readBytes; i++)
+		// 	{
+		// 		Serial.print(buffer[i]);
+		// 	}
+		// }
+		// Serial.println();
+		// readfile.close();
 
 
 		// int sample = 0;
@@ -101,7 +102,7 @@ void setup(){
 		
 	});
 
-	if(SerialFlash.exists("1.mp3"))
+	if(SerialFlash.exists("recording.wav"))
 	{
 		Serial.println("exists");
 	}
@@ -109,7 +110,7 @@ void setup(){
 	{
 		Serial.println("doesnt exist");
 	}
-	SerialFlashFile readfile = SerialFlash.open("1.mp3");
+	SerialFlashFile readfile = SerialFlash.open("recording.wav");
 	Serial.println(readfile.getFlashAddress());		
 	char buffer[10] = {0};
 	uint32_t readBytes = sizeof(buffer);
@@ -125,7 +126,7 @@ void setup(){
 	readfile.close();
 
 	file = new AudioFileSourceSerialFlash();
-	if(!file->open("1.mp3"))
+	if(!file->open("recording.wav"))
 	{
 		Serial.println("error opening file");
 		// delay(10000);
@@ -133,28 +134,27 @@ void setup(){
 
 	audio.begin();
 	// i2s_stop(I2S_NUM_0);
-	// wav = new AudioGeneratorWAV();
-
-	mp3 = new AudioGeneratorMP3();
+	wav = new AudioGeneratorWAV();
+	// mp3 = new AudioGeneratorMP3();
 	out = new AudioOutputI2S(0,0,16,-1);
 	
 	out->SetRate(16000);
 	out->SetPinout(16, 21, 4);
-	out->SetBitsPerSample(32);
+	out->SetBitsPerSample(16);
 	out->SetChannels(1);
 	out->SetOutputModeMono(1);
 	out->SetGain(0.5);
-	mp3->begin(file, out);
-	// wav->begin(file, out);
+	// mp3->begin(file, out);
+	wav->begin(file, out);
 }
 
 void loop(){
 	input.loop(micros());
-	if(mp3 != nullptr)
+	if(wav != nullptr)
 	{
-		if (mp3->isRunning()) {
-			if (!mp3->loop()){
-				mp3->stop();
+		if (wav->isRunning()) {
+			if (!wav->loop()){
+				wav->stop();
 			}
 		}
 		else {
