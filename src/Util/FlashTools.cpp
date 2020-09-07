@@ -7,6 +7,7 @@ void FlashTools::erase(){
 }
 
 void FlashTools::upload(){
+	Serial.setTimeout(30000);
 	Serial.println("Waiting for serial upload");
 
 	while(!Serial.available());
@@ -39,16 +40,24 @@ void FlashTools::upload(){
 		SerialFlashFile file = SerialFlash.open(filename);
 
 		size_t fileWritten = 0;
+		uint32_t sum = 0;
 		while(fileWritten < filesize){
 			byte data[256];
 			size_t bytes = Serial.readBytes(data, min((size_t) 256, filesize - fileWritten));
 
 			file.write(data, bytes);
 			fileWritten += bytes;
-		}
 
+			for(int i = 0; i < bytes; i += sizeof(uint32_t)){
+				sum += *reinterpret_cast<uint32_t*>(&data);
+			}
+		}
 		file.close();
+
+		Serial.write(reinterpret_cast<uint8_t*>(&sum), sizeof(uint32_t));
 	}
+
+	Serial.setTimeout(1000);
 }
 
 void FlashTools::listFiles(){
