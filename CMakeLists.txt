@@ -31,6 +31,7 @@ AUX_SOURCE_DIRECTORY(src/Services/Audio SOURCES)
 AUX_SOURCE_DIRECTORY(src/Util SOURCES)
 
 add_definitions(-DDEBUG)
+add_definitions(-DESP32)
 
 SET_SOURCE_FILES_PROPERTIES(Spencer.ino PROPERTIES LANGUAGE CXX)
 add_executable(Spencer ${SOURCES} Spencer.ino)
