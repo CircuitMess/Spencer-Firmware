@@ -26,8 +26,8 @@ void Audio::record(void (*callback)(byte*, size_t))
 		i2s->Read(i2sBuffer, i2sBufferSize/2);
 		// Serial.println(((int32_t*)i2sBuffer)[0]);
 		for (int i = 0; i < i2sBufferSize/8; ++i) {
-			wavData[j][2*i] = i2sBuffer[8*i + 2];
-			wavData[j][2*i + 1] = i2sBuffer[8*i + 3];
+			wavData[j][2*i] = i2sBuffer[4*i + 2];
+			wavData[j][2*i + 1] = i2sBuffer[4*i + 3];
 		}
 	}
 	// if(SerialFlash.exists("recording.wav")){
