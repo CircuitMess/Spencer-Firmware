@@ -56,13 +56,14 @@ void setup(){
 	// 	Serial.print(buffer[i]);
 	// }
 	// Serial.println();
-	out = new AudioOutputI2S(0,0,16,-1);
+	out = new AudioOutputI2S(0,0,16,0);
 	out->SetRate(16000);
 	out->SetPinout(16, 21, 4);
 	out->SetChannels(1);
 	out->SetOutputModeMono(1);
 	out->SetGain(0.1);
-	// audio.begin();
+	i2s_driver_uninstall(I2S_NUM_0);
+	audio.begin();
 
 	input.setBtnPressCallback(17, [](){
 		// audio.begin();

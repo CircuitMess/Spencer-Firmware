@@ -25,7 +25,8 @@ void i2s_init(void) {
 		.communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
 		.intr_alloc_flags = 0,     // Interrupt level 1
 		.dma_buf_count = 16,                           // number of buffers
-		.dma_buf_len = 60                              // 8 samples per buffer (minimum)
+		.dma_buf_len = 60,                              // 8 samples per buffer (minimum)
+		.use_apll = false
 	};
 
 	// The pin config as per the setup
