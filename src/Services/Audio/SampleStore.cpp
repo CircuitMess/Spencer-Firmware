@@ -2,7 +2,8 @@
 #include "AudioFileSourceSerialFlash.h"
 AudioFileSource* SampleStore::load(SampleGroup group, char* label)
 {
-	char fileName[40];
+	char fileName[40] = {0};
+
 	char suffix;
 	switch (group)
 	{

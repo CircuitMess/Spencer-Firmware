@@ -11,6 +11,7 @@ Audio::~Audio()
 void Audio::begin()
 {
 	wav = new AudioGeneratorWAV();
+	mp3 = new AudioGeneratorMP3();
 	out = new AudioOutputI2S(0,0,16,0);
 	out->SetRate(16000);
 	out->SetPinout(16, 21, 4);
@@ -116,22 +117,46 @@ void Audio::loop()
 		if (wav->isRunning()) {
 			if (!wav->loop()){
 				Serial.printf("WAV done\n");
-				wav->stop();
+				stopPlayback();
+			}
+		}
+	}
+	if(mp3 != nullptr)
+	{
+		if (mp3->isRunning()) {
+			if (!mp3->loop()){
+				Serial.printf("MP3 done\n");
+				stopPlayback();
 			}
 		}
 	}
 }
-void Audio::play(AudioFileSource* _file)
+void Audio::play(AudioFileSource* _file, bool WAVorMP3)
 {
 	if(_file == nullptr) return;
 	file = _file;
-	wav->begin(file, out);
+	if(WAVorMP3)
+	{
+		Serial.println("mp3 begin");
+		mp3->begin(file, out);
+	}
+	else
+	{
+		wav->begin(file, out);
+	}
 }
-void Audio::play(const char* path)
+void Audio::play(const char* path, bool WAVorMP3)
 {
 	if(path == nullptr) return;
 	file = new AudioFileSourceSerialFlash(path);
-	wav->begin(file, out);
+	if(WAVorMP3)
+	{
+		mp3->begin(file, out);
+	}
+	else
+	{
+		wav->begin(file, out);
+	}
 }
 void Audio::stopPlayback()
 {

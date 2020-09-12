@@ -7,6 +7,7 @@
 #include <AudioOutputI2S.h>
 #include <AudioGeneratorWAV.h>
 #include <AudioGeneratorMP3.h>
+#include "SampleStore.h"
 
 class Audio
 {
@@ -14,8 +15,8 @@ public:
 	Audio();
 	~Audio();
 	void begin();
-	void play(AudioFileSource* file);
-	void play(const char* path);
+	void play(AudioFileSource* file, bool WAVorMP3 = 0);
+	void play(const char* path, bool WAVorMP3 = 0);
 	void stopPlayback();
 	void record(void (*callback)(void)); // 16bit, monoral, 16000Hz,  linear PCM
 	void loop();
