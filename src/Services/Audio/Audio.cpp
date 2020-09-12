@@ -10,9 +10,17 @@ Audio::~Audio()
 }
 void Audio::begin()
 {
+	wav = new AudioGeneratorWAV();
+	out = new AudioOutputI2S(0,0,16,0);
+	out->SetRate(16000);
+	out->SetPinout(16, 21, 4);
+	out->SetChannels(1);
+	out->SetOutputModeMono(1);
+	out->SetGain(0.1);
+	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
 	i2s = new I2S();
 }
-void Audio::record(void (*callback)(byte*, size_t))
+void Audio::record(void (*callback)(void))
 {
 	wavData = new char*[wavDataSize/dividedWavDataSize + 1];
 	wavData[0] = new char[headerSize];
@@ -42,9 +50,8 @@ void Audio::record(void (*callback)(byte*, size_t))
 	// }
 	if(!SerialFlash.createErasable("recording.wav", 70000))
 	{
-		Serial.println("cannot create recording.wav");
+		Serial.println("cannot create recording.wav, already exists");
 	}
-
 	SerialFlashFile f = SerialFlash.open("recording.wav");
 	Serial.println((bool)f ? "file open" : "file error");
 	f.erase();
@@ -53,6 +60,7 @@ void Audio::record(void (*callback)(byte*, size_t))
 		f.write(wavData[i], i == 0 ? 44 : 1500);
 	}
 	f.close();
+	recordCallback();
 }
 void Audio::CreateWavHeader(byte* header, int waveDataSize){
 	header[0] = 'R';
@@ -100,4 +108,41 @@ void Audio::CreateWavHeader(byte* header, int waveDataSize){
 	header[41] = (byte)((waveDataSize >> 8) & 0xFF);
 	header[42] = (byte)((waveDataSize >> 16) & 0xFF);
 	header[43] = (byte)((waveDataSize >> 24) & 0xFF);
+}
+void Audio::loop()
+{
+	if(wav != nullptr)
+	{
+		if (wav->isRunning()) {
+			if (!wav->loop()){
+				Serial.printf("WAV done\n");
+				wav->stop();
+			}
+		}
+	}
+}
+void Audio::play(AudioFileSource* _file)
+{
+	if(_file == nullptr) return;
+	file = _file;
+	wav->begin(file, out);
+}
+void Audio::play(const char* path)
+{
+	if(path == nullptr) return;
+	file = new AudioFileSourceSerialFlash(path);
+	wav->begin(file, out);
+}
+void Audio::stopPlayback()
+{
+	if(wav != nullptr)
+	{
+		wav->stop();
+	}
+	if(mp3 != nullptr)
+	{
+		mp3->stop();
+	}
+	if(file == nullptr) return;
+	delete file;
 }
