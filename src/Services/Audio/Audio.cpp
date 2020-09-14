@@ -7,6 +7,8 @@ Audio::Audio()
 Audio::~Audio()
 {
 	delete i2s;
+	if(file == nullptr) return;
+	delete file;
 }
 void Audio::begin()
 {
@@ -137,8 +139,11 @@ void Audio::play(AudioFileSource* _file, bool WAVorMP3)
 	file = _file;
 	if(WAVorMP3)
 	{
-		Serial.println("mp3 begin");
-		mp3->begin(file, out);
+		if(!mp3->begin(file, out))
+		{
+			Serial.println("mp3 begin failed");
+			delay(5);
+		}
 	}
 	else
 	{
@@ -168,6 +173,5 @@ void Audio::stopPlayback()
 	{
 		mp3->stop();
 	}
-	if(file == nullptr) return;
-	delete file;
+	
 }

@@ -3,6 +3,7 @@
 
 #include "I2S.h"
 #include "AudioFileSourceSerialFlash.h"
+#include "CompositeAudioFileSource.h"
 #include <AudioFileSource.h>
 #include <AudioOutputI2S.h>
 #include <AudioGeneratorWAV.h>
@@ -28,7 +29,6 @@ private:
 	AudioGeneratorMP3 *mp3;
 	AudioOutputI2S *out;
 	AudioFileSource *file;
-
 	//recording
 	void (*recordCallback)(void) = nullptr;
 	static const int headerSize = 44;
