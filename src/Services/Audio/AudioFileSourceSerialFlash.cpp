@@ -10,7 +10,11 @@ AudioFileSourceSerialFlash::AudioFileSourceSerialFlash(const char *filename)
 
 bool AudioFileSourceSerialFlash::open(const char *filename)
 {
+	while(!SerialFlash.ready());
 	f = SerialFlash.open(filename);
+	
+	Serial.println(f.getFlashAddress());
+	if(!f) f.close();
 	return f;
 }
 
