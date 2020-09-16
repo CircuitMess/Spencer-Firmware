@@ -14,6 +14,4 @@ void setup(){
 }
 
 void loop(){
-	input.loop(0);
-	audio.loop();
 }
