@@ -6,7 +6,7 @@ class Intent
 public:
     Intent(void* params);
     virtual ~Intent() = 0;
-    void loop();
+    virtual void loop();
 };
 
 struct IntentInfo {

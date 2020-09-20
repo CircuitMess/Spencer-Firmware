@@ -35,6 +35,7 @@
     inclusive.
 */
 /**************************************************************************/
+class TimeSpan;
 class DateTime {
 public:
   DateTime(uint32_t t = SECONDS_FROM_1970_TO_2000);

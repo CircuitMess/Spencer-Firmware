@@ -22,18 +22,3 @@ void setup(){
 
 void loop(){
 }
-curl -H ""Content-Type": "application/json"; charset=utf-8" --data "{
-  "input":{
-    "text":"One."
-  },
-  "voice":{
-    "languageCode":"en-US",
-    "name":"en-US-Standard-D",
-    "ssmlGender":"NEUTRAL"
-  },
-  "audioConfig":{
-    "audioEncoding":"MP3",
-	"speakingRate":"0.96",
-	"pitch":"7.2"
-  }
-}" "https://texttospeech.googleapis.com/v1/text:synthesize?key=secret"

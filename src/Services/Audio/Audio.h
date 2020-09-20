@@ -41,5 +41,6 @@ private:
 
 };
 
+extern Audio audio;
 
 #endif

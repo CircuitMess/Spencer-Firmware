@@ -11,7 +11,7 @@ public:
 private:
 	uint unixtime = 0;
 	uint currentMillis = 0;
-}
-
+};
+extern TimeService timeService;
 
 #endif
