@@ -5,8 +5,12 @@
 #include <Input/InputGPIO.h>
 #include "src/Services/Audio/Audio.h"
 #include "Spencer.hpp"
+#include "src/LEDmatrix/LEDmatrix.h"
+
 InputGPIO input;
 Audio audio;
+LEDmatrix ledmatrix;
+
 void setup(){
 	Serial.begin(115200);
 
@@ -16,24 +20,22 @@ void setup(){
 		Serial.println("Flash fail");
 		return;
 	}
-	
-	Serial.println("erasing");
-	SerialFlash.eraseAll();
-	while (!SerialFlash.ready());
-	Serial.println("ready");
-
-	audio.begin();
-	input.setBtnPressCallback(BTN_PIN, [](){
-		// audio.begin();
-		Serial.println("start recording!");
-		audio.record([](){
-			Serial.println("record done");
-			audio.play("recording.wav");
-		});
-	});
+	if(!ledmatrix.begin())
+	{
+		Serial.println("couldn't start matrix");
+		while(1);
+	}
+	ledmatrix.clear();
+	ledmatrix.setBrightness(10);
+	ledmatrix.setRotation(2);
 }
 
 void loop(){
-	input.loop(0);
-	audio.loop();
+	for(int8_t i = 20; i > -20; i--)
+	{
+		ledmatrix.clear();
+		ledmatrix.drawString(i, 0, "ABC");
+		ledmatrix.push();
+		delay(20);
+	}
 }
