@@ -1,7 +1,7 @@
 #ifndef SPENCER_FLASHTOOLS_H
 #define SPENCER_FLASHTOOLS_H
 
-#define MAX_FILENAME 24
+#define MAX_FILENAME 255
 
 class FlashTools {
 public:
