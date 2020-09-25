@@ -6,6 +6,7 @@
 #include "src/Services/Audio/Audio.h"
 #include "Spencer.hpp"
 #include "src/LEDmatrix/LEDmatrix.h"
+#include "src/LEDmatrix/gifdec.h"
 
 InputGPIO input;
 Audio audio;
@@ -28,14 +29,30 @@ void setup(){
 	ledmatrix.clear();
 	ledmatrix.setBrightness(10);
 	ledmatrix.setRotation(2);
+
+
+	gd_GIF *gif = gd_open_gif("speaking1.gif");
+	if(gif == NULL)
+	{
+		return;
+	}
+	uint8_t *buffer = (uint8_t*)malloc(gif->width * gif->height * 3);
+	for (unsigned looped = 1;; looped++) {
+		while (gd_get_frame(gif)) {
+			gd_render_frame(gif, buffer);
+			//draw
+			delay(gif->gce.delay * 10);
+			/* insert code to render buffer to screen
+				and wait for delay time to pass here  */
+		}
+		if (looped == gif->loop_count)
+			break;
+		gd_rewind(gif);
+	}
+	free(buffer);
+	gd_close_gif(gif);
 }
 
 void loop(){
-	for(int8_t i = 20; i > -20; i--)
-	{
-		ledmatrix.clear();
-		ledmatrix.drawString(i, 0, "ABC");
-		ledmatrix.push();
-		delay(20);
-	}
+	
 }
