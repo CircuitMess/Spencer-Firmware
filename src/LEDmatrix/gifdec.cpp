@@ -94,8 +94,7 @@ gd_open_gif(const char *fname)
 	if (bgcolor[0] || bgcolor[1] || bgcolor [2])
 		for (i = 0; i < gif->width * gif->height; i++)
 			memcpy(&gif->canvas[i*3], bgcolor, 3);
-	gif->anim_start = 0;
-	fd->seek(0);
+	gif->anim_start = fd->position();
 	goto ok;
 fail:
 	fd->close();
@@ -456,7 +455,6 @@ int
 gd_get_frame(gd_GIF *gif)
 {
 	char sep;
-
 	dispose(gif);
 	gif->fd->read(&sep, 1);
 	while (sep != ',') {
