@@ -5,7 +5,11 @@ Modified version of Adafruits IS31FL3731 library (https://github.com/adafruit/Ad
 
 This is a stripped-down version with no Adafruit-GFX library inheritance.
 */
+
 #include <Arduino.h>
+#include "Animation.h"
+#include <Loop/LoopListener.h>
+
 #define ISSI_ADDR_DEFAULT 0x74
 
 #define ISSI_REG_CONFIG 0x00
@@ -25,7 +29,7 @@ This is a stripped-down version with no Adafruit-GFX library inheritance.
 #define ISSI_COMMANDREGISTER 0xFD
 #define ISSI_BANK_FUNCTIONREG 0x0B // helpfully called 'page nine'
 
-class LEDmatrix
+class LEDmatrix : public LoopListener
 {
 public:
 	LEDmatrix(uint8_t width = 16, uint8_t height = 9);
@@ -44,8 +48,13 @@ public:
 	void drawString(int32_t x, int32_t y, const char* c, uint8_t brightness = 255);
 	void setBrightness(uint8_t _brightness);
 	uint8_t getBrightness();
-
 	void push();
+	void drawBitmap(int x, int y, uint width, uint height, uint8_t* data);
+	void drawBitmap(int x, int y, uint width, uint height, RGBpixel* data);
+
+	void startAnimation(Animation* _animation, bool loop);
+	void stopAnimation();
+	void loop(uint _time) override;
 
 private:
 	void selectBank(uint8_t bank);
@@ -54,7 +63,13 @@ private:
 	uint8_t _i2caddr, ///< The I2C address we expect to find the chip
 		_frame;       ///< The frame (of 8) we are currently addressing
 	uint8_t width, height, brightness, rotation;
-	uint8_t *matrixBuffer;
+	uint8_t *matrixBuffer = nullptr;
+
+	AnimationFrame* animationFrame = nullptr;
+	Animation* animation = nullptr;
+	bool animationLoop = 0;
+	uint currentFrameTime = 0;
+
 };
 
 

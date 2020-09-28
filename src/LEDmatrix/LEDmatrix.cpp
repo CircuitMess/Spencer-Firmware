@@ -256,6 +256,7 @@ void LEDmatrix::drawChar(int32_t x, int32_t y, unsigned char c, uint8_t _brightn
 		mask <<= 1;
 	}
 }
+
 /**************************************************************************/
 /*!
 	@brief  Draws a character array on the desired position. Uses a standard ASCII 5x7 font.
@@ -274,6 +275,7 @@ void LEDmatrix::drawString(int32_t x, int32_t y, const char* c, uint8_t _brightn
 		x+=6;
 	}
 }
+
 /**************************************************************************/
 /*!
 	@brief  Sets global brightness for the matrix.
@@ -295,6 +297,7 @@ uint8_t LEDmatrix::getBrightness()
 {
 	return brightness;
 }
+
 /**************************************************************************/
 /*!
 	@brief  Sets matrix rotation.
@@ -306,6 +309,7 @@ void LEDmatrix::setRotation(uint8_t rot)
 	if(rot > 3) return;
 	rotation = rot;
 }
+
 /**************************************************************************/
 /*!
 	@brief  Gets matrix rotation.
@@ -316,6 +320,7 @@ uint8_t LEDmatrix::getRotation()
 {
 	return rotation;
 }
+
 /**************************************************************************/
 /*!
 	@brief  Push the matrix buffer onto the matrix.
@@ -332,5 +337,107 @@ void LEDmatrix::push()
 			Wire.write((uint8_t)(matrixBuffer[i*24 + j]*brightness/255));
 		}
 		Wire.endTransmission();
+	}
+}
+
+/**************************************************************************/
+/*!
+	@brief  Starts animation. Frames will be updated inside updateAnimation().
+	@param  animation Pointer to desired animation.
+	@param  loop Sets animation loop. True - loop until stopAnimation() or another startAnimation(), False - no looping.
+*/
+/**************************************************************************/
+void LEDmatrix::startAnimation(Animation* _animation, bool loop)
+{
+	animation = _animation;
+	animationLoop = loop;
+	animationFrame = animation->getNextFrame();
+	drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
+	currentFrameTime = 0;
+}
+
+/**************************************************************************/
+/*!
+	@brief  Stops running animation.
+*/
+/**************************************************************************/
+void LEDmatrix::stopAnimation()
+{
+	animation = nullptr;
+	animationFrame = nullptr;
+	currentFrameTime = 0;
+}
+
+/**************************************************************************/
+/*!
+	@brief  Updates running animation. Expected to be used inside loop().
+	@param  _time Current millis() time, used for frame duration calculation.
+*/
+/**************************************************************************/
+void LEDmatrix::loop(uint _time)
+{
+	if(animationFrame == nullptr || animation == nullptr) return;
+	currentFrameTime+=_time;
+	Serial.println(currentFrameTime);
+	if(currentFrameTime >= animationFrame->duration*1000)
+	{
+		clear();
+		currentFrameTime = 0;
+		animationFrame = animation->getNextFrame();
+		if(animationFrame == nullptr)
+		{
+			if(animationLoop)
+			{
+				Serial.println("rewind");
+				animation->rewind();
+				animationFrame = animation->getNextFrame();
+			}
+			else return;
+		}
+		Serial.println("draw");
+		Serial.println(animation->currentFrame);
+		drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
+	}
+}
+
+/**************************************************************************/
+/*!
+	@brief  Draws a bitmap on the desired position. Expects an 8-bit monochrome array.
+	@param   x The x position, starting with 0 for left-most side.
+	@param   y The y position, starting with 0 for top-most side.
+	@param   width Bitmap width.
+	@param   height Bitmap height.
+	@param   data Pointer to the bitmap.
+*/
+/**************************************************************************/
+void LEDmatrix::drawBitmap(int x, int y, uint width, uint height, uint8_t* data)
+{
+	for(int i = 0; i < height; i++)
+	{
+		for(int j = 0; j < width; j++)
+		{
+			drawPixel(x + j, y + i, data[i*width + j]);
+		}
+	}
+}
+
+/**************************************************************************/
+/*!
+	@brief  Draws a bitmap on the desired position. Expects a 24-bit color array, uses only the red color value.
+	@param   x The x position, starting with 0 for left-most side.
+	@param   y The y position, starting with 0 for top-most side.
+	@param   width Bitmap width.
+	@param   height Bitmap height.
+	@param   data Pointer to the bitmap.
+*/
+/**************************************************************************/
+void LEDmatrix::drawBitmap(int x, int y, uint width, uint height, RGBpixel* data)
+{
+	for(int i = 0; i < height; i++)
+	{
+		for(int j = 0; j < width; j++)
+		{
+			drawPixel(x + j, y + i, data[i*width + j].r);
+		}
 	}
 }
