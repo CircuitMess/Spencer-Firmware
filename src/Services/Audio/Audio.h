@@ -16,9 +16,23 @@ public:
 	Audio();
 	~Audio();
 	void begin();
+	/**
+	 * Starts audio playback.
+	 * @param file File to be played.
+	 * @param WAVorMP3 Flag to indicate MP3 or wav encoding. True is MP3, false is WAV (also the default).
+	 */
 	void play(AudioFileSource* file, bool WAVorMP3 = 0);
+	/**
+	 * Starts audio playback of a file from the serial flash chip.
+	 * @param path Path of the file on the flash chip.
+	 * @param WAVorMP3 Flag to indicate MP3 or wav encoding. True is MP3, false is WAV (also the default).
+	 */
 	void play(const char* path, bool WAVorMP3 = 0);
 	void stopPlayback();
+	/**
+	 * Starts audio recording. File is saved on the flash chip as "recording.wav"
+	 * @param callback Callback to be executed after done recording.
+	 */
 	void record(void (*callback)(void)); // 16bit, monoral, 16000Hz,  linear PCM
 	void loop();
 
