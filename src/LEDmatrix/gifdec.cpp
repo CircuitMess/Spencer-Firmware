@@ -37,6 +37,7 @@ gd_open_gif(const char *fname)
 	uint8_t *bgcolor;
 	int gct_sz;
 	gd_GIF *gif;
+	bool gctPresent = 1;
 
 	fd = new SerialFlashFile();
 	*fd = SerialFlash.open(fname);
@@ -53,7 +54,7 @@ gd_open_gif(const char *fname)
 	if (memcmp(sigver, "89a", 3) != 0) {
 		fprintf(stderr, "invalid version\n");
 		Serial.println((char*)sigver);
-		goto fail;
+		// goto fail;
 	}
 	/* Width x Height */
 	width  = read_num(fd);
@@ -63,7 +64,8 @@ gd_open_gif(const char *fname)
 	/* Presence of GCT */
 	if (!(fdsz & 0x80)) {
 		fprintf(stderr, "no global color table\n");
-		goto fail;
+		gctPresent = 0;
+		// goto fail;
 	}
 	/* Color Space's Depth */
 	depth = ((fdsz >> 4) & 7) + 1;
@@ -82,8 +84,11 @@ gd_open_gif(const char *fname)
 	gif->height = height;
 	gif->depth  = depth;
 	/* Read GCT */
-	gif->gct.size = gct_sz;
-	fd->read(gif->gct.colors, 3 * gif->gct.size);
+	if(gctPresent)
+	{
+		gif->gct.size = gct_sz;
+		fd->read(gif->gct.colors, 3 * gif->gct.size);
+	}
 	gif->palette = &gif->gct;
 	gif->bgindex = bgidx;
 	gif->canvas = (uint8_t *) &gif[1];
