@@ -18,7 +18,7 @@ struct RGBpixel{
 */
 struct AnimationFrame
 {
-	RGBpixel *data;
+	uint8_t *data;
 	uint duration;
 };
 

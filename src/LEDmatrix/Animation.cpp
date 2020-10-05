@@ -8,10 +8,10 @@ Animation::Animation(char* gifPath)
 	// Serial.printf("width: %d, height: %d\n", gif->width, gif->height);
 	while (gd_get_frame(gif) == 1) {
 
-		uint8_t *buffer = (uint8_t*)malloc(gif->width * gif->height * 3);
+		uint8_t *buffer = (uint8_t*)malloc(gif->width * gif->height);
 		//render 24-bit color frame into buffer
-		gd_render_frame(gif, buffer);
-		frames.push_back(AnimationFrame{(RGBpixel*)buffer, gif->gce.delay*10});
+		gd_render_frame(gif, buffer, 1);
+		frames.push_back(AnimationFrame{buffer, gif->gce.delay*10});
 	}
 }
 

@@ -30,7 +30,7 @@ void setup(){
 	ledmatrix.setBrightness(20);
 	ledmatrix.setRotation(2);
 
-	ledmatrix.startAnimation(new Animation("speaking1.gif"), 1);
+	ledmatrix.startAnimation(new Animation("wifi.gif"), 1);
 	LoopManager::addListener(&ledmatrix);
 }
 

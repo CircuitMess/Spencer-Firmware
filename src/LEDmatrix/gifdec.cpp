@@ -416,7 +416,7 @@ read_image(gd_GIF *gif)
 }
 
 static void
-render_frame_rect(gd_GIF *gif, uint8_t *buffer)
+render_frame_rect(gd_GIF *gif, uint8_t *buffer, bool monochrome)
 {
 	int i, j, k;
 	uint8_t index, *color;
@@ -426,7 +426,16 @@ render_frame_rect(gd_GIF *gif, uint8_t *buffer)
 			index = gif->frame[(gif->fy + j) * gif->width + gif->fx + k];
 			color = &gif->palette->colors[index*3];
 			if (!gif->gce.transparency || index != gif->gce.tindex)
-				memcpy(&buffer[(i+k)*3], color, 3);
+			{
+				if(monochrome)
+				{
+					memcpy(&buffer[(i+k)], color, 1);
+				}
+				else
+				{
+					memcpy(&buffer[(i+k)*3], color, 3);
+				}
+			}
 		}
 		i += gif->width;
 	}
@@ -451,7 +460,7 @@ dispose(gd_GIF *gif)
 		break;
 	default:
 		/* Add frame non-transparent pixels to canvas. */
-		render_frame_rect(gif, gif->canvas);
+		render_frame_rect(gif, gif->canvas, 0);
 	}
 }
 
@@ -476,10 +485,17 @@ gd_get_frame(gd_GIF *gif)
 }
 
 void
-gd_render_frame(gd_GIF *gif, uint8_t *buffer)
+gd_render_frame(gd_GIF *gif, uint8_t *buffer, bool monochrome)
 {
-	memcpy(buffer, gif->canvas, gif->width * gif->height * 3);
-	render_frame_rect(gif, buffer);
+	if(monochrome)
+	{
+		memcpy(buffer, gif->canvas, gif->width * gif->height);
+	}
+	else
+	{
+		memcpy(buffer, gif->canvas, gif->width * gif->height * 3);
+	}
+	render_frame_rect(gif, buffer, monochrome);
 }
 
 int
