@@ -18,6 +18,6 @@ void setup(){
 		Serial.println("Flash fail");
 		return;
 	}
-
+}
 void loop(){
 }

@@ -2,8 +2,7 @@
 #define SPENCER_STOPWATCHINTENT_H
 #include <Arduino.h>
 #include "Intent.hpp"
-class DateTime;
-class TimeSpan;
+#include "../Services/TimeService/DateTime.hpp"
 enum StopwatchState{
 	waitingState, runningState, finishedState  
 };

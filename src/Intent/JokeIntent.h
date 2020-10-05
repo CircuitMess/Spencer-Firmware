@@ -8,8 +8,10 @@ class JokeIntent: public Intent
 public:
 	JokeIntent(void* params);
 	virtual ~JokeIntent() override;
+	void loop() override;
 private:
-	const uint numJokes = 11;
+	static const uint numJokes = 11;
+	std::vector<uint> jokeVector;
 	AudioFileSource *file;
 
 };

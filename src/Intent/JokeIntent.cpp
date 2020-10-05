@@ -1,37 +1,31 @@
 #include "JokeIntent.h"
 #include "../Services/Audio/Audio.h"
-bool *jokeSaid = nullptr;
 JokeIntent::JokeIntent(void* params) : Intent(params)
 {
-	if(jokeSaid == nullptr)
+
+	uint jokeIndex = 0;
+	bool jokeFound = 1;
+	do
 	{
-		jokeSaid = new bool[numJokes];
-		memset(jokeSaid, 0, numJokes);
-	}
-    bool allSaid = 1;
-    for(uint8_t i = 0; i < numJokes; i++)
-    {
-        if(jokeSaid[i] == 0)
-        {
-            allSaid = 0;
-            break;
-        }
-    }
-    if(allSaid){
-		file = SampleStore::load(SampleGroup::Jokes, "outOfJokes");
-	}
-    else
-    {
-		uint jokeIndex = 0;
-        do
+		jokeIndex = random(0, 11);
+		for(uint i = 0; i < jokeVector.size(); i++)
 		{
-            jokeIndex = random(0, 11);
+			if(jokeVector[i] == jokeIndex)
+			{
+				jokeFound = 0;
+				break;
+			}
 		}
-        while(jokeSaid[jokeIndex] == true);
-		char buff[3] = {0};
-		sprintf(buff, "%d", jokeIndex);
-		file = SampleStore::load(SampleGroup::Jokes, buff);
-    }
+	}
+	while(!jokeFound);
+	jokeVector.push_back(jokeIndex);
+	if(jokeVector.size() == (int(numJokes/2) + 1))
+	{
+		jokeVector.erase(jokeVector.begin());
+	}
+	char buff[3] = {0};
+	sprintf(buff, "%d", jokeIndex);
+	file = SampleStore::load(SampleGroup::Jokes, buff);
 	audio.play(file);
 }
 JokeIntent::~JokeIntent()

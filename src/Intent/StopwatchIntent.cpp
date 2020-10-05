@@ -11,7 +11,7 @@ StopwatchIntent::StopwatchIntent(void* params) : Intent(params)
 		instance->start = DateTime(timeService.getTime());
 		InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 			instance->state = finishedState;
-			instance->timeDiff = timeService.getTime() - instance->start;
+			instance->timeDiff = TimeSpan(timeService.getTime() - instance->start.unixtime());
 			//say timeDiff
 		});
 	});
@@ -28,7 +28,7 @@ void StopwatchIntent::loop()
 		//wait animation, 
 		break;
 	case runningState:
-		timeDiff = timeService.getTime() - start;
+		timeDiff = TimeSpan(timeService.getTime() - start.unixtime());
 		//print timeDiff
 		break;
 	case finishedState:
