@@ -9,6 +9,7 @@ include_directories(~/.arduino15/packages/cm/hardware/esp32/1.0.4/libraries/SD/s
 include_directories(~/.arduino15/packages/cm/hardware/esp32/1.0.4/libraries/SPI/src)
 include_directories(~/.arduino15/packages/cm/hardware/esp32/1.0.4/libraries/WiFi/src)
 include_directories(~/.arduino15/packages/cm/hardware/esp32/1.0.4/libraries/SPIFFS/src)
+include_directories(~/.arduino15/packages/cm/hardware/esp32/1.0.4/libraries/HTTPClient/src)
 
 
 include_directories(~/.arduino15/packages/cm/hardware/esp32/1.0.4/cores/esp32)
