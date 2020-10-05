@@ -98,7 +98,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	default:
 		break;
 	}
-	audio.play(speakFile);
+	audio.playMP3(speakFile);
 }
 
 TimeIntent::~TimeIntent()
