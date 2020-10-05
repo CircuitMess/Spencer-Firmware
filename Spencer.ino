@@ -3,6 +3,7 @@
 #include <SerialFlash.h>
 #include <CircuitOS.h>
 #include <Input/InputGPIO.h>
+#include "src/Speech/SpeechToIntent.h"
 #include "src/Services/Audio/Audio.h"
 #include "Spencer.hpp"
 #include "src/LEDmatrix/LEDmatrix.h"
@@ -11,6 +12,7 @@
 InputGPIO input;
 Audio audio;
 LEDmatrix ledmatrix;
+
 void setup(){
 	Serial.begin(115200);
 
@@ -29,12 +31,8 @@ void setup(){
 	ledmatrix.clear();
 	ledmatrix.setBrightness(20);
 	ledmatrix.setRotation(2);
-
-	ledmatrix.startAnimation(new Animation("wifi.gif"), 1);
-	LoopManager::addListener(&ledmatrix);
 }
-
 void loop(){
-	LoopManager::loop();
-	ledmatrix.push();
+
 }
+

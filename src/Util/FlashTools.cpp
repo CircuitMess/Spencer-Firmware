@@ -69,7 +69,7 @@ void FlashTools::listFiles(){
 		if(SerialFlash.readdir(filename, sizeof(filename), filesize)){
 			Serial.print("  ");
 			Serial.print(filename);
-			for(int i = 0; i < 20 - strlen(filename); i++) Serial.print(" ");
+			for(int i = 0; i < 40 - (int) strlen(filename); i++) Serial.print(" ");
 			Serial.print("  ");
 			Serial.print(filesize);
 			Serial.print(" bytes");
