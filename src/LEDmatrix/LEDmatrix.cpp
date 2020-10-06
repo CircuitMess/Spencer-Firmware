@@ -338,6 +338,10 @@ void LEDmatrix::push()
 		}
 		Wire.endTransmission();
 	}
+
+	for (uint8_t i = 0; i <= 0x11; i++){
+		writeRegister8(_frame, i, 0xff); // each 8 LEDs on
+	}
 }
 
 /**************************************************************************/
