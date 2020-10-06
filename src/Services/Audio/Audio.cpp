@@ -133,35 +133,33 @@ void Audio::loop()
 		}
 	}
 }
-void Audio::play(AudioFileSource* _file, bool WAVorMP3)
+void Audio::playWAV(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	file = _file;
-	if(WAVorMP3)
-	{
-		if(!mp3->begin(file, out))
-		{
-			Serial.println("mp3 begin failed");
-			delay(5);
-		}
-	}
-	else
-	{
-		wav->begin(file, out);
-	}
+	wav->begin(file, out);
 }
-void Audio::play(const char* path, bool WAVorMP3)
+void Audio::playWAV(const char* path)
 {
 	if(path == nullptr) return;
 	file = new AudioFileSourceSerialFlash(path);
-	if(WAVorMP3)
+	wav->begin(file, out);
+}
+void Audio::playMP3(AudioFileSource* _file)
+{
+	if(_file == nullptr) return;
+	file = _file;
+	if(!mp3->begin(file, out))
 	{
-		mp3->begin(file, out);
+		Serial.println("mp3 begin failed");
+		delay(5);
 	}
-	else
-	{
-		wav->begin(file, out);
-	}
+}
+void Audio::playMP3(const char* path)
+{
+	if(path == nullptr) return;
+	file = new AudioFileSourceSerialFlash(path);
+	mp3->begin(file, out);
 }
 void Audio::stopPlayback()
 {
