@@ -26,9 +26,14 @@ include_directories(~/Arduino/libraries/ESP8266Audio/src)
 include_directories(~/Arduino/libraries/SerialFlash-master)
 include_directories(~/Arduino/libraries/Adafruit_Zero_I2S)
 
+
 AUX_SOURCE_DIRECTORY(src SOURCES)
+AUX_SOURCE_DIRECTORY(src/Intent SOURCES)
+AUX_SOURCE_DIRECTORY(src/LEDmatrix SOURCES)
 AUX_SOURCE_DIRECTORY(src/Services SOURCES)
 AUX_SOURCE_DIRECTORY(src/Services/Audio SOURCES)
+AUX_SOURCE_DIRECTORY(src/Services/TimeService SOURCES)
+AUX_SOURCE_DIRECTORY(src/Speech SOURCES)
 AUX_SOURCE_DIRECTORY(src/Util SOURCES)
 
 add_definitions(-DDEBUG)
