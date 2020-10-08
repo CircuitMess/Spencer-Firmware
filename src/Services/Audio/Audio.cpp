@@ -51,12 +51,8 @@ void Audio::record(void (*callback)(void))
 	// 		Serial.println("failed to remove file");
 	// 	}
 	// }
-	if(!SerialFlash.createErasable("recording.wav", 70000))
-	{
-		Serial.println("cannot create recording.wav, already exists");
-	}
 	SerialFlashFile f = SerialFlash.open("recording.wav");
-	Serial.println((bool)f ? "file open" : "file error");
+	// Serial.println((bool)f ? "file open" : "file error");
 	f.erase();
 	for(uint8_t i = 0; i < wavDataSize/dividedWavDataSize + 1; i++)
 	{
@@ -118,7 +114,6 @@ void Audio::loop()
 	{
 		if (wav->isRunning()) {
 			if (!wav->loop()){
-				Serial.printf("WAV done\n");
 				stopPlayback();
 			}
 		}
@@ -127,7 +122,6 @@ void Audio::loop()
 	{
 		if (mp3->isRunning()) {
 			if (!mp3->loop()){
-				Serial.printf("MP3 done\n");
 				stopPlayback();
 			}
 		}
@@ -151,8 +145,7 @@ void Audio::playMP3(AudioFileSource* _file)
 	file = _file;
 	if(!mp3->begin(file, out))
 	{
-		Serial.println("mp3 begin failed");
-		delay(5);
+		return;
 	}
 }
 void Audio::playMP3(const char* path)

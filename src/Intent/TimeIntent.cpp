@@ -7,7 +7,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	//make prepared statement
 	TimeIntentParam _params = *static_cast<TimeIntentParam*>(params);
 	DateTime now = DateTime(_params.unixTime);
-	Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
+	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
 	char buff[4] = {0};
 	speakFile = new CompositeAudioFileSource();
 	switch (_params.type)

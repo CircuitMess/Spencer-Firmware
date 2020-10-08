@@ -38,14 +38,10 @@ uint32_t CompositeAudioFileSource::read(void *data, uint32_t len)
 	int readBytes = getCurrentFile()->read(reinterpret_cast<uint8_t*>(data), len);
 	if(readBytes == 0 && currentFileIndex < filePointers.size() - 1)
 	{
-		Serial.println("next file");
-		delay(5);
 		currentFileIndex++;
 		getCurrentFile()->seek(0, SEEK_SET);
 		
 		readBytes = getCurrentFile()->read(reinterpret_cast<uint8_t*>(data), len);
-		Serial.println("after read");
-		delay(5);
 	}
 	return readBytes;
 }

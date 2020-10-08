@@ -13,7 +13,7 @@
 //  -   DATA bits are left-aligned with respect to LRC edge.
 //  -   DATA bits are right-shifted by one with respect to LRC edges.
 void i2s_init(void) {
-	Serial.println("Configuring I2S...");
+	// Serial.println("Configuring I2S...");
 	esp_err_t err;
 
 	// The I2S config as per the example
@@ -41,15 +41,15 @@ void i2s_init(void) {
 	// This function must be called before any I2S driver read/write operations.
 	err = i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
 	if (err != ESP_OK) {
-		Serial.printf("Failed installing driver: %d\n", err);
+		// Serial.printf("Failed installing driver: %d\n", err);
 		while (true);
 	}
 	err = i2s_set_pin(I2S_NUM_0, &pin_config);
 	if (err != ESP_OK) {
-		Serial.printf("Failed setting pin: %d\n", err);
+		// Serial.printf("Failed setting pin: %d\n", err);
 		while (true);
 	}
-	Serial.println("I2S driver installed.");
+	// Serial.println("I2S driver installed.");
 }
 
 I2S::I2S() {

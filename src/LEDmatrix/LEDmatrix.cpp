@@ -382,7 +382,6 @@ void LEDmatrix::loop(uint _time)
 {
 	if(animationFrame == nullptr || animation == nullptr) return;
 	currentFrameTime+=_time;
-	Serial.println(currentFrameTime);
 	if(currentFrameTime >= animationFrame->duration*1000)
 	{
 		clear();
@@ -392,14 +391,11 @@ void LEDmatrix::loop(uint _time)
 		{
 			if(animationLoop)
 			{
-				Serial.println("rewind");
 				animation->rewind();
 				animationFrame = animation->getNextFrame();
 			}
 			else return;
 		}
-		Serial.println("draw");
-		Serial.println(animation->currentFrame);
 		drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
 	}
 }
