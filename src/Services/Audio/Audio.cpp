@@ -114,7 +114,7 @@ void Audio::loop()
 	{
 		if (wav->isRunning()) {
 			if (!wav->loop()){
-				stopPlayback();
+				wav->stop();
 			}
 		}
 	}
@@ -122,7 +122,7 @@ void Audio::loop()
 	{
 		if (mp3->isRunning()) {
 			if (!mp3->loop()){
-				stopPlayback();
+				mp3->stop();
 			}
 		}
 	}
