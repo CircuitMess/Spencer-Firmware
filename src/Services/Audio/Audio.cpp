@@ -25,39 +25,35 @@ void Audio::begin()
 }
 void Audio::record(void (*callback)(void))
 {
-	wavData = new char*[wavDataSize/dividedWavDataSize + 1];
-	wavData[0] = new char[headerSize];
-	for (int i = 1; i < wavDataSize/dividedWavDataSize + 1; ++i){
-		wavData[i] = new char[dividedWavDataSize];
-	}
 	recordCallback = callback;
-	CreateWavHeader((byte*)(wavData[0]), wavDataSize);
+
+	const int headerSize = 44;
+	const int i2sBufferSize = 1600;
+	char i2sBuffer[i2sBufferSize];
+	char headerData[headerSize];
+	float recordLength = 1.0;
+	char wavData[i2sBufferSize/4];
+	uint wavFileSize = int(recordLength*16000);
+
+	SerialFlash.remove("recording.wav");
+	SerialFlash.createErasable("recording.wav", wavFileSize + headerSize);
+	SerialFlashFile f = SerialFlash.open("recording.wav");
+	f.erase();
+	CreateWavHeader((byte*)headerData, wavFileSize);
+	f.write(headerData, 44);
 	
-	for (uint32_t j = 1; j < wavDataSize/dividedWavDataSize + 1; j++) {
+	for (uint32_t j = 1; j < wavFileSize/(i2sBufferSize/4); j++) {
+		yield();
 		i2s->Read(i2sBuffer, i2sBufferSize/2);
 		// Serial.println(((int32_t*)i2sBuffer)[0]);
 		for (int i = 0; i < i2sBufferSize/8; ++i) {
-			wavData[j][2*i] = i2sBuffer[4*i + 2];
-			wavData[j][2*i + 1] = i2sBuffer[4*i + 3];
+			yield();
+			wavData[2*i] = i2sBuffer[4*i + 2];
+			wavData[2*i + 1] = i2sBuffer[4*i + 3];
 		}
+		f.write(wavData, sizeof(wavData));
 	}
-	// if(SerialFlash.exists("recording.wav")){
-	// 	Serial.println("removing recording.wav...");
-	// 	if(SerialFlash.remove("recording.wav"))
-	// 	{
-	// 		Serial.println("removed file");
-	// 	}
-	// 	else{
-	// 		Serial.println("failed to remove file");
-	// 	}
-	// }
-	SerialFlashFile f = SerialFlash.open("recording.wav");
-	// Serial.println((bool)f ? "file open" : "file error");
-	f.erase();
-	for(uint8_t i = 0; i < wavDataSize/dividedWavDataSize + 1; i++)
-	{
-		f.write(wavData[i], i == 0 ? 44 : 1500);
-	}
+	
 	f.close();
 	recordCallback();
 }
@@ -168,5 +164,4 @@ void Audio::stopPlayback()
 			mp3->stop();
 		}
 	}
-	
 }
