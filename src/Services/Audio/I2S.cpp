@@ -1,7 +1,7 @@
 #include "I2S.h"
 #define SAMPLE_RATE (16000)
 #define PIN_I2S_BCLK 16
-#define PIN_I2S_LRC 21
+#define PIN_I2S_LRC 27
 #define PIN_I2S_DIN 32
 #define PIN_I2S_DOUT 4
 
@@ -32,7 +32,7 @@ void i2s_init(void) {
 	// The pin config as per the setup
 	const i2s_pin_config_t pin_config = {
 		.bck_io_num = 16,   // BCKL
-		.ws_io_num = 21,    // LRCL
+		.ws_io_num = 27,    // LRCL
 		.data_out_num = PIN_I2S_DOUT, // not used (only for speakers)
 		.data_in_num = 32
 	};

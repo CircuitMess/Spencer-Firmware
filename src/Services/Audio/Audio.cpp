@@ -16,7 +16,7 @@ void Audio::begin()
 	mp3 = new AudioGeneratorMP3();
 	out = new AudioOutputI2S(0,0,16,0);
 	out->SetRate(16000);
-	out->SetPinout(16, 21, 4);
+	out->SetPinout(16, 27, 4);
 	out->SetChannels(1);
 	out->SetOutputModeMono(1);
 	out->SetGain(0.1);
@@ -158,11 +158,15 @@ void Audio::stopPlayback()
 {
 	if(wav != nullptr)
 	{
-		wav->stop();
+		if(wav->isRunning()){
+			wav->stop();
+		}
 	}
 	if(mp3 != nullptr)
 	{
-		mp3->stop();
+		if(mp3->isRunning()){
+			mp3->stop();
+		}
 	}
 	
 }
