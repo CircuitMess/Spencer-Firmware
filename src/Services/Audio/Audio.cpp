@@ -2,6 +2,9 @@
 #include <SerialFlash.h>
 Audio::Audio()
 {
+	wav = new AudioGeneratorWAV();
+	mp3 = new AudioGeneratorMP3();
+	i2s = new I2S();
 }
 
 Audio::~Audio()
@@ -12,8 +15,6 @@ Audio::~Audio()
 }
 void Audio::begin()
 {
-	wav = new AudioGeneratorWAV();
-	mp3 = new AudioGeneratorMP3();
 	out = new AudioOutputI2S(0,0,16,0);
 	out->SetRate(16000);
 	out->SetPinout(16, 27, 4);
@@ -21,7 +22,7 @@ void Audio::begin()
 	out->SetOutputModeMono(1);
 	out->SetGain(0.1);
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
-	i2s = new I2S();
+	i2s->begin();
 }
 void Audio::record(void (*callback)(void))
 {
@@ -42,6 +43,10 @@ void Audio::record(void (*callback)(void))
 	CreateWavHeader((byte*)headerData, wavFileSize);
 	f.write(headerData, 44);
 	
+	if(!i2s->isInited())
+	{
+		i2s->begin();
+	}
 	for (uint32_t j = 1; j < wavFileSize/(i2sBufferSize/4); j++) {
 		yield();
 		i2s->Read(i2sBuffer, i2sBufferSize/2);
@@ -111,6 +116,7 @@ void Audio::loop()
 		if (wav->isRunning()) {
 			if (!wav->loop()){
 				wav->stop();
+				i2s->stop();
 			}
 		}
 	}
@@ -119,6 +125,7 @@ void Audio::loop()
 		if (mp3->isRunning()) {
 			if (!mp3->loop()){
 				mp3->stop();
+				i2s->stop();
 			}
 		}
 	}
@@ -126,18 +133,21 @@ void Audio::loop()
 void Audio::playWAV(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
+	i2s->begin();
 	file = _file;
 	wav->begin(file, out);
 }
 void Audio::playWAV(const char* path)
 {
 	if(path == nullptr) return;
+	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	wav->begin(file, out);
 }
 void Audio::playMP3(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
+	i2s->begin();
 	file = _file;
 	if(!mp3->begin(file, out))
 	{
@@ -147,6 +157,7 @@ void Audio::playMP3(AudioFileSource* _file)
 void Audio::playMP3(const char* path)
 {
 	if(path == nullptr) return;
+	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
@@ -164,4 +175,5 @@ void Audio::stopPlayback()
 			mp3->stop();
 		}
 	}
+	i2s->stop();
 }

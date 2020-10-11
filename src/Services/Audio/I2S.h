@@ -7,11 +7,14 @@
 #include "esp_system.h"
 
 class I2S {
-  i2s_bits_per_sample_t BITS_PER_SAMPLE;
 public:
-  I2S();
-  int Read(char* data, int numData);
-  int GetBitPerSample();
+	I2S();
+	void begin();
+	void stop();
+	int Read(char* data, int numData);
+	bool isInited();
+private:
+	bool inited = 0;
 };
 
 #endif
