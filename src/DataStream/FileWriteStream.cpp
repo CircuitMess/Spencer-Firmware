@@ -17,6 +17,8 @@ void FileWriteStream::write(unsigned char byte){
 }
 
 void FileWriteStream::flush(){
+	if(buffer.empty()) return;
+
 	file.write(buffer.data(), buffer.size());
 	buffer.resize(0);
 }
