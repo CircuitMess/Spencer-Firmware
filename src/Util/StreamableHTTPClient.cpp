@@ -1,18 +1,20 @@
 #include "StreamableHTTPClient.h"
 
-void StreamableHTTPClient::startPOST(){
+bool StreamableHTTPClient::startPOST(){
 	// connect to server
 	if(!connect()) {
-		return;
+		return false;
 	}
 
 	// send Header
 	if(!sendHeader("POST")) {
-		return;
+		return false;
 	}
 
 	buffer.clear();
 	buffer.reserve(bufferSize);
+
+	return true;
 }
 
 bool StreamableHTTPClient::send(uint8_t* data, uint32_t size){
