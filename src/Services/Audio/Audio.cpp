@@ -28,46 +28,43 @@ void Audio::record(void (*callback)(void))
 {
 	recordCallback = callback;
 
-	const int headerSize = 44;
-	const int i2sBufferSize = 1600;
 	char i2sBuffer[i2sBufferSize];
-	char headerData[headerSize];
-	float recordLength = 1.0;
-	char wavData[i2sBufferSize/4];
-	uint wavFileSize = int(recordLength*16000);
+	int16_t wavBuffer[i2sBufferSize / 4]; // i2sBuffer is stereo by byte, wavBuffer is mono int16
+	const uint wavFileSize = maxRecordTime * (float) sampleRate * 2.0f;
 
-	SerialFlash.remove("recording.wav");
-	SerialFlash.createErasable("recording.wav", wavFileSize + headerSize);
-	SerialFlashFile f = SerialFlash.open("recording.wav");
-	f.erase();
-	CreateWavHeader((byte*)headerData, wavFileSize);
-	f.write(headerData, 44);
+	SerialFlash.createErasable("recording.wav", wavFileSize + wavHeaderSize);
+	SerialFlashFile file = SerialFlash.open("recording.wav");
+	file.erase();
+
+	writeWavHeader(&file, wavFileSize);
 	
-	if(!i2s->isInited())
-	{
+	if(!i2s->isInited()){
 		i2s->begin();
 	}
-	for (uint32_t j = 1; j < wavFileSize/(i2sBufferSize/4); j++) {
-		yield();
-		i2s->Read(i2sBuffer, i2sBufferSize/2);
-		// Serial.println(((int32_t*)i2sBuffer)[0]);
-		for (int i = 0; i < i2sBufferSize/8; ++i) {
-			yield();
-			wavData[2*i] = i2sBuffer[4*i + 2];
-			wavData[2*i + 1] = i2sBuffer[4*i + 3];
+
+	// time * sampleRate * 4 bytes per sample (sample is int16_t, 2 channels)
+	for(int i = 0; i < (maxRecordTime * sampleRate * 4) / i2sBufferSize; i++){
+		i2s->Read(i2sBuffer, i2sBufferSize);
+
+		for(int j = 0; j < i2sBufferSize; j += 4){
+			int16_t sample = *(int16_t*)(&i2sBuffer[j + 2]);
+			wavBuffer[j/4] = sample;
 		}
-		f.write(wavData, sizeof(wavData));
+
+		file.write(wavBuffer, sizeof(wavBuffer));
 	}
 	
-	f.close();
+	file.close();
 	recordCallback();
 }
-void Audio::CreateWavHeader(byte* header, int waveDataSize){
+void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
+	unsigned char header[wavHeaderSize];
+	unsigned int fileSizeMinus8 = wavSize + 44 - 8;
+
 	header[0] = 'R';
 	header[1] = 'I';
 	header[2] = 'F';
 	header[3] = 'F';
-	unsigned int fileSizeMinus8 = waveDataSize + 44 - 8;
 	header[4] = (byte)(fileSizeMinus8 & 0xFF);
 	header[5] = (byte)((fileSizeMinus8 >> 8) & 0xFF);
 	header[6] = (byte)((fileSizeMinus8 >> 16) & 0xFF);
@@ -104,10 +101,12 @@ void Audio::CreateWavHeader(byte* header, int waveDataSize){
 	header[37] = 'a';
 	header[38] = 't';
 	header[39] = 'a';
-	header[40] = (byte)(waveDataSize & 0xFF);
-	header[41] = (byte)((waveDataSize >> 8) & 0xFF);
-	header[42] = (byte)((waveDataSize >> 16) & 0xFF);
-	header[43] = (byte)((waveDataSize >> 24) & 0xFF);
+	header[40] = (byte)(wavSize & 0xFF);
+	header[41] = (byte)((wavSize >> 8) & 0xFF);
+	header[42] = (byte)((wavSize >> 16) & 0xFF);
+	header[43] = (byte)((wavSize >> 24) & 0xFF);
+
+	file->write(header, sizeof(header));
 }
 void Audio::loop()
 {
