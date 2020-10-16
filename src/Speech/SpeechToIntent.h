@@ -1,11 +1,21 @@
 #ifndef SPENCER_SPEECH2INTENT_H
 #define SPENCER_SPEECH2INTENT_H
 
-class SpeechToIntent
-{
-public:
-    void identifyVoice(void (*callback)(void), const char* fileName = "recording.wav");
+#include <HTTPClient.h>
+#include "../Util/StreamableHTTPClient.h"
+
+struct IntentResult {
+	const char* transcript;
+	const char* intent;
+	float confidence;
 };
 
-extern SpeechToIntent speechToIntent;
+class SpeechToIntentImpl {
+public:
+	SpeechToIntentImpl();
+	void identifyVoice(void (* callback)(IntentResult*), const char* fileName = "recording.wav");
+
+};
+
+extern SpeechToIntentImpl SpeechToIntent;
 #endif
