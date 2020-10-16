@@ -1,3 +1,4 @@
+#include <queue>
 #include "FileReadStream.h"
 
 FileReadStream::FileReadStream(SerialFlashFile source) : source(source){
@@ -16,7 +17,8 @@ unsigned char FileReadStream::get(){
 
 	if(buffer.empty()) return 0;
 
-	unsigned char byte = buffer.back();
-	buffer.pop_back();
+	// TODO: Vector is a bad data structure for this. Should use a queue instead
+	unsigned char byte = buffer.front();
+	buffer.erase(buffer.begin());
 	return byte;
 }
