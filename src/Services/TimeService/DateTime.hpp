@@ -4,8 +4,7 @@
 #define SPENCER_DATETIME_HPP
 
 /**************************************************************************/
-/*!
-  @file     RTClib.h
+/*
   Original library by JeeLabs http://news.jeelabs.org/code/, released to the
   public domain
   License: MIT (see LICENSE)

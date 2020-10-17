@@ -2,7 +2,7 @@
 #define SPENCER_TIMESERVICE_H
 
 #include "DateTime.hpp"
-class TimeService
+class TimeServiceImpl
 {
 public:
 	uint getTime();
@@ -12,6 +12,6 @@ private:
 	uint unixtime = 0;
 	uint currentMillis = 0;
 };
-extern TimeService timeService;
+extern TimeServiceImpl TimeService;
 
 #endif

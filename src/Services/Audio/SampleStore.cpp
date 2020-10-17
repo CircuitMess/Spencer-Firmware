@@ -26,7 +26,7 @@ AudioFileSource* SampleStore::load(SampleGroup group, char* label)
 	sprintf(fileName, "%s-%c.mp3", label, suffix);
 	return new AudioFileSourceSerialFlash(fileName);
 }
-AudioFileSource* load(SampleGroup group, const char* label)
+AudioFileSource* SampleStore::load(SampleGroup group, const char* label)
 {
 	SampleStore::load(group, (char*)label);
 }

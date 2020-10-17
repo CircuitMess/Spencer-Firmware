@@ -1,19 +1,20 @@
 #include "Audio.h"
 #include <SerialFlash.h>
-Audio::Audio()
+AudioImpl Audio;
+AudioImpl::AudioImpl()
 {
 	wav = new AudioGeneratorWAV();
 	mp3 = new AudioGeneratorMP3();
 	i2s = new I2S();
 }
 
-Audio::~Audio()
+AudioImpl::~AudioImpl()
 {
 	delete i2s;
 	if(file == nullptr) return;
 	delete file;
 }
-void Audio::begin()
+void AudioImpl::begin()
 {
 	out = new AudioOutputI2S(0,0,16,0);
 	out->SetRate(16000);
@@ -24,7 +25,7 @@ void Audio::begin()
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
 	i2s->begin();
 }
-void Audio::record(void (*callback)(void))
+void AudioImpl::record(void (*callback)(void))
 {
 	recordCallback = callback;
 
@@ -62,7 +63,7 @@ void Audio::record(void (*callback)(void))
 	f.close();
 	recordCallback();
 }
-void Audio::CreateWavHeader(byte* header, int waveDataSize){
+void AudioImpl::CreateWavHeader(byte* header, int waveDataSize){
 	header[0] = 'R';
 	header[1] = 'I';
 	header[2] = 'F';
@@ -109,7 +110,7 @@ void Audio::CreateWavHeader(byte* header, int waveDataSize){
 	header[42] = (byte)((waveDataSize >> 16) & 0xFF);
 	header[43] = (byte)((waveDataSize >> 24) & 0xFF);
 }
-void Audio::loop()
+void AudioImpl::loop()
 {
 	if(wav != nullptr)
 	{
@@ -130,21 +131,21 @@ void Audio::loop()
 		}
 	}
 }
-void Audio::playWAV(AudioFileSource* _file)
+void AudioImpl::playWAV(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	i2s->begin();
 	file = _file;
 	wav->begin(file, out);
 }
-void Audio::playWAV(const char* path)
+void AudioImpl::playWAV(const char* path)
 {
 	if(path == nullptr) return;
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	wav->begin(file, out);
 }
-void Audio::playMP3(AudioFileSource* _file)
+void AudioImpl::playMP3(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	i2s->begin();
@@ -154,14 +155,14 @@ void Audio::playMP3(AudioFileSource* _file)
 		return;
 	}
 }
-void Audio::playMP3(const char* path)
+void AudioImpl::playMP3(const char* path)
 {
 	if(path == nullptr) return;
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
-void Audio::stopPlayback()
+void AudioImpl::stopPlayback()
 {
 	if(wav != nullptr)
 	{

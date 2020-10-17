@@ -4,9 +4,9 @@
 class Intent
 {
 public:
-    Intent(void* params);
-    virtual ~Intent() = 0;
-    virtual void loop();
+    Intent(void* params){};
+    virtual ~Intent(){};
+    virtual void loop() = 0;
 };
 
 struct IntentInfo {

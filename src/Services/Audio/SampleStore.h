@@ -13,5 +13,4 @@ public:
 	static AudioFileSource* load(SampleGroup group, const char* label);
 };
 
-extern SampleStore sampleStore;
 #endif

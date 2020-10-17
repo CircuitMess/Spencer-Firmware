@@ -1,9 +1,10 @@
 #include "TimeService.h"
-void TimeService::setTime(uint unixTime)
+TimeServiceImpl TimeService;
+void TimeServiceImpl::setTime(uint unixTime)
 {
 	unixtime = unixTime;
 }
-uint TimeService::getTime()
+uint TimeServiceImpl::getTime()
 {
 	uint diff = millis() - currentMillis;
 	unixtime+=diff;
