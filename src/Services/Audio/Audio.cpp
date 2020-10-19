@@ -77,8 +77,8 @@ void Audio::record(void (*callback)(void))
 
 		}
 
-		file.write(wavBuffer, sizeof(wavBuffer));
-		wavTotalWritten += sizeof(wavBuffer);
+		file.write(wavBuffer, sizeof(int16_t) * i2sBufferSize / 4);
+		wavTotalWritten += sizeof(int16_t) * i2sBufferSize / 4;
 		if(underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
 			break;
 		}
