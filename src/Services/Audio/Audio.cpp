@@ -27,8 +27,11 @@ void Audio::begin()
 void Audio::record(void (*callback)(void))
 {
 
+	const uint32_t wavBufferSize = sizeof(int16_t) * i2sBufferSize / 4; // i2sBuffer is stereo by byte, wavBuffer is mono int16
+	const uint32_t noReadings = (maxRecordTime * sampleRate * 4) / i2sBufferSize; // time * sampleRate * 4 bytes per sample (sample is int16_t, 2 channels)
+
 	char* i2sBuffer = static_cast<char*>(malloc(i2sBufferSize));
-	int16_t* wavBuffer = static_cast<int16_t*>(malloc(sizeof(int16_t) * i2sBufferSize / 4)); // i2sBuffer is stereo by byte, wavBuffer is mono int16
+	int16_t* wavBuffer = static_cast<int16_t*>(malloc(wavBufferSize));
 	const uint wavFileSize = maxRecordTime * (float) sampleRate * 2.0f;
 
 	SerialFlash.createErasable("recording.wav", wavFileSize + wavHeaderSize);
@@ -48,8 +51,7 @@ void Audio::record(void (*callback)(void))
 	uint underMaxTime = 0;
 	uint32_t wavTotalWritten = 0;
 
-	// time * sampleRate * 4 bytes per sample (sample is int16_t, 2 channels)
-	for(int i = 0; i < (maxRecordTime * sampleRate * 4) / i2sBufferSize; i++){
+	for(int i = 0; i < noReadings; i++){
 		i2s->Read(i2sBuffer, i2sBufferSize);
 
 		for(int j = 0; j < i2sBufferSize; j += 4){
@@ -63,8 +65,8 @@ void Audio::record(void (*callback)(void))
 
 			uint32_t sum = 0;
 			for(int k = 0; k < avgBufferSize; k++) sum += ampBuffer[k];
-			uint16_t avgLastTen = sum / avgBufferSize;
-			maxAmp = max(maxAmp, avgLastTen);
+			uint16_t avgLastN = sum / avgBufferSize;
+			maxAmp = max(maxAmp, avgLastN);
 
 			if(abs(sample) < (float) maxAmp * cutoffThreshold){
 				if(!underMax){
@@ -77,8 +79,8 @@ void Audio::record(void (*callback)(void))
 
 		}
 
-		file.write(wavBuffer, sizeof(int16_t) * i2sBufferSize / 4);
-		wavTotalWritten += sizeof(int16_t) * i2sBufferSize / 4;
+		file.write(wavBuffer, wavBufferSize);
+		wavTotalWritten += wavBufferSize;
 		if(underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
 			break;
 		}
