@@ -64,6 +64,7 @@ private:
 		_frame;       ///< The frame (of 8) we are currently addressing
 	uint8_t width, height, brightness, rotation;
 	uint8_t *matrixBuffer = nullptr;
+	uint8_t *pastMatrixBuffer = nullptr;
 
 	AnimationFrame* animationFrame = nullptr;
 	Animation* animation = nullptr;
