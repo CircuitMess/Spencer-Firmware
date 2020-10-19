@@ -26,36 +26,72 @@ void Audio::begin()
 }
 void Audio::record(void (*callback)(void))
 {
-	recordCallback = callback;
 
-	char i2sBuffer[i2sBufferSize];
-	int16_t wavBuffer[i2sBufferSize / 4]; // i2sBuffer is stereo by byte, wavBuffer is mono int16
+	char* i2sBuffer = static_cast<char*>(malloc(i2sBufferSize));
+	int16_t* wavBuffer = static_cast<int16_t*>(malloc(sizeof(int16_t) * i2sBufferSize / 4)); // i2sBuffer is stereo by byte, wavBuffer is mono int16
 	const uint wavFileSize = maxRecordTime * (float) sampleRate * 2.0f;
 
 	SerialFlash.createErasable("recording.wav", wavFileSize + wavHeaderSize);
 	SerialFlashFile file = SerialFlash.open("recording.wav");
 	file.erase();
 
-	writeWavHeader(&file, wavFileSize);
+	file.seek(wavHeaderSize);
 	
 	if(!i2s->isInited()){
 		i2s->begin();
 	}
+
+	uint16_t ampBuffer[avgBufferSize] = {0};
+	uint16_t ampPointer = 0;
+	uint16_t maxAmp = 0;
+	bool underMax = false;
+	uint underMaxTime = 0;
+	uint32_t wavTotalWritten = 0;
 
 	// time * sampleRate * 4 bytes per sample (sample is int16_t, 2 channels)
 	for(int i = 0; i < (maxRecordTime * sampleRate * 4) / i2sBufferSize; i++){
 		i2s->Read(i2sBuffer, i2sBufferSize);
 
 		for(int j = 0; j < i2sBufferSize; j += 4){
-			int16_t sample = *(int16_t*)(&i2sBuffer[j + 2]);
+			int16_t sample = *(int16_t*)(&i2sBuffer[j + 2]) + 3705;
 			wavBuffer[j/4] = sample;
+
+			ampBuffer[ampPointer++] = abs(sample);
+			if(ampPointer == avgBufferSize){
+				ampPointer = 0;
+			}
+
+			uint32_t sum = 0;
+			for(int k = 0; k < avgBufferSize; k++) sum += ampBuffer[k];
+			uint16_t avgLastTen = sum / avgBufferSize;
+			maxAmp = max(maxAmp, avgLastTen);
+
+			if(abs(sample) < (float) maxAmp * cutoffThreshold){
+				if(!underMax){
+					underMax = true;
+					underMaxTime = millis();
+				}
+			}else if(underMax){
+				underMax = false;
+			}
+
 		}
 
 		file.write(wavBuffer, sizeof(wavBuffer));
+		wavTotalWritten += sizeof(wavBuffer);
+		if(underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
+			break;
+		}
 	}
-	
+
+
+	file.seek(0);
+	writeWavHeader(&file, wavTotalWritten);
+
 	file.close();
-	recordCallback();
+	free(i2sBuffer);
+	free(wavBuffer);
+	callback();
 }
 void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
 	unsigned char header[wavHeaderSize];
