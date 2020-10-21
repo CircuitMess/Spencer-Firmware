@@ -62,6 +62,8 @@ private:
 
 	//recording
 	void writeWavHeader(SerialFlashFile* file, int wavSize);
+
+	void compress(const char* inputFilename, const char* outputFilename, size_t wavSize);
 };
 
 extern Audio audio;

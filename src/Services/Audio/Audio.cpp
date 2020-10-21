@@ -1,4 +1,5 @@
 #include "Audio.h"
+#include "Compression.h"
 #include <SerialFlash.h>
 Audio::Audio()
 {
@@ -34,10 +35,9 @@ void Audio::record(void (*callback)(void))
 	int16_t* wavBuffer = static_cast<int16_t*>(malloc(wavBufferSize));
 	const uint wavFileSize = maxRecordTime * (float) sampleRate * 2.0f;
 
-	SerialFlash.createErasable("recording.wav", wavFileSize + wavHeaderSize);
-	SerialFlashFile file = SerialFlash.open("recording.wav");
+	SerialFlash.createErasable("recordingRaw.wav", wavFileSize + wavHeaderSize);
+	SerialFlashFile file = SerialFlash.open("recordingRaw.wav");
 	file.erase();
-
 	file.seek(wavHeaderSize);
 	
 	if(!i2s->isInited()){
@@ -86,15 +86,57 @@ void Audio::record(void (*callback)(void))
 		}
 	}
 
-
 	file.seek(0);
 	writeWavHeader(&file, wavTotalWritten);
-
 	file.close();
+
 	free(i2sBuffer);
 	free(wavBuffer);
+
+	compress("recordingRaw.wav", "recording.wav", wavTotalWritten);
+
 	callback();
 }
+
+void Audio::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
+	SerialFlashFile input = SerialFlash.open(inputFilename);
+	if(!input){
+		Serial.println("Failed opening input file");
+		return;
+	}
+
+	SerialFlash.createErasable(outputFilename, maxRecordTime * (float) sampleRate * 2.0f + wavHeaderSize);
+	SerialFlashFile output = SerialFlash.open(outputFilename);
+	output.erase();
+	if(!output){
+		Serial.println("Failed opening output file");
+		return;
+	}
+
+	writeWavHeader(&output, wavSize);
+	input.seek(wavHeaderSize);
+
+	const uint16_t samplesPerProcess = 32 * 100;
+
+	Compression comp(16000, 10, 5, -26, 5, 5, 0.003f, 0.250f);
+	int16_t* inputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
+	int16_t* outputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
+
+	size_t totalProcessed = 0;
+	while(input.read(inputBuf, samplesPerProcess * sizeof(int16_t))){
+		comp.process(inputBuf, outputBuf, samplesPerProcess);
+		output.write(outputBuf, samplesPerProcess * sizeof(int16_t));
+
+		totalProcessed += samplesPerProcess * sizeof(int16_t);
+		if(totalProcessed >= wavSize) break;
+	}
+
+	input.close();
+	output.close();
+	free(inputBuf);
+	free(outputBuf);
+}
+
 void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
 	unsigned char header[wavHeaderSize];
 	unsigned int fileSizeMinus8 = wavSize + 44 - 8;
