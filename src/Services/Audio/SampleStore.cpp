@@ -4,26 +4,37 @@ AudioFileSource* SampleStore::load(SampleGroup group, char* label)
 {
 	char fileName[40] = {0};
 
-	char suffix;
+	const char *suffix = new char[20];
 	switch (group)
 	{
 	case SampleGroup::Months:
-		suffix = 'm';
+		suffix = "months";
 		break;
 	case SampleGroup::Numbers:
-		suffix = 'n';
+		suffix = "numbers";
 		break;
 	case SampleGroup::Jokes:
-		suffix = 'j';
+		suffix = "jokes";
 		break;
 	case SampleGroup::Generic:
-		suffix = 'g';
+		suffix = "generic";
+		break;
+	case SampleGroup::Time:
+		suffix = "time";
 		break;
 	default:
-		suffix = 'g';
+		suffix = "\0";
 		break;
 	}
-	sprintf(fileName, "%s-%c.mp3", label, suffix);
+	if(strcmp(suffix, "\0") != 0)
+	{
+		sprintf(fileName, "%s-%s.mp3", suffix, label);
+	}
+	else
+	{
+		sprintf(fileName, "%s.mp3", label);
+	}
+	
 	return new AudioFileSourceSerialFlash(fileName);
 }
 AudioFileSource* SampleStore::load(SampleGroup group, const char* label)

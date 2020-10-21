@@ -11,14 +11,22 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
 	char buff[4] = {0};
 	speakFile = new CompositeAudioFileSource();
+	Serial.println("here");
+	delay(5);
 	switch (_params.type)
 	{
 	case TimeIntentType::TIME:
 		//parsing time to speech
-		
-		speakFile->add(SampleStore::load(SampleGroup::Generic, "The time is"));
+		// speakFile->add(new AudioFileSourceSerialFlash("time-The_time_is.mp3"));
+		speakFile->add(SampleStore::load(SampleGroup::Time, "The_time_is"));
+		Serial.println("here");
+		delay(5);
 		sprintf(buff, "%d", now.hour() > 12 ? now.hour() - 12 : now.hour());
+		Serial.println("here");
+		delay(5);
 		speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
+		Serial.println("here");
+		delay(5);
 		if(now.minute() > 19)
 		{
 			sprintf(buff, "%d", now.minute() / 10);
@@ -33,17 +41,17 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 		{
 			if(now.minute() < 10)
 			{
-				speakFile->add(SampleStore::load(SampleGroup::Generic, "oh"));
+				speakFile->add(SampleStore::load(SampleGroup::Numbers, "0"));
 			}
 
 			sprintf(buff, "%d", now.minute());
 			speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 		}
-		speakFile->add(SampleStore::load(SampleGroup::Generic, now.hour() > 12 ? "PM" : "AM"));
+		speakFile->add(SampleStore::load(SampleGroup::Time, now.hour() > 12 ? "PM" : "AM"));
 		break;
 	
 	case TimeIntentType::DATE:
-		speakFile->add(SampleStore::load(SampleGroup::Generic, "It's the"));
+		speakFile->add(SampleStore::load(SampleGroup::Time, "It's_the"));
 		if(now.day() > 19)
 		{
 			if(now.day()%10 > 0)
@@ -64,7 +72,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 			sprintf(buff, "%d.", now.day());
 			speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 		}
-		speakFile->add(SampleStore::load(SampleGroup::Generic, "of"));
+		speakFile->add(SampleStore::load(SampleGroup::Time, "of"));
 		sprintf(buff, "%d", now.month());
 		speakFile->add(SampleStore::load(SampleGroup::Months, buff));
 
@@ -89,7 +97,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 			{
 				if(temp < 10)
 				{
-					speakFile->add(SampleStore::load(SampleGroup::Generic, "oh"));
+					speakFile->add(SampleStore::load(SampleGroup::Time, "0"));
 				}
 				sprintf(buff, "%d", temp);
 				speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
@@ -99,6 +107,8 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	default:
 		break;
 	}
+	Serial.println("playing file");
+	delay(5);
 	Audio.playMP3(speakFile);
 }
 
