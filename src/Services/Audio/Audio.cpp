@@ -1,4 +1,5 @@
 #include "Audio.h"
+#include "Compression.h"
 #include <SerialFlash.h>
 AudioImpl Audio;
 AudioImpl::AudioImpl()
@@ -27,48 +28,124 @@ void AudioImpl::begin()
 }
 void AudioImpl::record(void (*callback)(void))
 {
-	recordCallback = callback;
 
-	const int headerSize = 44;
-	const int i2sBufferSize = 1600;
-	char i2sBuffer[i2sBufferSize];
-	char headerData[headerSize];
-	float recordLength = 1.0;
-	char wavData[i2sBufferSize/4];
-	uint wavFileSize = int(recordLength*16000);
+	const uint32_t wavBufferSize = sizeof(int16_t) * i2sBufferSize / 4; // i2sBuffer is stereo by byte, wavBuffer is mono int16
+	const uint32_t noReadings = (maxRecordTime * sampleRate * 4) / i2sBufferSize; // time * sampleRate * 4 bytes per sample (sample is int16_t, 2 channels)
 
-	SerialFlash.remove("recording.wav");
-	SerialFlash.createErasable("recording.wav", wavFileSize + headerSize);
-	SerialFlashFile f = SerialFlash.open("recording.wav");
-	f.erase();
-	CreateWavHeader((byte*)headerData, wavFileSize);
-	f.write(headerData, 44);
+	char* i2sBuffer = static_cast<char*>(malloc(i2sBufferSize));
+	int16_t* wavBuffer = static_cast<int16_t*>(malloc(wavBufferSize));
+	const uint wavFileSize = maxRecordTime * (float) sampleRate * 2.0f;
+
+	SerialFlash.createErasable("recordingRaw.wav", wavFileSize + wavHeaderSize);
+	SerialFlashFile file = SerialFlash.open("recordingRaw.wav");
+	file.erase();
+	file.seek(wavHeaderSize);
 	
-	if(!i2s->isInited())
-	{
+	if(!i2s->isInited()){
 		i2s->begin();
 	}
-	for (uint32_t j = 1; j < wavFileSize/(i2sBufferSize/4); j++) {
-		yield();
-		i2s->Read(i2sBuffer, i2sBufferSize/2);
-		// Serial.println(((int32_t*)i2sBuffer)[0]);
-		for (int i = 0; i < i2sBufferSize/8; ++i) {
-			yield();
-			wavData[2*i] = i2sBuffer[4*i + 2];
-			wavData[2*i + 1] = i2sBuffer[4*i + 3];
+
+	uint16_t ampBuffer[avgBufferSize] = {0};
+	uint16_t ampPointer = 0;
+	uint16_t maxAmp = 0;
+	bool underMax = false;
+	uint underMaxTime = 0;
+	uint32_t wavTotalWritten = 0;
+
+	for(int i = 0; i < noReadings; i++){
+		i2s->Read(i2sBuffer, i2sBufferSize);
+
+		for(int j = 0; j < i2sBufferSize; j += 4){
+			int16_t sample = *(int16_t*)(&i2sBuffer[j + 2]) + 3705;
+			wavBuffer[j/4] = sample;
+
+			ampBuffer[ampPointer++] = abs(sample);
+			if(ampPointer == avgBufferSize){
+				ampPointer = 0;
+			}
+
+			uint32_t sum = 0;
+			for(int k = 0; k < avgBufferSize; k++) sum += ampBuffer[k];
+			uint16_t avgLastN = sum / avgBufferSize;
+			maxAmp = max(maxAmp, avgLastN);
+
+			if(abs(sample) < (float) maxAmp * cutoffThreshold){
+				if(!underMax){
+					underMax = true;
+					underMaxTime = millis();
+				}
+			}else if(underMax){
+				underMax = false;
+			}
+
 		}
-		f.write(wavData, sizeof(wavData));
+
+		file.write(wavBuffer, wavBufferSize);
+		wavTotalWritten += wavBufferSize;
+		if(underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
+			break;
+		}
 	}
-	
-	f.close();
-	recordCallback();
+
+	file.seek(0);
+	writeWavHeader(&file, wavTotalWritten);
+	file.close();
+
+	free(i2sBuffer);
+	free(wavBuffer);
+
+	compress("recordingRaw.wav", "recording.wav", wavTotalWritten);
+
+	callback();
 }
-void AudioImpl::CreateWavHeader(byte* header, int waveDataSize){
+
+void AudioImpl::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
+	SerialFlashFile input = SerialFlash.open(inputFilename);
+	if(!input){
+		Serial.println("Failed opening input file");
+		return;
+	}
+
+	SerialFlash.createErasable(outputFilename, maxRecordTime * (float) sampleRate * 2.0f + wavHeaderSize);
+	SerialFlashFile output = SerialFlash.open(outputFilename);
+	output.erase();
+	if(!output){
+		Serial.println("Failed opening output file");
+		return;
+	}
+
+	writeWavHeader(&output, wavSize);
+	input.seek(wavHeaderSize);
+
+	const uint16_t samplesPerProcess = 32 * 100;
+
+	Compression comp(16000, 10, 5, -26, 5, 5, 0.003f, 0.250f);
+	int16_t* inputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
+	int16_t* outputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
+
+	size_t totalProcessed = 0;
+	while(input.read(inputBuf, samplesPerProcess * sizeof(int16_t))){
+		comp.process(inputBuf, outputBuf, samplesPerProcess);
+		output.write(outputBuf, samplesPerProcess * sizeof(int16_t));
+
+		totalProcessed += samplesPerProcess * sizeof(int16_t);
+		if(totalProcessed >= wavSize) break;
+	}
+
+	input.close();
+	output.close();
+	free(inputBuf);
+	free(outputBuf);
+}
+
+void AudioImpl::writeWavHeader(SerialFlashFile* file, int wavSize){
+	unsigned char header[wavHeaderSize];
+	unsigned int fileSizeMinus8 = wavSize + 44 - 8;
+
 	header[0] = 'R';
 	header[1] = 'I';
 	header[2] = 'F';
 	header[3] = 'F';
-	unsigned int fileSizeMinus8 = waveDataSize + 44 - 8;
 	header[4] = (byte)(fileSizeMinus8 & 0xFF);
 	header[5] = (byte)((fileSizeMinus8 >> 8) & 0xFF);
 	header[6] = (byte)((fileSizeMinus8 >> 16) & 0xFF);
@@ -105,10 +182,12 @@ void AudioImpl::CreateWavHeader(byte* header, int waveDataSize){
 	header[37] = 'a';
 	header[38] = 't';
 	header[39] = 'a';
-	header[40] = (byte)(waveDataSize & 0xFF);
-	header[41] = (byte)((waveDataSize >> 8) & 0xFF);
-	header[42] = (byte)((waveDataSize >> 16) & 0xFF);
-	header[43] = (byte)((waveDataSize >> 24) & 0xFF);
+	header[40] = (byte)(wavSize & 0xFF);
+	header[41] = (byte)((wavSize >> 8) & 0xFF);
+	header[42] = (byte)((wavSize >> 16) & 0xFF);
+	header[43] = (byte)((wavSize >> 24) & 0xFF);
+
+	file->write(header, sizeof(header));
 }
 void AudioImpl::loop()
 {

@@ -16,7 +16,7 @@ TextToSpeechImpl::TextToSpeechImpl(){
 
 }
 
-void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char* text){
+void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char* text, const char* filename){
 	const char pattern[] = "{ 'input': { 'text': '%s' },"
 						   "'voice': {"
 						   "'languageCode': 'en-US',"
@@ -88,7 +88,7 @@ void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char
 				state = PRE;
 			}
 		}else if(state == VAL){
-			processStream(stream);
+			processStream(stream, filename);
 			processed = true;
 			break;
 		}
@@ -104,12 +104,12 @@ void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char
 		return;
 	}
 
-	callback("speech.mp3");
+	callback(filename);
 }
 
-void TextToSpeechImpl::processStream(WiFiClient& stream){
-	SerialFlash.createErasable("speech.mp3", 70000);
-	SerialFlashFile file = SerialFlash.open("speech.mp3");
+void TextToSpeechImpl::processStream(WiFiClient& stream, const char* filename){
+	SerialFlash.createErasable(filename, 70000);
+	SerialFlashFile file = SerialFlash.open(filename);
 	file.erase();
 
 	FileWriteStream fileStream(file);

@@ -44,15 +44,25 @@ public:
 	void loop();
 
 private:
+	const uint16_t wavHeaderSize = 44;
+	const uint32_t i2sBufferSize = 1600;
+	const uint32_t sampleRate = 16000;
+	const float maxRecordTime = 3.0f; // in seconds
+	const float cutoffThreshold = 0.5f;
+	const float cutoffTime = 1.0f; // in seconds, time where amplitude is below max*cutoffThreshold before recording is cut
+#define avgBufferSize 10
+
 	//playback
 	I2S* i2s;
 	AudioGeneratorWAV *wav = nullptr;
 	AudioGeneratorMP3 *mp3;
 	AudioOutputI2S *out;
 	AudioFileSource *file;
+
 	//recording
-	void CreateWavHeader(byte* header, int waveDataSize);
-	void (*recordCallback)(void) = nullptr;
+	void writeWavHeader(SerialFlashFile* file, int wavSize);
+
+	void compress(const char* inputFilename, const char* outputFilename, size_t wavSize);
 };
 
 extern AudioImpl Audio;
