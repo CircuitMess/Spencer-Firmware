@@ -26,6 +26,7 @@ LEDmatrix::LEDmatrix(uint8_t _width, uint8_t _height)
 	brightness = 255;
 	setRotation(0);
 	matrixBuffer = new uint8_t(width*height);
+	pastMatrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
 }
 
 /**************************************************************************/
@@ -398,6 +399,20 @@ void LEDmatrix::loop(uint _time)
 		}
 		drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
 	}
+	bool noChange = 1;
+	for(uint8_t i = 0; i < width*height; i++)
+	{
+		if(matrixBuffer[i] != pastMatrixBuffer[i])
+		{
+			noChange = 0;
+			break;
+		}
+	}
+	if(!noChange)
+	{
+		push();
+	}
+	memcpy(pastMatrixBuffer, matrixBuffer, width*height);
 }
 
 /**************************************************************************/

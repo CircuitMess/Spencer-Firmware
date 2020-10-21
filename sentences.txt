@@ -1,2 +1,2 @@
-HELLO Why hello there! How do you do fellow kids!
-QUICK_FOX The quick brown fox jumps over the lazy dog.
+generic HELLO Why hello there! How do you do fellow kids!
+generic/samples QUICK_FOX The quick brown fox jumps over the lazy dog.
