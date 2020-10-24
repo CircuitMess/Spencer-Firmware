@@ -45,48 +45,38 @@ bool wifiConnect(char *SSID, char *PASS, unsigned short tries)
 
 // TimeIntent *timeIntent;
 void setup(){
-	// Serial.begin(115200);
-	// if(!wifiConnect("Grabrik", "Ayy4Imao", 10))
-	// {
-	// 	Serial.println("cant connect");
-	// 	while(1);
-	// }
-	// else
-	// {
-	// 	Serial.println("connected");
-	// }
-	// SPIClass spi(3);
-	// spi.begin(18, 19, 23, FLASH_CS_PIN);
-	// if(!SerialFlash.begin(spi, FLASH_CS_PIN)){
-	// 	Serial.println("Flash fail");
-	// 	return;
-	// }
-	// if(!ledmatrix.begin())
-	// {
-	// 	Serial.println("couldn't start matrix");
-	// 	while(1);
-	// }
-	// ledmatrix.clear();
-	// ledmatrix.setBrightness(20);
-	// ledmatrix.setRotation(2);
-
-
-	// TimeService.fetchTime();
-	// Serial.print("unixtime: ");
-	// Serial.println(TimeService.getTime());
-	// TimeIntent timeintent = TimeIntent((void*)(TimeService.getTime()));
-
-	
-	AudioFileSource* source = SampleStore::load(Generic, "HELLO");
-	if(!source->isOpen()){
-		Serial.println("Failed opening sample");
-		for(;;);
+	Serial.begin(115200);
+	if(!wifiConnect("Grabrik", "Ayy4Imao", 10))
+	{
+		Serial.println("cant connect");
+		while(1);
 	}
-	source->seek(16000, SEEK_SET);
-	Audio.begin();
-	Audio.playMP3(source);
+	else
+	{
+		Serial.println("connected");
+	}
+	SPIClass spi(3);
+	spi.begin(18, 19, 23, FLASH_CS_PIN);
+	if(!SerialFlash.begin(spi, FLASH_CS_PIN)){
+		Serial.println("Flash fail");
+		return;
+	}
+	if(!ledmatrix.begin())
+	{
+		Serial.println("couldn't start matrix");
+		while(1);
+	}
+	ledmatrix.clear();
+	ledmatrix.setBrightness(20);
+	ledmatrix.setRotation(2);
+
+
+	TimeService.fetchTime();
+	Serial.print("unixtime: ");
+	Serial.println(TimeService.getTime());
+	TimeIntent timeintent = TimeIntent((void*)(TimeService.getTime()));
 }
 void loop(){
-	// Audio.loop();
+	Audio.loop();
 }
 

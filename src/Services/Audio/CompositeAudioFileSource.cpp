@@ -9,24 +9,9 @@ CompositeAudioFileSource::CompositeAudioFileSource(AudioFileSource* file)
 }
 void CompositeAudioFileSource::add(AudioFileSource* file)
 {
-	Serial.println("compositeaudio-here");
-	delay(5);
-	if(!file->seek(0, SEEK_SET))
-	{
-		Serial.println("error seek");
-	delay(5);
-	}
-	else
-	{
-		Serial.println("seek ok");
-	delay(5);
-	}
-	
-	Serial.println("compositeaudio-here");
-	delay(5);
-	size+=file->getSize();
-	Serial.println("compositeaudio-here");
 	filePointers.push_back(file);
+	file->seek(0, SEEK_SET);
+	size+=file->getSize();
 }
 AudioFileSource* CompositeAudioFileSource::getCurrentFile()
 {
