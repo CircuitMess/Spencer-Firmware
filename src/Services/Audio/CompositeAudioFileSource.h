@@ -23,7 +23,7 @@ public:
 private:
 	std::vector<AudioFileSource*> filePointers;
 	uint currentFileIndex = 0;
-	size_t size;
+	size_t size = 0;
 };
 
 #endif

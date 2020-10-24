@@ -11,6 +11,12 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
 	char buff[4] = {0};
 	speakFile = new CompositeAudioFileSource();
+
+	AudioFileSource* test = SampleStore::load(SampleGroup::Generic, "HELLO");
+	// AudioFileSource* test = new AudioFileSourceSerialFlash("generic-HELLO.mp3");
+	test->seek(0,SEEK_SET);
+	// speakFile->add(test);
+	// speakFile->add((AudioFileSource*)(new AudioFileSourceSerialFlash("generic-HELLO.mp3")));
 	Serial.println("here");
 	delay(5);
 	switch (_params.type)
@@ -18,6 +24,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	case TimeIntentType::TIME:
 		//parsing time to speech
 		// speakFile->add(new AudioFileSourceSerialFlash("time-The_time_is.mp3"));
+		
 		speakFile->add(SampleStore::load(SampleGroup::Time, "The_time_is"));
 		Serial.println("here");
 		delay(5);

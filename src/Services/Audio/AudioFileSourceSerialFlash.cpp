@@ -29,6 +29,8 @@ uint32_t AudioFileSourceSerialFlash::read(void *data, uint32_t len)
 
 bool AudioFileSourceSerialFlash::seek(int32_t pos, int dir)
 {
+	Serial.println("audiofilesourceserialflash-here");
+	delay(2);
 	if(dir == SEEK_CUR && pos > (f.size() - 1)) return false;
 	switch (dir)
 	{
