@@ -12,7 +12,6 @@
 #include "src/Intent/TimeIntent.h"
 #include "src/Util/FlashTools.h"
 InputGPIO input;
-LEDmatrix ledmatrix;
 
 bool wifiStatus;
 void wifiClear()
@@ -43,7 +42,7 @@ bool wifiConnect(char *SSID, char *PASS, unsigned short tries)
 }
 
 
-// TimeIntent *timeIntent;
+TimeIntent *timeIntent;
 void setup(){
 	Serial.begin(115200);
 	if(!wifiConnect("Grabrik", "Ayy4Imao", 10))
@@ -55,28 +54,37 @@ void setup(){
 	{
 		Serial.println("connected");
 	}
+
 	SPIClass spi(3);
 	spi.begin(18, 19, 23, FLASH_CS_PIN);
 	if(!SerialFlash.begin(spi, FLASH_CS_PIN)){
 		Serial.println("Flash fail");
 		return;
 	}
-	if(!ledmatrix.begin())
+
+	if(!LEDmatrix.begin())
 	{
 		Serial.println("couldn't start matrix");
 		while(1);
 	}
-	ledmatrix.clear();
-	ledmatrix.setBrightness(20);
-	ledmatrix.setRotation(2);
+	LEDmatrix.clear();
+	LEDmatrix.setBrightness(20);
+	LEDmatrix.setRotation(2);
+	LoopManager::addListener(&LEDmatrix);
 
+	Audio.begin();
+	LoopManager::addListener(&Audio);
 
 	TimeService.fetchTime();
-	Serial.print("unixtime: ");
-	Serial.println(TimeService.getTime());
-	TimeIntent timeintent = TimeIntent((void*)(TimeService.getTime()));
+	Serial.print("time: ");
+	DateTime now = DateTime(TimeService.getTime());
+	Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
+	Serial.println();
+	TimeIntentParam params{TimeIntentType::TIME, TimeService.getTime()};
+	timeIntent = new TimeIntent(&params);
 }
 void loop(){
-	Audio.loop();
+	LoopManager::loop();
+	if(timeIntent != nullptr) timeIntent->loop();
 }
 

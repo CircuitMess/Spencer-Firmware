@@ -22,6 +22,11 @@ public:
 	void loop() override;
 private:
 	CompositeAudioFileSource *speakFile;
+	uint32_t elapsedMillis = millis();
+	bool audioStopped = 0;
+	TimeIntentParam _params;
+	char scrollingText[8];
+	int8_t textCursor = 0;
 	
 };
 

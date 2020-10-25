@@ -189,7 +189,7 @@ void AudioImpl::writeWavHeader(SerialFlashFile* file, int wavSize){
 
 	file->write(header, sizeof(header));
 }
-void AudioImpl::loop()
+void AudioImpl::loop(uint _time)
 {
 	if(wav != nullptr)
 	{
@@ -256,4 +256,8 @@ void AudioImpl::stopPlayback()
 		}
 	}
 	i2s->stop();
+}
+bool AudioImpl::isRunning()
+{
+	return i2s->isInited();
 }

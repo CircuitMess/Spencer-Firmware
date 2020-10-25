@@ -1,12 +1,13 @@
 #include "TimeIntent.h"
 #include "../Services/TimeService/TimeService.h"
 #include "../Services/Audio/Audio.h"
+#include "../LEDmatrix/LEDmatrix.h"
 TimeIntent::TimeIntent(void* params) : Intent(params)
 {
  	//start loading animation
 
 	//make prepared statement
-	TimeIntentParam _params = *static_cast<TimeIntentParam*>(params);
+	_params = *static_cast<TimeIntentParam*>(params);
 	DateTime now = DateTime(_params.unixTime);
 	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
 	char buff[4] = {0};
@@ -20,7 +21,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 		speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 		if(now.minute() > 19)
 		{
-			sprintf(buff, "%d", now.minute() / 10);
+			sprintf(buff, "%d", (now.minute() / 10)*10);
 			speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 			if(now.minute()%10 > 0)
 			{
@@ -47,7 +48,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 		{
 			if(now.day()%10 > 0)
 			{
-				sprintf(buff, "%d", now.day() / 10);
+				sprintf(buff, "%d", (now.day() / 10)*10);
 				speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 				sprintf(buff, "%d.", now.day() % 10);
 				speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
@@ -76,7 +77,7 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 				temp = now.year()%100;
 			if(temp > 19)
 			{
-				sprintf(buff, "%d", temp / 10);
+				sprintf(buff, "%d", (temp / 10)*10);
 				speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 				if(temp % 10 > 0)
 				{
@@ -98,6 +99,29 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 	default:
 		break;
 	}
+
+	if(_params.type == TimeIntentType::TIME)
+	{
+		LEDmatrix.clear();
+		if(now.hour()/10 + '0' != '1'){
+			LEDmatrix.drawChar(0,7,now.hour()/10 + '0', 255, 0);
+		}else{
+			LEDmatrix.drawChar(1,7,now.hour()/10 + '0', 255, 0);
+		}
+		LEDmatrix.drawChar(4,7,(now.hour()%10) + '0', 255, 0);
+		LEDmatrix.drawChar(9,7,now.minute()/10 + '0', 255, 0);
+		if(now.minute()/10 == 1){
+			LEDmatrix.drawChar(12,7,(now.minute()%10) + '0', 255, 0);
+		}else{
+			LEDmatrix.drawChar(13,7,(now.minute()%10) + '0', 255, 0);
+		}
+	}else{
+		strncpy(scrollingText, "DD.MMM", 8);
+		now.toString(scrollingText);
+		textCursor = 15;
+		elapsedMillis = millis();
+	}
+
 	Audio.playMP3(speakFile);
 }
 
@@ -107,5 +131,30 @@ TimeIntent::~TimeIntent()
 
 void TimeIntent::loop()
 {
-	
+	if(_params.type == TimeIntentType::TIME)
+	{
+		if(!Audio.isRunning() && !audioStopped)
+		{
+			audioStopped = 1;
+			elapsedMillis = millis();
+		}
+		if(millis() - elapsedMillis > 3000 && audioStopped)
+		{
+			LEDmatrix.clear();
+			//end
+		}
+	}else{
+		if(textCursor > -45){
+			if(millis() - elapsedMillis > 150)
+			{
+				textCursor--;
+				elapsedMillis = millis();
+			}
+			LEDmatrix.clear();
+			LEDmatrix.drawString(textCursor, 1, scrollingText);
+		}else{
+			LEDmatrix.clear();
+			//end
+		}
+	}
 }

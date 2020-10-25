@@ -9,7 +9,8 @@
 #include <AudioGeneratorWAV.h>
 #include <AudioGeneratorMP3.h>
 #include "SampleStore.h"
-class AudioImpl
+#include <Loop/LoopListener.h>
+class AudioImpl : public LoopListener
 {
 public:
 	AudioImpl();
@@ -41,7 +42,8 @@ public:
 	 * @param callback Callback to be executed after done recording.
 	 */
 	void record(void (*callback)(void)); // 16bit, monoral, 16000Hz,  linear PCM
-	void loop();
+	void loop(uint _time) override;
+	bool isRunning();
 
 private:
 	const uint16_t wavHeaderSize = 44;
