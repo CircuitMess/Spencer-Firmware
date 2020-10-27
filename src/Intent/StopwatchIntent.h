@@ -14,7 +14,7 @@ class StopwatchIntent: public Intent
 public:
 	StopwatchIntent();
 	virtual ~StopwatchIntent() override;
-	void loop() override;
+	void loop(uint) override;
 private:
 	static StopwatchIntent* instance;
 	DateTime start;

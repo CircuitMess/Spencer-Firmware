@@ -1,11 +1,12 @@
 #ifndef SPENCER_INTENT_H
 #define SPENCER_INTENT_H
 
-class Intent
+#include <Loop/LoopListener.h>
+
+class Intent : public LoopListener
 {
 public:
     virtual ~Intent() = default;
-    virtual void loop() = 0;
 };
 
 struct IntentInfo {

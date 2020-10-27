@@ -20,7 +20,7 @@ StopwatchIntent::~StopwatchIntent()
 {
 	
 }
-void StopwatchIntent::loop()
+void StopwatchIntent::loop(uint micros)
 {
 	switch (state)
 	{

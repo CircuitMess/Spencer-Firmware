@@ -32,7 +32,7 @@ JokeIntent::~JokeIntent()
 {
 
 }
-void JokeIntent::loop()
+void JokeIntent::loop(uint micros)
 {
 	
 }

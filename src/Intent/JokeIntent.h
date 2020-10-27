@@ -12,7 +12,7 @@ class JokeIntent: public Intent
 public:
 	JokeIntent();
 	virtual ~JokeIntent() override;
-	void loop() override;
+	void loop(uint) override;
 private:
 	static const uint numJokes = 11;
 	std::vector<uint> jokeVector;

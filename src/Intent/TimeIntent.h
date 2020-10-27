@@ -17,7 +17,7 @@ class TimeIntent: public Intent
 public:
 	TimeIntent(void* params);
 	virtual ~TimeIntent() override;
-	void loop() override;
+	void loop(uint micros) override;
 private:
 	CompositeAudioFileSource *speakFile;
 	
