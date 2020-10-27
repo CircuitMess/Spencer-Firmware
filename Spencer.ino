@@ -7,10 +7,12 @@
 #include "src/Services/Audio/Audio.h"
 #include "Spencer.hpp"
 #include "src/LEDmatrix/LEDmatrix.h"
+#include "src/State/State.h"
+#include "src/State/IdleState.h"
+#include "src/Util/FlashTools.h"
 #include <Loop/LoopManager.h>
+#include <WiFi.h>
 
-InputGPIO input;
-Audio audio;
 LEDmatrix ledmatrix;
 
 void setup(){
@@ -23,16 +25,27 @@ void setup(){
 		return;
 	}
 
-	if(!ledmatrix.begin())
-	{
+	WiFi.begin("CircuitMess", "MAKERphone!");
+	while(WiFi.status() != WL_CONNECTED);
+
+	if(!ledmatrix.begin()){
 		Serial.println("couldn't start matrix");
 		while(1);
 	}
 	ledmatrix.clear();
 	ledmatrix.setBrightness(20);
 	ledmatrix.setRotation(2);
-}
-void loop(){
 
+	audio.begin();
+
+	LoopManager::addListener(&ledmatrix);
+	LoopManager::addListener(new InputGPIO());
+
+	State::changeState(new IdleState());
+}
+
+void loop(){
+	LoopManager::loop();
+	audio.loop();
 }
 
