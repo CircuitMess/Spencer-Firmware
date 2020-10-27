@@ -6,10 +6,11 @@
 KEY=
 
 while IFS= read -r sentence; do
-  name=$(echo "$sentence" | cut -d " " -f1)
-  namecount=$(expr ${#name} + 2)
-  sentence=$(echo "$sentence" | tail -c +${namecount})
-  echo "$name: $sentence"
+  dir=$(echo "$sentence" | cut -d " " -f1)
+  name=$(echo "$sentence" | cut -d " " -f2)
+  sentence=$(echo "$sentence" | tail -c +$(expr ${#dir} + ${#name} + 3))
+  mkdir -p "data/$dir"
+  echo "$dir/$name: $sentence"
   curl -s --location --request POST "https://texttospeech.googleapis.com/v1/text:synthesize?key=$KEY" \
     --header "Content-Type: application/json" \
     --data-raw "{
@@ -25,5 +26,5 @@ while IFS= read -r sentence; do
         'pitch': 7.2,
         'sampleRateHertz': 16000
     }
-  }" | jq -r '.audioContent' | base64 -d > "data/$name.mp3"
+  }" | jq -r '.audioContent' | base64 -d > "data/$dir/$name.mp3"
 done < sentences.txt

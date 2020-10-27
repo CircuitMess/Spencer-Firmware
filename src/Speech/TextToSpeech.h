@@ -7,11 +7,11 @@
 class TextToSpeechImpl {
 public:
 	TextToSpeechImpl();
-	void generateSpeech(void (* callback)(const char*), const char* text);
+	void generateSpeech(void (* callback)(const char*), const char* text, const char* filename = "speech.mp3");
 
 private:
 
-	void processStream(WiFiClient& stream);
+	void processStream(WiFiClient& stream, const char* filename);
 	void readUntilQuote(WiFiClient& stream);
 };
 
