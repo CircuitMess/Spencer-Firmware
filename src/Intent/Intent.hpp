@@ -4,7 +4,7 @@
 class Intent
 {
 public:
-    virtual ~Intent() = 0;
+    virtual ~Intent() = default;
     virtual void loop() = 0;
 };
 
