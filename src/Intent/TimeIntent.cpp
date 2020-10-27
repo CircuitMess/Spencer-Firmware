@@ -2,7 +2,8 @@
 #include "../Services/TimeService/TimeService.h"
 #include "../Services/Audio/Audio.h"
 #include "../LEDmatrix/LEDmatrix.h"
-TimeIntent::TimeIntent(void* params) : Intent(params)
+
+TimeIntent::TimeIntent(void* params)
 {
  	//start loading animation
 
@@ -121,7 +122,6 @@ TimeIntent::TimeIntent(void* params) : Intent(params)
 		textCursor = 15;
 		elapsedMillis = millis();
 	}
-
 	Audio.playMP3(speakFile);
 }
 
@@ -129,7 +129,7 @@ TimeIntent::~TimeIntent()
 {
 }
 
-void TimeIntent::loop()
+void TimeIntent::loop(uint micros)
 {
 	if(_params.type == TimeIntentType::TIME)
 	{

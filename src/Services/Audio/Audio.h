@@ -10,6 +10,7 @@
 #include <AudioGeneratorMP3.h>
 #include "SampleStore.h"
 #include <Loop/LoopListener.h>
+
 class AudioImpl : public LoopListener
 {
 public:

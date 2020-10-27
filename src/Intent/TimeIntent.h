@@ -18,8 +18,9 @@ class TimeIntent: public Intent
 {
 public:
 	TimeIntent(void* params);
-	~TimeIntent() override;
-	void loop() override;
+	virtual ~TimeIntent() override;
+	void loop(uint micros) override;
+
 private:
 	CompositeAudioFileSource *speakFile;
 	uint32_t elapsedMillis = millis();

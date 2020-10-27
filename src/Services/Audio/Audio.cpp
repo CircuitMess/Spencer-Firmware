@@ -141,7 +141,6 @@ void AudioImpl::compress(const char* inputFilename, const char* outputFilename, 
 void AudioImpl::writeWavHeader(SerialFlashFile* file, int wavSize){
 	unsigned char header[wavHeaderSize];
 	unsigned int fileSizeMinus8 = wavSize + 44 - 8;
-
 	header[0] = 'R';
 	header[1] = 'I';
 	header[2] = 'F';
@@ -189,6 +188,7 @@ void AudioImpl::writeWavHeader(SerialFlashFile* file, int wavSize){
 
 	file->write(header, sizeof(header));
 }
+
 void AudioImpl::loop(uint _time)
 {
 	if(wav != nullptr)

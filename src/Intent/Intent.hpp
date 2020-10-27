@@ -1,25 +1,35 @@
 #ifndef SPENCER_INTENT_H
 #define SPENCER_INTENT_H
 
-class Intent
+#include <Loop/LoopListener.h>
+
+class Intent : public LoopListener
 {
 public:
-    Intent(void* params){};
-    virtual ~Intent(){};
-    virtual void loop() = 0;
+    virtual ~Intent() = default;
 };
 
 struct IntentInfo {
 	const char* title;
 	Intent* (*launch)(void* params);
+
+	struct Upsell {
+		const char* query;
+		const char* intent;
+	}* upsell;
 };
 
 /*
 example:
 
-const IntentInfo countInfo {
-		"count",
-		[](void* params) -> Intent* { return new Intent(params); }
-}; */
+const IntentInfo whatIsCorona {
+	"what_corona",
+	[](void* params) -> Intent* { return new WhatCoronaIntent(); },
+	new IntentInfo::Upsell { // or nullptr
+		"Would like to know about the current corona state?",
+		"coronaupdate"
+	}
+};
+ */
 
 #endif
