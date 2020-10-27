@@ -35,6 +35,7 @@ void setup(){
 
 	Audio.begin();
 	LoopManager::addListener(&Audio);
+	LoopManager::addListener(&TimeService);
 }
 void loop(){
 	LoopManager::loop();
