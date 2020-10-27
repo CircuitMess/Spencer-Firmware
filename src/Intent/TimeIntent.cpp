@@ -105,7 +105,7 @@ TimeIntent::~TimeIntent()
 {
 }
 
-void TimeIntent::loop()
+void TimeIntent::loop(uint micros)
 {
 	
 }
