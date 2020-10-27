@@ -1,15 +1,18 @@
 #ifndef SPENCER_STOPWATCHINTENT_H
 #define SPENCER_STOPWATCHINTENT_H
+
 #include <Arduino.h>
 #include "Intent.hpp"
 #include "../Services/TimeService/DateTime.hpp"
+
 enum StopwatchState{
 	waitingState, runningState, finishedState  
 };
+
 class StopwatchIntent: public Intent
 {
 public:
-	StopwatchIntent(void* params);
+	StopwatchIntent();
 	virtual ~StopwatchIntent() override;
 	void loop() override;
 private:

@@ -3,7 +3,7 @@
 #include "../../Spencer.hpp"
 #include "../Services/TimeService/TimeService.h"
 StopwatchIntent* StopwatchIntent::instance = nullptr;
-StopwatchIntent::StopwatchIntent(void* params)
+StopwatchIntent::StopwatchIntent()
 {
 	//"press my head to start", begin waiting animation
 	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
