@@ -45,15 +45,15 @@ void I2S::begin() {
 	// This function must be called before any I2S driver read/write operations.
 	err = i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
 	if (err != ESP_OK) {
-		Serial.printf("Failed installing driver: %d\n", err);
+		Serial.printf("Failed installing I2S driver: %d\n", err);
 		while (true);
 	}
 	err = i2s_set_pin(I2S_NUM_0, &pin_config);
 	if (err != ESP_OK) {
-		Serial.printf("Failed setting pin: %d\n", err);
+		Serial.printf("Failed setting I2S pin: %d\n", err);
 		while (true);
 	}
-	Serial.println("I2S driver installed.");
+	// Serial.println("I2S driver installed.");
 }
 
 int I2S::Read(char* data, int numData) {

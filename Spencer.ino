@@ -12,8 +12,9 @@
 #include "src/Util/FlashTools.h"
 #include <Loop/LoopManager.h>
 #include <WiFi.h>
+#include "src/Services/TimeService/TimeService.h"
+#include "src/Intent/TimeIntent.h"
 
-LEDmatrix ledmatrix;
 
 void setup(){
 	Serial.begin(115200);
@@ -28,17 +29,18 @@ void setup(){
 	WiFi.begin("CircuitMess", "MAKERphone!");
 	while(WiFi.status() != WL_CONNECTED);
 
-	if(!ledmatrix.begin()){
+	if(!LEDmatrix.begin()){
 		Serial.println("couldn't start matrix");
-		while(1);
+		for(;;);
 	}
-	ledmatrix.clear();
-	ledmatrix.setBrightness(20);
-	ledmatrix.setRotation(2);
+	LEDmatrix.clear();
+	LEDmatrix.setBrightness(20);
+	LEDmatrix.setRotation(2);
 
-	audio.begin();
+	Audio.begin();
 
-	LoopManager::addListener(&ledmatrix);
+	LoopManager::addListener(&Audio);
+	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(new InputGPIO());
 
 	State::changeState(new IdleState());
@@ -46,6 +48,5 @@ void setup(){
 
 void loop(){
 	LoopManager::loop();
-	audio.loop();
 }
 

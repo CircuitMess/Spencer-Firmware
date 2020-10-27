@@ -9,12 +9,13 @@
 #include <AudioGeneratorWAV.h>
 #include <AudioGeneratorMP3.h>
 #include "SampleStore.h"
+#include <Loop/LoopListener.h>
 
-class Audio
+class AudioImpl : public LoopListener
 {
 public:
-	Audio();
-	~Audio();
+	AudioImpl();
+	~AudioImpl();
 	void begin();
 	/**
 	 * Starts WAV audio playback from an AudioFileSource pointer.
@@ -42,7 +43,8 @@ public:
 	 * @param callback Callback to be executed after done recording.
 	 */
 	void record(void (*callback)(void)); // 16bit, monoral, 16000Hz,  linear PCM
-	void loop();
+	void loop(uint _time) override;
+	bool isRunning();
 
 private:
 	const uint16_t wavHeaderSize = 44;
@@ -66,6 +68,6 @@ private:
 	void compress(const char* inputFilename, const char* outputFilename, size_t wavSize);
 };
 
-extern Audio audio;
+extern AudioImpl Audio;
 
 #endif

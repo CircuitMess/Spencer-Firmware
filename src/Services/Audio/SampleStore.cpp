@@ -1,32 +1,13 @@
 #include "SampleStore.h"
 #include "AudioFileSourceSerialFlash.h"
+const char *suffixes[5] = {"months", "numbers", "jokes", "generic", "time"};
 AudioFileSource* SampleStore::load(SampleGroup group, char* label)
 {
-	char fileName[40] = {0};
-
-	char suffix;
-	switch (group)
-	{
-	case SampleGroup::Months:
-		suffix = 'm';
-		break;
-	case SampleGroup::Numbers:
-		suffix = 'n';
-		break;
-	case SampleGroup::Jokes:
-		suffix = 'j';
-		break;
-	case SampleGroup::Generic:
-		suffix = 'g';
-		break;
-	default:
-		suffix = 'g';
-		break;
-	}
-	sprintf(fileName, "%s-%c.mp3", label, suffix);
+	char fileName[40];
+	sprintf(fileName, "%s-%s.mp3", suffixes[(int)group], label);
 	return new AudioFileSourceSerialFlash(fileName);
 }
-AudioFileSource* load(SampleGroup group, const char* label)
+AudioFileSource* SampleStore::load(SampleGroup group, const char* label)
 {
-	SampleStore::load(group, (char*)label);
+	return SampleStore::load(group, (char*)label);
 }

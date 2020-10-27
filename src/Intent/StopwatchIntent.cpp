@@ -8,10 +8,10 @@ StopwatchIntent::StopwatchIntent()
 	//"press my head to start", begin waiting animation
 	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		instance->state = runningState;
-		instance->start = DateTime(timeService.getTime());
+		instance->start = DateTime(TimeService.getTime());
 		InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 			instance->state = finishedState;
-			instance->timeDiff = TimeSpan(timeService.getTime() - instance->start.unixtime());
+			instance->timeDiff = TimeSpan(TimeService.getTime() - instance->start.unixtime());
 			//say timeDiff
 		});
 	});
@@ -28,7 +28,7 @@ void StopwatchIntent::loop(uint micros)
 		//wait animation, 
 		break;
 	case runningState:
-		timeDiff = TimeSpan(timeService.getTime() - start.unixtime());
+		timeDiff = TimeSpan(TimeService.getTime() - start.unixtime());
 		//print timeDiff
 		break;
 	case finishedState:

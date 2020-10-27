@@ -1,20 +1,21 @@
 #include "Audio.h"
 #include "Compression.h"
 #include <SerialFlash.h>
-Audio::Audio()
+AudioImpl Audio;
+AudioImpl::AudioImpl()
 {
 	wav = new AudioGeneratorWAV();
 	mp3 = new AudioGeneratorMP3();
 	i2s = new I2S();
 }
 
-Audio::~Audio()
+AudioImpl::~AudioImpl()
 {
 	delete i2s;
 	if(file == nullptr) return;
 	delete file;
 }
-void Audio::begin()
+void AudioImpl::begin()
 {
 	out = new AudioOutputI2S(0,0,16,0);
 	out->SetRate(16000);
@@ -25,7 +26,7 @@ void Audio::begin()
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
 	i2s->begin();
 }
-void Audio::record(void (*callback)(void))
+void AudioImpl::record(void (*callback)(void))
 {
 
 	const uint32_t wavBufferSize = sizeof(int16_t) * i2sBufferSize / 4; // i2sBuffer is stereo by byte, wavBuffer is mono int16
@@ -98,7 +99,7 @@ void Audio::record(void (*callback)(void))
 	callback();
 }
 
-void Audio::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
+void AudioImpl::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
 	SerialFlashFile input = SerialFlash.open(inputFilename);
 	if(!input){
 		Serial.println("Failed opening input file");
@@ -137,10 +138,9 @@ void Audio::compress(const char* inputFilename, const char* outputFilename, size
 	free(outputBuf);
 }
 
-void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
+void AudioImpl::writeWavHeader(SerialFlashFile* file, int wavSize){
 	unsigned char header[wavHeaderSize];
 	unsigned int fileSizeMinus8 = wavSize + 44 - 8;
-
 	header[0] = 'R';
 	header[1] = 'I';
 	header[2] = 'F';
@@ -188,7 +188,8 @@ void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
 
 	file->write(header, sizeof(header));
 }
-void Audio::loop()
+
+void AudioImpl::loop(uint _time)
 {
 	if(wav != nullptr)
 	{
@@ -209,21 +210,21 @@ void Audio::loop()
 		}
 	}
 }
-void Audio::playWAV(AudioFileSource* _file)
+void AudioImpl::playWAV(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	i2s->begin();
 	file = _file;
 	wav->begin(file, out);
 }
-void Audio::playWAV(const char* path)
+void AudioImpl::playWAV(const char* path)
 {
 	if(path == nullptr) return;
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	wav->begin(file, out);
 }
-void Audio::playMP3(AudioFileSource* _file)
+void AudioImpl::playMP3(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	i2s->begin();
@@ -233,14 +234,14 @@ void Audio::playMP3(AudioFileSource* _file)
 		return;
 	}
 }
-void Audio::playMP3(const char* path)
+void AudioImpl::playMP3(const char* path)
 {
 	if(path == nullptr) return;
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
-void Audio::stopPlayback()
+void AudioImpl::stopPlayback()
 {
 	if(wav != nullptr)
 	{
@@ -255,4 +256,8 @@ void Audio::stopPlayback()
 		}
 	}
 	i2s->stop();
+}
+bool AudioImpl::isRunning()
+{
+	return i2s->isInited();
 }

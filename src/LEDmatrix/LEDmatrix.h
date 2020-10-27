@@ -29,10 +29,10 @@ This is a stripped-down version with no Adafruit-GFX library inheritance.
 #define ISSI_COMMANDREGISTER 0xFD
 #define ISSI_BANK_FUNCTIONREG 0x0B // helpfully called 'page nine'
 
-class LEDmatrix : public LoopListener
+class LEDmatrixImpl : public LoopListener
 {
 public:
-	LEDmatrix(uint8_t width = 16, uint8_t height = 9);
+	LEDmatrixImpl(uint8_t width = 16, uint8_t height = 9);
 	bool begin(uint8_t sda = 22, uint8_t scl = 21, uint8_t addr = ISSI_ADDR_DEFAULT);
 	void drawPixel(int16_t x, int16_t y, uint16_t color);
 	void clear(void);
@@ -44,8 +44,8 @@ public:
 
 	void setRotation(uint8_t rotation);
 	uint8_t getRotation();
-	void drawChar(int32_t x, int32_t y, unsigned char c, uint8_t brightness = 255);
-	void drawString(int32_t x, int32_t y, const char* c, uint8_t brightness = 255);
+	void drawChar(int32_t x, int32_t y, unsigned char c, uint8_t brightness = 255, bool bigFont = 1);
+	void drawString(int32_t x, int32_t y, const char* c, uint8_t brightness = 255, bool bigFont = 1);
 	void setBrightness(uint8_t _brightness);
 	uint8_t getBrightness();
 	void push();
@@ -73,7 +73,7 @@ private:
 
 };
 
-
+extern LEDmatrixImpl LEDmatrix;
 
 
 

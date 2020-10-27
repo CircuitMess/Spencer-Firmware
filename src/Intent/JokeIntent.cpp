@@ -26,7 +26,7 @@ JokeIntent::JokeIntent()
 	char buff[3] = {0};
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
-	audio.playMP3(file);
+	Audio.playMP3(file);
 }
 JokeIntent::~JokeIntent()
 {
