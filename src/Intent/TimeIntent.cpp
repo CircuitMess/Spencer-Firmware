@@ -3,7 +3,8 @@
 #include "../Services/Audio/Audio.h"
 TimeIntent::TimeIntent(void* params)
 {
-	//start loading animation
+ 	//start loading animation
+
 	//make prepared statement
 	TimeIntentParam _params = *static_cast<TimeIntentParam*>(params);
 	DateTime now = DateTime(_params.unixTime);
@@ -98,7 +99,7 @@ TimeIntent::TimeIntent(void* params)
 	default:
 		break;
 	}
-	audio.playMP3(speakFile);
+	Audio.playMP3(speakFile);
 }
 
 TimeIntent::~TimeIntent()

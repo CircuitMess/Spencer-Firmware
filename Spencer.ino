@@ -8,11 +8,11 @@
 #include "Spencer.hpp"
 #include "src/LEDmatrix/LEDmatrix.h"
 #include <Loop/LoopManager.h>
-
+#include "src/Services/TimeService/TimeService.h"
+#include "src/Intent/TimeIntent.h"
 InputGPIO input;
-Audio audio;
 LEDmatrix ledmatrix;
-
+// TimeIntent *timeIntent;
 void setup(){
 	Serial.begin(115200);
 
@@ -31,6 +31,7 @@ void setup(){
 	ledmatrix.clear();
 	ledmatrix.setBrightness(20);
 	ledmatrix.setRotation(2);
+	TimeIntent timeintent = TimeIntent((void*)(TimeService.getTime()));
 }
 void loop(){
 

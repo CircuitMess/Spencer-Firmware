@@ -9,12 +9,11 @@
 #include <AudioGeneratorWAV.h>
 #include <AudioGeneratorMP3.h>
 #include "SampleStore.h"
-
-class Audio
+class AudioImpl
 {
 public:
-	Audio();
-	~Audio();
+	AudioImpl();
+	~AudioImpl();
 	void begin();
 	/**
 	 * Starts WAV audio playback from an AudioFileSource pointer.
@@ -66,6 +65,6 @@ private:
 	void compress(const char* inputFilename, const char* outputFilename, size_t wavSize);
 };
 
-extern Audio audio;
+extern AudioImpl Audio;
 
 #endif
