@@ -4,22 +4,31 @@
 class Intent
 {
 public:
-    Intent(void* params);
     virtual ~Intent() = 0;
-    virtual void loop();
+    virtual void loop() = 0;
 };
 
 struct IntentInfo {
 	const char* title;
 	Intent* (*launch)(void* params);
+
+	struct Upsell {
+		const char* query;
+		const char* intent;
+	}* upsell;
 };
 
 /*
 example:
 
-const IntentInfo countInfo {
-		"count",
-		[](void* params) -> Intent* { return new Intent(params); }
-}; */
+const IntentInfo whatIsCorona {
+	"what_corona",
+	[](void* params) -> Intent* { return new WhatCoronaIntent(); },
+	new IntentInfo::Upsell { // or nullptr
+		"Would like to know about the current corona state?",
+		"coronaupdate"
+	}
+};
+ */
 
 #endif

@@ -1,7 +1,7 @@
 #include "TimeIntent.h"
 #include "../Services/TimeService/TimeService.h"
 #include "../Services/Audio/Audio.h"
-TimeIntent::TimeIntent(void* params) : Intent(params)
+TimeIntent::TimeIntent(void* params)
 {
 	//start loading animation
 	//make prepared statement

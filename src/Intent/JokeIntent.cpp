@@ -1,6 +1,6 @@
 #include "JokeIntent.h"
 #include "../Services/Audio/Audio.h"
-JokeIntent::JokeIntent(void* params) : Intent(params)
+JokeIntent::JokeIntent(void* params)
 {
 
 	uint jokeIndex = 0;
