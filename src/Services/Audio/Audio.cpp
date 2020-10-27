@@ -99,7 +99,7 @@ void AudioImpl::record(void (*callback)(void))
 	callback();
 }
 
-void Audio::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
+void AudioImpl::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
 	SerialFlashFile input = SerialFlash.open(inputFilename);
 	if(!input){
 		Serial.println("Failed opening input file");
@@ -138,7 +138,7 @@ void Audio::compress(const char* inputFilename, const char* outputFilename, size
 	free(outputBuf);
 }
 
-void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
+void AudioImpl::writeWavHeader(SerialFlashFile* file, int wavSize){
 	unsigned char header[wavHeaderSize];
 	unsigned int fileSizeMinus8 = wavSize + 44 - 8;
 	header[0] = 'R';
@@ -188,7 +188,8 @@ void Audio::writeWavHeader(SerialFlashFile* file, int wavSize){
 
 	file->write(header, sizeof(header));
 }
-void AudioImpl::loop()
+
+void AudioImpl::loop(uint _time)
 {
 	if(wav != nullptr)
 	{
@@ -255,4 +256,8 @@ void AudioImpl::stopPlayback()
 		}
 	}
 	i2s->stop();
+}
+bool AudioImpl::isRunning()
+{
+	return i2s->isInited();
 }

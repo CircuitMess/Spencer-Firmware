@@ -10,9 +10,9 @@
 #include <Loop/LoopManager.h>
 #include "src/Services/TimeService/TimeService.h"
 #include "src/Intent/TimeIntent.h"
+
 InputGPIO input;
-LEDmatrix ledmatrix;
-// TimeIntent *timeIntent;
+
 void setup(){
 	Serial.begin(115200);
 
@@ -23,17 +23,20 @@ void setup(){
 		return;
 	}
 
-	if(!ledmatrix.begin())
+	if(!LEDmatrix.begin())
 	{
 		Serial.println("couldn't start matrix");
 		while(1);
 	}
-	ledmatrix.clear();
-	ledmatrix.setBrightness(20);
-	ledmatrix.setRotation(2);
-	TimeIntent timeintent = TimeIntent((void*)(TimeService.getTime()));
+	LEDmatrix.clear();
+	LEDmatrix.setBrightness(20);
+	LEDmatrix.setRotation(2);
+	LoopManager::addListener(&LEDmatrix);
+
+	Audio.begin();
+	LoopManager::addListener(&Audio);
 }
 void loop(){
-
+	LoopManager::loop();
 }
 

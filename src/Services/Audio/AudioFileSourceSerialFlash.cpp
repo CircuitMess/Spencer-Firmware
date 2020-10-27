@@ -29,17 +29,17 @@ uint32_t AudioFileSourceSerialFlash::read(void *data, uint32_t len)
 
 bool AudioFileSourceSerialFlash::seek(int32_t pos, int dir)
 {
-	if(dir == SEEK_CUR && pos > (f.size() - 1)) return false;
+	if((dir == SEEK_CUR && pos > (f.size() - 1 - getPos())) || (pos > (f.size() - 1))) return false;
 	switch (dir)
 	{
 	case SEEK_SET:
-		f.seek(0);
+		f.seek(pos);
 		break;
 	case SEEK_END:
 		f.seek(f.size() - 1);
 		break;
-	default:
-		f.seek(pos);
+	case SEEK_CUR:
+		f.seek(pos + getPos());
 		break;
 	}
 	return true;
