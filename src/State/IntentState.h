@@ -3,7 +3,9 @@
 
 #include <Loop/LoopListener.h>
 #include "State.h"
-#include "../Intent/Intent.hpp"
+#include "../Intent/IntentInfo.hpp"
+
+class Intent;
 
 class IntentState : public State, public LoopListener {
 public:

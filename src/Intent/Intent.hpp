@@ -2,34 +2,17 @@
 #define SPENCER_INTENT_H
 
 #include <Loop/LoopListener.h>
+#include "../State/IntentState.h"
 
 class Intent : public LoopListener
 {
 public:
     virtual ~Intent() = default;
-};
 
-struct IntentInfo {
-	const char* title;
-	Intent* (*launch)(void* params);
-
-	struct Upsell {
-		const char* query;
-		const char* intent;
-	}* upsell;
-};
-
-/*
-example:
-
-const IntentInfo whatIsCorona {
-	"what_corona",
-	[](void* params) -> Intent* { return new WhatCoronaIntent(); },
-	new IntentInfo::Upsell { // or nullptr
-		"Would like to know about the current corona state?",
-		"coronaupdate"
+protected:
+	static void done(){
+		IntentState::intentDone();
 	}
 };
- */
 
 #endif

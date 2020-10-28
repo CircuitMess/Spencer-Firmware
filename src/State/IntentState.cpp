@@ -1,6 +1,7 @@
 #include <Loop/LoopManager.h>
 #include "IntentState.h"
 #include "IdleState.h"
+#include "../Intent/Intent.hpp"
 
 IntentState* IntentState::instance = nullptr;
 
