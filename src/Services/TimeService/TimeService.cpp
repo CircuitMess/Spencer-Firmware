@@ -38,7 +38,6 @@ void TimeServiceImpl::loop(uint _time)
 	refreshMicros+=_time;
 	if(refreshMicros > 300000000)
 	{
-		Serial.println("fetch time");
 		fetchTime();
 		refreshMicros = 0;
 	}
