@@ -9,13 +9,16 @@ class IntentStore {
 public:
 	static const IntentInfo* findIntent(const char* intent);
 
-private:
-	static std::map<const char*, IntentInfo> storage;
+	static void fillStorage();
 
-	friend class IntentStoreFiller;
-	class IntentStoreFiller {
-		IntentStoreFiller();
+private:
+	struct CStrCompare {
+		bool operator()(char const* a, char const* b) const{
+			return strcmp(a, b) < 0;
+		}
 	};
+
+	static std::map<const char*, IntentInfo, CStrCompare> storage;
 
 };
 

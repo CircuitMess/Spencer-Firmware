@@ -2,25 +2,29 @@
 #include "TimeIntent.h"
 #include "JokeIntent.h"
 #include "StopwatchIntent.h"
+#include "../Services/TimeService/TimeService.h"
 
-std::map<const char*, IntentInfo> IntentStore::storage;
+std::map<const char*, IntentInfo, IntentStore::CStrCompare> IntentStore::storage;
 
-IntentStore::IntentStoreFiller::IntentStoreFiller(){
+void IntentStore::fillStorage(){
 	storage["time"] = {
 			"time",
-			[](void*) -> Intent* { return new TimeIntent(nullptr); },
+			[](void*) -> Intent*{
+				TimeIntentParam params{TimeIntentType::TIME, TimeService.getTime()};
+				return new TimeIntent(&params);
+			},
 			nullptr
 	};
 
 	storage["joke"] = {
 			"joke",
-			[](void*) -> Intent* { return new JokeIntent(nullptr); },
+			[](void*) -> Intent*{ return new JokeIntent(); },
 			nullptr
 	};
 
 	storage["stopwatch"] = {
-		"stopwatch",
-			[](void*) -> Intent* { return new StopwatchIntent(nullptr); },
+			"stopwatch",
+			[](void*) -> Intent*{ return new StopwatchIntent(); },
 			nullptr
 	};
 }

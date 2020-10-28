@@ -10,6 +10,7 @@
 #include "src/State/State.h"
 #include "src/State/IdleState.h"
 #include "src/Util/FlashTools.h"
+#include "src/Intent/IntentStore.h"
 #include <Loop/LoopManager.h>
 #include <WiFi.h>
 #include "src/Services/TimeService/TimeService.h"
@@ -38,6 +39,7 @@ void setup(){
 	LEDmatrix.setRotation(2);
 
 	Audio.begin();
+	IntentStore::fillStorage();
 
 	LoopManager::addListener(&Audio);
 	LoopManager::addListener(&LEDmatrix);
