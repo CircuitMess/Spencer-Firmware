@@ -31,3 +31,14 @@ bool TimeServiceImpl::fetchTime()
 	ntpUDP->stop();
 	return true;
 }
+void TimeServiceImpl::loop(uint _time)
+{
+	if(!WiFi.status() == WL_CONNECTED) return;
+
+	refreshMicros+=_time;
+	if(refreshMicros > 300000000)
+	{
+		fetchTime();
+		refreshMicros = 0;
+	}
+}

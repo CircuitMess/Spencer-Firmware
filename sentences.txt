@@ -1,6 +1,5 @@
 generic HELLO Why hello there! How do you do fellow kids!
 generic/NO_INTENT Sorry, I didnt quite catch that.
-jokes 0 How did the programmer die in the shower? He read the shampoo bottle instructions. Lather, Rinse, Repeat!
 numbers 1 1
 numbers 2 2
 numbers 3 3
@@ -75,3 +74,15 @@ months 9 September
 months 10 October
 months 11 November
 months 12 December
+jokes 0 How did the programmer die in the shower? He read the shampoo bottle instructions. Lather, Rinse, Repeat!
+jokes 1 I will be giving away empty batteries later today. Free of charge!
+jokes 2 Never trust atoms. They make up everything!
+jokes 3 What did the pirate say on his 80th birthday? AYE MATEY!
+jokes 4 Whats the best part about living in Switzerland? I dont know, but the flag is a big plus.
+jokes 5 Why couldnt the bike stand up by itself? It was two tired.
+jokes 6 How many tickles does it take to make an octopus laugh? Ten-tickles.
+jokes 7 Did you hear about the circus fire? It was in tents!
+jokes 8 What do you get when you cross a snowman with a vampire? Frostbite.
+jokes 9 Want to hear a joke about paper? Never mind. Its tearable.
+jokes 10 What did the drummer call his twin daughters? Anna one, Anna two!
+jokes 11 What sound does a witches car make? Broom Broom.

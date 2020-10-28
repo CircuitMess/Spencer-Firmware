@@ -43,6 +43,7 @@ void setup(){
 
 	LoopManager::addListener(&Audio);
 	LoopManager::addListener(&LEDmatrix);
+	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());
 
 	State::changeState(new IdleState());

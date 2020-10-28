@@ -34,6 +34,11 @@ JokeIntent::~JokeIntent()
 }
 void JokeIntent::loop(uint micros)
 {
-	
+	if(!Audio.isRunning() && !badumFlag)
+	{
+		Audio.playMP3(SampleStore::load(SampleGroup::Special, "badum"));
+		badumFlag = 1;
+		//end
+	}
 }
 

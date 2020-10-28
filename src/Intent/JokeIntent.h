@@ -17,6 +17,7 @@ private:
 	static const uint numJokes = 11;
 	std::vector<uint> jokeVector;
 	AudioFileSource *file;
+	bool badumFlag = 0;
 
 };
 
