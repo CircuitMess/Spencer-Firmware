@@ -7,15 +7,21 @@
 
 class IntentState : public State, public LoopListener {
 public:
-	IntentState(Intent* intent);
+	IntentState(Intent* info, IntentInfo::Upsell* upsell);
+	virtual ~IntentState();
 
 	void enter() override;
 	void exit() override;
 
 	void loop(uint micros) override;
 
+	static void intentDone();
+
 private:
+	static IntentState* instance;
+
 	Intent* intent;
+	IntentInfo::Upsell* upsell;
 
 };
 

@@ -2,10 +2,10 @@
 #include "../Services/Audio/Audio.h"
 #include "../Speech/SpeechToIntent.h"
 #include "IdleState.h"
-#include "../Speech/TextToSpeech.h"
 #include "../Intent/Intent.hpp"
 #include "../Intent/IntentStore.h"
 #include "IntentState.h"
+#include "../LEDmatrix/LEDmatrix.h"
 
 ListenState::ListenState(){
 
@@ -33,7 +33,7 @@ void ListenState::enter(){
 				return;
 			}
 
-			changeState(new IntentState(intent->launch(nullptr)));
+			changeState(new IntentState(intent->launch(nullptr), intent->upsell));
 		});
 	});
 }
