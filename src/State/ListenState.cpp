@@ -16,14 +16,19 @@ ListenState::~ListenState(){
 }
 
 void ListenState::enter(){
-	// set listen animation
+	LEDmatrix.startAnimation(new Animation("GIF-listen.gif"), true);
+	LEDmatrix.push();
 
-	audio.record([](){
+	Audio.record([](){
+		LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
+		LEDmatrix.push();
+
 		SpeechToIntent.identifyVoice([](IntentResult* result){
 			const IntentInfo* intent;
 
 			if(result == nullptr || (intent = IntentStore::findIntent(result->intent)) == nullptr){
-				audio.playMP3("generic-NO_INTENT.mp3");
+				LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+				Audio.playMP3("generic-NO_INTENT.mp3");
 				changeState(new IdleState());
 				return;
 			}

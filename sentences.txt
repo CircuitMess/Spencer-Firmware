@@ -1,5 +1,6 @@
 generic HELLO Why hello there! How do you do fellow kids!
-generic/samples QUICK_FOX The quick brown fox jumps over the lazy dog.
+generic/NO_INTENT Sorry, I didnt quite catch that.
+jokes 0 How did the programmer die in the shower? He read the shampoo bottle instructions. Lather, Rinse, Repeat!
 numbers 1 1
 numbers 2 2
 numbers 3 3

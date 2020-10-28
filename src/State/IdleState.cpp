@@ -15,7 +15,7 @@ IdleState::~IdleState(){
 }
 
 void IdleState::enter(){
-	// set idle animation
+	LEDmatrix.startAnimation(new Animation("GIF-yawn.gif"), true);
 
 	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		if(instance == nullptr) return;
