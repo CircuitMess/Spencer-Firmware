@@ -15,10 +15,13 @@
 #include <WiFi.h>
 #include "src/Services/TimeService/TimeService.h"
 #include "src/Intent/TimeIntent.h"
-
+#include <Util/Task.h>
 
 void setup(){
 	Serial.begin(115200);
+
+	disableCore0WDT();
+	disableCore1WDT();
 
 	SPIClass spi(3);
 	spi.begin(18, 19, 23, FLASH_CS_PIN);
@@ -47,9 +50,14 @@ void setup(){
 	LoopManager::addListener(new InputGPIO());
 
 	State::changeState(new IdleState());
+
+	LoopManager::setStackSize(10240);
+	Task::setPinned(true);
+	LoopManager::startTask(10);
+	Task::setPinned(false);
 }
 
 void loop(){
-	LoopManager::loop();
+	vTaskDelete(nullptr);
 }
 
