@@ -1,3 +1,4 @@
+#include <Loop/LoopManager.h>
 #include "ListenState.h"
 #include "../Services/Audio/Audio.h"
 #include "../Speech/SpeechToIntent.h"
@@ -19,25 +20,35 @@ void ListenState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-listen.gif"), true);
 	LEDmatrix.push();
 
-	Audio.record([](){
-		LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
-		LEDmatrix.push();
+	Audio.record([](){ });
 
-		SpeechToIntent.identifyVoice([](IntentResult* result){
-			const IntentInfo* intent;
+	LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
 
-			if(result == nullptr || (intent = IntentStore::findIntent(result->intent)) == nullptr){
-				LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
-				Audio.playMP3("generic-NO_INTENT.mp3");
-				changeState(new IdleState());
-				return;
-			}
-
-			changeState(new IntentState(intent->launch(nullptr), intent->upsell));
-		});
-	});
+	SpeechToIntent.addJob({ "recording.wav", &intentResult });
+	LoopManager::addListener(this);
 }
 
 void ListenState::exit(){
 
+}
+
+void ListenState::loop(uint micros){
+	if(intentResult == nullptr) return;
+	LoopManager::removeListener(this);
+
+	const IntentInfo* intent;
+	if((intent = IntentStore::findIntent(intentResult->intent)) == nullptr){
+		delete intentResult;
+		intentResult = nullptr;
+
+		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+		Audio.playMP3("generic-NO_INTENT.mp3");
+		changeState(new IdleState());
+		return;
+	}
+
+	delete intentResult;
+	intentResult = nullptr;
+
+	changeState(new IntentState(intent->launch(nullptr), intent->upsell));
 }
