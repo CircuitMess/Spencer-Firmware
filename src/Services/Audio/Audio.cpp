@@ -255,7 +255,9 @@ void AudioImpl::stopPlayback()
 			mp3->stop();
 		}
 	}
-	i2s->stop();
+	if(i2s->isInited()){
+		i2s->stop();
+	}
 }
 bool AudioImpl::isRunning()
 {

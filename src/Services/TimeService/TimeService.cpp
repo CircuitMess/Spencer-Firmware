@@ -11,9 +11,7 @@ void TimeServiceImpl::setTime(uint unixTime)
 uint TimeServiceImpl::getTime()
 {
 	uint diff = (millis() - currentMillis) / 1000;
-	unixtime+=diff;
-	unixtime+=LocationService.getLocation()->timezoneOffset;
-	return unixtime;
+	return (unixtime + LocationService.getLocation()->timezoneOffset + diff);
 }
 bool TimeServiceImpl::fetchTime()
 {

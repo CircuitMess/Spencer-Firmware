@@ -2,7 +2,7 @@
 #include "../Services/Audio/Audio.h"
 JokeIntent::JokeIntent()
 {
-
+	randomSeed(micros()*millis());
 	uint jokeIndex = 0;
 	bool jokeFound = 1;
 	do
