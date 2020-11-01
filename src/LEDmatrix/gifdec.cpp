@@ -46,14 +46,14 @@ gd_open_gif(const char *fname)
 	/* Header */
 	fd->read(sigver, 3);
 	if (memcmp(sigver, "GIF", 3) != 0) {
-		fprintf(stderr, "invalid signature\n");
+		// fprintf(stderr, "invalid signature\n");
 		goto fail;
 	}
 	/* Version */
 	fd->read(sigver, 3);
 	if (memcmp(sigver, "89a", 3) != 0) {
-		fprintf(stderr, "invalid version\n");
-		Serial.println((char*)sigver);
+		// fprintf(stderr, "invalid version\n");
+		// Serial.println((char*)sigver);
 		// goto fail;
 	}
 	/* Width x Height */
@@ -63,7 +63,7 @@ gd_open_gif(const char *fname)
 	fd->read(&fdsz, 1);
 	/* Presence of GCT */
 	if (!(fdsz & 0x80)) {
-		fprintf(stderr, "no global color table\n");
+		// fprintf(stderr, "no global color table\n");
 		gctPresent = 0;
 		// goto fail;
 	}

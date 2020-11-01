@@ -2,15 +2,16 @@
 #include <NTPClient.h>
 #include <WiFi.h>
 
+#define CA "EB:6D:04:1A:C9:07:50:C7:52:C5:BC:69:E0:79:87:A6:5A:E5:2F:A8:23:D7:93:52:8C:9F:E8:62:27:AB:65:47"
+
 LocationServiceImpl LocationService;
 bool LocationServiceImpl::fetchLocation()
 {
+	//location info request
 	HTTPClient http;
 	http.useHTTP10(true);
 	http.setReuse(false);
 	http.begin("http://ipinfo.io/geo");
-	// http.addHeader("Content-Type", "application/json; charset=utf-8");
-	// http.addHeader("Accept-Encoding", "identity");
 
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK) {
@@ -35,16 +36,26 @@ bool LocationServiceImpl::fetchLocation()
 		Serial.println("Failed recognizing");
 		return false;
 	}
-	serializeJsonPretty(json, Serial);
 	strcpy(data.IPaddress, json["ip"].as<const char*>());
 	strcpy(data.city, json["city"].as<const char*>());
 	strcpy(data.countryCode, json["country"].as<const char*>());
 	strcpy(data.timezone, json["timezone"].as<const char*>());
 
-	// data.IPaddress = json["ip"].as<const char*>();
-	// data.city = json["city"].as<const char*>();
-	// data.countryCode = json["country"].as<const char*>();
-	// data.timezone = json["timezone"].as<const char*>();
+	//timezone offset request
+	HTTPClient http2;
+	http2.begin("https://spencer.circuitmess.com:8443/timezone", CA);
+	http2.addHeader("Zone", data.timezone);
+	httpCode = http2.GET();
+	if (httpCode != HTTP_CODE_OK) {
+		return false;
+	}
+	char offset[12];
+	http2.getStream().readBytes(offset, 12);
+	offset[11] = '\0';
+	data.timezoneOffset = atoi(offset) / 1000;
+	http2.end();
+	http2.getStream().stop();
+	http2.getStream().flush();
 
 	return true;
 }
