@@ -3,19 +3,22 @@
 
 
 #include "I2S.h"
+#include "../../AsyncProcessor.hpp"
 
 class SerialFlashFile;
 
-class RecordingImpl {
-public:
+struct RecordJob {
+	const char** resultFilename;
+};
 
-	/**
-	 * Starts audio recording. File is saved on the flash chip as "recording.wav"
-	 * @param callback Callback to be executed after done recording.
-	 */
-	void record(void (*callback)(void)); // 16bit, monoral, 16000Hz,  linear PCM
+class RecordingImpl : public AsyncProcessor<RecordJob> {
+public:
+	RecordingImpl();
 
 	void begin(I2S* i2s);
+
+protected:
+	void doJob(const RecordJob& job) override;
 
 private:
 	const uint16_t wavHeaderSize = 44;
@@ -27,6 +30,8 @@ private:
 #define avgBufferSize 10
 
 	I2S* i2s = nullptr;
+
+	void record(); // 16bit, monoral, 16000Hz,  linear PCM
 
 	void writeWavHeader(SerialFlashFile* file, int wavSize);
 	void compress(const char* inputFilename, const char* outputFilename, size_t wavSize);

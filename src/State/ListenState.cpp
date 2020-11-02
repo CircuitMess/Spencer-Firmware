@@ -19,37 +19,40 @@ ListenState::~ListenState(){
 
 void ListenState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-listen.gif"), true);
-	LEDmatrix.push();
-
-	Recording.record([](){ });
-
-	LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
-
-	SpeechToIntent.addJob({ "recording.wav", &intentResult });
+	Recording.addJob({ &recordResult });
 	LoopManager::addListener(this);
 }
 
 void ListenState::exit(){
-
+	LoopManager::removeListener(this);
+	delete intentResult;
 }
 
-void ListenState::loop(uint micros){
-	if(intentResult == nullptr) return;
-	LoopManager::removeListener(this);
+void ListenState::processRecording(){
+	LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
+	SpeechToIntent.addJob({ recordResult, &intentResult });
+}
 
+void ListenState::processIntent(){
 	const IntentInfo* intent;
 	if((intent = IntentStore::findIntent(intentResult->intent)) == nullptr){
-		delete intentResult;
-		intentResult = nullptr;
-
 		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 		Playback.playMP3("generic-NO_INTENT.mp3");
 		changeState(new IdleState());
 		return;
 	}
 
-	delete intentResult;
-	intentResult = nullptr;
-
 	changeState(new IntentState(intent->launch(nullptr), intent->upsell));
+}
+
+void ListenState::loop(uint micros){
+	if(recordResult != nullptr){
+		processRecording();
+		recordResult = nullptr;
+		return;
+	}
+
+	if(intentResult != nullptr){
+		processIntent();
+	}
 }

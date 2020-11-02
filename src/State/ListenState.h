@@ -17,8 +17,11 @@ public:
 	void loop(uint micros) override;
 
 private:
+	const char* recordResult = nullptr;
 	IntentResult* intentResult = nullptr;
 
+	void processRecording();
+	void processIntent();
 };
 
 

@@ -4,11 +4,20 @@
 
 RecordingImpl Recording;
 
+RecordingImpl::RecordingImpl() : AsyncProcessor("Record_Task"){
+
+}
+
 void RecordingImpl::begin(I2S* i2s){
 	this->i2s = i2s;
 }
 
-void RecordingImpl::record(void (* callback)(void)){
+void RecordingImpl::doJob(const RecordJob& job){
+	record();
+	*job.resultFilename = "recording.wav";
+}
+
+void RecordingImpl::record(){
 	if(i2s == nullptr) return;
 
 	const uint32_t wavBufferSize = sizeof(int16_t) * i2sBufferSize / 4; // i2sBuffer is stereo by byte, wavBuffer is mono int16
@@ -77,8 +86,6 @@ void RecordingImpl::record(void (* callback)(void)){
 	free(wavBuffer);
 
 	compress("recordingRaw.wav", "recording.wav", wavTotalWritten);
-
-	callback();
 }
 
 void RecordingImpl::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
