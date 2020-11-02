@@ -15,8 +15,9 @@
 #include <WiFi.h>
 #include "src/Services/TimeService/TimeService.h"
 #include "src/Intent/TimeIntent.h"
+#include "src/HTTPserver/HTTPserver.h"
 
-
+HTTPserver server;
 void setup(){
 	Serial.begin(115200);
 
@@ -27,26 +28,28 @@ void setup(){
 		return;
 	}
 
-	WiFi.begin("CircuitMess", "MAKERphone!");
-	while(WiFi.status() != WL_CONNECTED);
+	// WiFi.begin("CircuitMess", "MAKERphone!");
+	// while(WiFi.status() != WL_CONNECTED);
 
-	if(!LEDmatrix.begin()){
-		Serial.println("couldn't start matrix");
-		for(;;);
-	}
+	// if(!LEDmatrix.begin()){
+	// 	Serial.println("couldn't start matrix");
+	// 	for(;;);
+	// }
 	LEDmatrix.clear();
 	LEDmatrix.setBrightness(20);
 	LEDmatrix.setRotation(2);
 
 	Audio.begin();
-	IntentStore::fillStorage();
+	
+	server.start();
+	// IntentStore::fillStorage();
 
-	LoopManager::addListener(&Audio);
-	LoopManager::addListener(&LEDmatrix);
-	LoopManager::addListener(&TimeService);
-	LoopManager::addListener(new InputGPIO());
+	// LoopManager::addListener(&Audio);
+	// LoopManager::addListener(&LEDmatrix);
+	// LoopManager::addListener(&TimeService);
+	// LoopManager::addListener(new InputGPIO());
 
-	State::changeState(new IdleState());
+	// State::changeState(new IdleState());
 }
 
 void loop(){
