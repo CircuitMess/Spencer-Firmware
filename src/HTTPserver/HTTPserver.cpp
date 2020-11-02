@@ -21,10 +21,14 @@ HTTPserver::HTTPserver(/* args */)
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head><body>
 	<p>Input your wifi creditentials here:</p>
-	<form action="/get">
+	<form action="/savesettings">
 		SSID: <input type="text" name="SSID"><br>
 		<br>
 		password: <input type="text" name="PASS"><br>
+		<br>
+		apikey1: <input type="text" name="apikey1"><br>
+		<br>
+		apikey2: <input type="text" name="apikey2"><br>
 		<br>
 		<input type="submit" value="Submit">
 	</form><br>
@@ -62,10 +66,7 @@ void HTTPserver::start()
 		char connect_ssid[64];
 		char connect_pass[64];
 		// GET input1 value on <ESP_IP>/get?input1=<inputMessage>
-		instance->server.arg(0).toCharArray(connect_ssid, 64);
-		instance->server.arg(1).toCharArray(connect_pass, 64);
-		instance->server.send(200, "text/html", "Connecting to network " + String(connect_ssid) +
-			" with password " + String(connect_pass) + ".");
+		
 	});
 	server.on("/listwifi", HTTP_GET, [](){
 		String output = "";
@@ -89,6 +90,18 @@ void HTTPserver::start()
 			}
 		}
 		instance->server.send(200, "text/html", output);
+	});
+	server.on("/savesettings", HTTP_GET, [](){
+		char apikey1[40];
+		char apikey2[40];
+		char connect_ssid[64];
+		char connect_pass[64];
+		instance->server.arg(0).toCharArray(connect_ssid, 64);
+		instance->server.arg(1).toCharArray(connect_pass, 64);
+		instance->server.arg(2).toCharArray(apikey1, 40);
+		instance->server.arg(3).toCharArray(apikey2, 40);
+		instance->server.send(200, "text/html", "Connecting to network " + String(connect_ssid) +
+			" with password " + String(connect_pass) + ". Key1: " + String(apikey1) + ", key2: " + String(apikey2));
 	});
 	server.begin();
 	Serial.println("Server started");
