@@ -30,6 +30,16 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 		return;
 	}
 
+	int wavSize = 0;
+	file.seek(4); //skip RIFF on start of file
+	for(int8_t i = 0; i < 4; i++)
+	{
+		file.read(&(((char*)(void*)&wavSize)[i]), 1);
+		Serial.println((((char*)(void*)&wavSize)[i]), BIN);
+	}
+	wavSize+=8;
+	file.seek(0);
+
 	FileReadStream fileStream(file);
 	Base64Encode encodeStream(&fileStream);
 
@@ -41,7 +51,7 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 	http.addHeader("Content-Type", "application/json; charset=utf-8");
 	http.addHeader("Accept-Encoding", "identity");
 
-	uint length = sizeof(prefix) + sizeof(suffix) + ceil((float) file.size() * (4.0f / 3.0f)) + 20;
+	uint length = sizeof(prefix) + sizeof(suffix) + ceil((float) wavSize * (4.0f / 3.0f)) + 20;
 	http.addHeader("Content-Length", String(length));
 
 	if(!http.startPOST()){
@@ -63,7 +73,10 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 	}
 
 	uint sent = 0;
-	while(encodeStream.available()){
+	for(uint i = 0; i < wavSize; i++)
+	{
+		if(!encodeStream.available()) break;
+
 		unsigned char byte = encodeStream.get();
 		if(!http.send(&byte, 1)){
 			Serial.println("Error sending data");
