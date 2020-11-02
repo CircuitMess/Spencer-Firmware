@@ -9,22 +9,22 @@ std::map<const char*, IntentInfo, IntentStore::CStrCompare> IntentStore::storage
 void IntentStore::fillStorage(){
 	storage["time"] = {
 			"time",
-			[](void*) -> Intent*{
-				TimeIntentParam params{TimeIntentType::TIME, TimeService.getTime()};
-				return new TimeIntent(&params);
+			[](const std::map<std::string, std::string>& params) -> Intent*{
+				TimeIntentParam launchParams {TimeIntentType::TIME, TimeService.getTime()};
+				return new TimeIntent(&launchParams);
 			},
 			nullptr
 	};
 
 	storage["joke"] = {
 			"joke",
-			[](void*) -> Intent*{ return new JokeIntent(); },
+			[](const std::map<std::string, std::string>&) -> Intent*{ return new JokeIntent(); },
 			nullptr
 	};
 
 	storage["stopwatch"] = {
 			"stopwatch",
-			[](void*) -> Intent*{ return new StopwatchIntent(); },
+			[](const std::map<std::string, std::string>&) -> Intent*{ return new StopwatchIntent(); },
 			nullptr
 	};
 }

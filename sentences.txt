@@ -1,5 +1,6 @@
 generic HELLO Why hello there! How do you do fellow kids!
 generic/NO_INTENT Sorry, I didnt quite catch that.
+generic and and
 numbers 1 1
 numbers 2 2
 numbers 3 3
@@ -62,6 +63,13 @@ time PM PM
 time The_time_is The time is:
 time It's_the Its the
 time of of
+time PressToStart Allright. Press my head when you want me to start.
+time minutes minutes
+time seconds seconds
+time minute minute
+time second second
+time NewRecord I dont know what you were timing, but that must be a new record!
+time under under
 months 1 January
 months 2 February
 months 3 March

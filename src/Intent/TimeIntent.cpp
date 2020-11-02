@@ -41,7 +41,7 @@ TimeIntent::TimeIntent(void* params)
 			sprintf(buff, "%d", now.minute());
 			speakFile->add(SampleStore::load(SampleGroup::Numbers, buff));
 		}
-		speakFile->add(SampleStore::load(SampleGroup::Time, now.hour() > 12 ? "PM" : "AM"));
+		speakFile->add(SampleStore::load(SampleGroup::Time, now.hour() >= 12 ? "PM" : "AM"));
 		break;
 	
 	case TimeIntentType::DATE:

@@ -14,12 +14,18 @@ class StopwatchIntent: public Intent
 public:
 	StopwatchIntent();
 	virtual ~StopwatchIntent() override;
-	void loop(uint) override;
+	void loop(uint _time) override;
 private:
 	static StopwatchIntent* instance;
 	DateTime start;
 	StopwatchState state = waitingState;
 	TimeSpan timeDiff;
+	bool stopTalkingFlag = 0;
+	uint finishedTime = 0;
+	uint blinkTime = 0;
+	bool blinkState = 0;
+
+	void drawTime(uint minutes, uint seconds);
 };
 
 

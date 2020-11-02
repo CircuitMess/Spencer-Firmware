@@ -1,11 +1,13 @@
 #ifndef SPENCER_INTENTINFO_H
 #define SPENCER_INTENTINFO_H
 
+#include <map>
+
 class Intent;
 
 struct IntentInfo {
 	const char* title;
-	Intent* (*launch)(void* params);
+	Intent* (*launch)(const std::map<std::string, std::string>& params);
 
 	struct Upsell {
 		const char* query;
