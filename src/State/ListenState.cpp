@@ -33,7 +33,7 @@ void ListenState::enter(){
 				return;
 			}
 
-			changeState(new IntentState(intent->launch(nullptr), intent->upsell));
+			changeState(new IntentState(intent->launch(std::map<std::string, std::string>{}), intent->upsell));
 		});
 	});
 }
