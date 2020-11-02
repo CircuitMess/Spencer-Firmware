@@ -10,7 +10,7 @@
 
 SpeechToIntentImpl SpeechToIntent;
 
-SpeechToIntentImpl::SpeechToIntentImpl() : AsyncProcessor<STIJob>("STI_Job"){
+SpeechToIntentImpl::SpeechToIntentImpl() : AsyncProcessor("STI_Job"){
 
 }
 

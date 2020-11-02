@@ -2,7 +2,7 @@
 #define SPENCER_ASYNCPROCESSOR_HPP
 
 
-#include <Sync/BinarySemaphore.h>
+#include <Sync/Semaphore.h>
 #include <Sync/Mutex.h>
 #include <queue>
 #include <Util/Task.h>
@@ -19,13 +19,13 @@ public:
 	void addJob(const T& job);
 
 protected:
-	AsyncProcessor(const char* name);
+	AsyncProcessor(const char* name, uint16_t queueSize = 1);
 
 	virtual void doJob(const T& job) = 0;
 
 private:
 	Task task;
-	BinarySemaphore semaphore;
+	Semaphore semaphore;
 	std::queue<T> jobs;
 	Mutex jobsMutex;
 
@@ -34,7 +34,7 @@ private:
 };
 
 template<typename T>
-AsyncProcessor<T>::AsyncProcessor(const char* name) : task(name, taskFunc, 4096, this){
+AsyncProcessor<T>::AsyncProcessor(const char* name, uint16_t queueSize) : task(name, taskFunc, 4096, this), semaphore(queueSize){
 	task.start(10, 1);
 }
 

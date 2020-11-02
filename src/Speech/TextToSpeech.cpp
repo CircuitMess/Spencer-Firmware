@@ -1,22 +1,43 @@
 #include <sstream>
 #include <SerialFlash.h>
 #include "TextToSpeech.h"
-#include "../Util/Base64Encode.h"
-#include "../DataStream/FileReadStream.h"
 #include "../DataStream/FileWriteStream.h"
 #include "../Util/Base64Decode.h"
-#include <ArduinoJson.h>
 
 #define KEY "AIzaSyAQqImCEX2tEnIs-sgEZbcubCeFkTNaIOo"
 #define CA "EB:6D:04:1A:C9:07:50:C7:52:C5:BC:69:E0:79:87:A6:5A:E5:2F:A8:23:D7:93:52:8C:9F:E8:62:27:AB:65:47"
 
+const char* stash[] = {
+		"recording-1.mp3",
+		"recording-2.mp3",
+		"recording-3.mp3",
+		"recording-4.mp3"
+};
+
+#define STASH_COUNT (sizeof(stash) / sizeof(stash[0]))
+
 TextToSpeechImpl TextToSpeech;
 
-TextToSpeechImpl::TextToSpeechImpl(){
+TextToSpeechImpl::TextToSpeechImpl() : AsyncProcessor("TTS_Task", STASH_COUNT), fileStash(::stash, ::stash + STASH_COUNT){
 
 }
 
-void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char* text, const char* filename){
+void TextToSpeechImpl::releaseRecording(const char* filename){
+	stashMut.lock();
+	fileStash.insert(filename);
+	stashMut.unlock();
+}
+
+void TextToSpeechImpl::doJob(const TTSJob& job){
+	stashMut.lock();
+	const char* filename = *fileStash.begin();
+	fileStash.erase(filename);
+	stashMut.unlock();
+
+	*job.resultFilename = generateSpeech(job.text, filename);
+}
+
+const char* TextToSpeechImpl::generateSpeech(const char* text, const char* filename){
 	const char pattern[] = "{ 'input': { 'text': '%s' },"
 						   "'voice': {"
 						   "'languageCode': 'en-US',"
@@ -46,8 +67,7 @@ void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	if(!http.send(reinterpret_cast<uint8_t*>(data), length)){
@@ -55,8 +75,7 @@ void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	int code = http.finish();
@@ -65,8 +84,7 @@ void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	enum { PRE, PROP, VAL, POST } state = PRE;
@@ -100,15 +118,14 @@ void TextToSpeechImpl::generateSpeech(void (* callback)(const char*), const char
 
 	if(!processed){
 		Serial.println("Error processing stream");
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
-	callback(filename);
+	return filename;
 }
 
 void TextToSpeechImpl::processStream(WiFiClient& stream, const char* filename){
-	SerialFlash.createErasable(filename, 70000);
+	SerialFlash.createErasable(filename, 64000);
 	SerialFlashFile file = SerialFlash.open(filename);
 	file.erase();
 
