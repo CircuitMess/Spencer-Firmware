@@ -7,6 +7,7 @@
 #include "../Intent/IntentStore.h"
 #include "IntentState.h"
 #include "../LEDmatrix/LEDmatrix.h"
+#include "../Services/Audio/Recording.h"
 
 ListenState::ListenState(){
 
@@ -20,7 +21,7 @@ void ListenState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-listen.gif"), true);
 	LEDmatrix.push();
 
-	Audio.record([](){ });
+	Recording.record([](){ });
 
 	LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
 

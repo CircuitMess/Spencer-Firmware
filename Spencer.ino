@@ -15,6 +15,7 @@
 #include <WiFi.h>
 #include "src/Services/TimeService/TimeService.h"
 #include "src/Intent/TimeIntent.h"
+#include "src/Services/Audio/Recording.h"
 #include <Util/Task.h>
 
 void setup(){
@@ -41,7 +42,12 @@ void setup(){
 	LEDmatrix.setBrightness(20);
 	LEDmatrix.setRotation(2);
 
-	Audio.begin();
+	I2S* i2s = new I2S();
+	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
+	i2s->begin();
+
+	Audio.begin(i2s);
+	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
 	LoopManager::addListener(&Audio);
