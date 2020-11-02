@@ -5,6 +5,7 @@
 #include <Sync/BinarySemaphore.h>
 #include <Sync/Mutex.h>
 #include <Util/Task.h>
+#include "../AsyncProcessor.hpp"
 
 struct IntentResult {
 	const char* transcript;
@@ -17,27 +18,14 @@ struct STIJob {
 	IntentResult** result;
 };
 
-class SpeechToIntentImpl {
+class SpeechToIntentImpl : public AsyncProcessor<STIJob> {
 public:
 	SpeechToIntentImpl();
 
-	/**
-	 * Add a job to the STI queue. When completed, *job.result will point to an instance of IntentResult.
-	 * Ownership of the object is transferred to the caller, and should be deallocated after use.
-	 * * @param job
-	 */
-	void addJob(const STIJob& job);
-	void loop();
-
-	[[noreturn]] static void taskFunc(Task* task);
+protected:
+	void doJob(const STIJob& job) override;
 
 private:
-	Task task;
-	BinarySemaphore semaphore;
-	std::queue<STIJob> jobs;
-	Mutex jobsMutex;
-
-
 	IntentResult* identifyVoice(const char* filename);
 
 };

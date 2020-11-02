@@ -10,39 +10,12 @@
 
 SpeechToIntentImpl SpeechToIntent;
 
-SpeechToIntentImpl::SpeechToIntentImpl() : task("STI_Task", SpeechToIntentImpl::taskFunc, 4096){
-	task.start();
+SpeechToIntentImpl::SpeechToIntentImpl() : AsyncProcessor<STIJob>("STI_Job"){
+
 }
 
-[[noreturn]] void SpeechToIntentImpl::taskFunc(Task* task){
-	for(;;){
-		SpeechToIntent.loop();
-	}
-}
-
-void SpeechToIntentImpl::addJob(const STIJob& job){
-	jobsMutex.lock();
-	jobs.push(job);
-	jobsMutex.unlock();
-
-	semaphore.signal();
-}
-
-void SpeechToIntentImpl::loop(){
-	if(!semaphore.wait()) return;
-
-	jobsMutex.lock();
-	if(jobs.empty()){
-		jobsMutex.unlock();
-		return;
-	}
-
-	STIJob job = jobs.front();
-	jobs.pop();
-	jobsMutex.unlock();
-
-	IntentResult* result = identifyVoice(job.recordingFilename);
-	*job.result = result;
+void SpeechToIntentImpl::doJob(const STIJob& job){
+	*job.result = identifyVoice(job.recordingFilename);
 }
 
 IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
