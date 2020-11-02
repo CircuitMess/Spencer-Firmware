@@ -43,7 +43,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	wavSize+=8;
 	file.seek(0);
 
-	FileReadStream fileStream(file);
+	FileReadStream fileStream(&file);
 	Base64Encode encodeStream(&fileStream);
 
 	StreamableHTTPClient http;
@@ -74,11 +74,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	}
 
 	uint sent = 0;
-	for(uint i = 0; i < wavSize; i++)
-	{
-		if(!encodeStream.available()) break;
-
-		unsigned char byte = encodeStream.get();
+	auto sendFunc = [&http, &sent](unsigned char byte){
 		if(!http.send(&byte, 1)){
 			Serial.println("Error sending data");
 			http.end();
@@ -87,6 +83,17 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 			return nullptr;
 		}
 		sent += 1;
+	};
+
+	for(uint i = 0; i < wavSize; i++){
+		if(!encodeStream.available()) break;
+		sendFunc(encodeStream.get());
+	}
+
+	file.seek(file.size());
+
+	while(encodeStream.available()){
+		sendFunc(encodeStream.get());
 	}
 
 	if(!http.send((uint8_t*) suffix, sizeof(suffix) - 1)){
