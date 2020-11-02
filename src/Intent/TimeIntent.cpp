@@ -1,6 +1,7 @@
+#include "../Services/Audio/CompositeAudioFileSource.h"
 #include "TimeIntent.h"
 #include "../Services/TimeService/TimeService.h"
-#include "../Services/Audio/Audio.h"
+#include "../Services/Audio/Playback.h"
 #include "../LEDmatrix/LEDmatrix.h"
 
 TimeIntent::TimeIntent(void* params)
@@ -122,7 +123,7 @@ TimeIntent::TimeIntent(void* params)
 		textCursor = 15;
 		elapsedMillis = millis();
 	}
-	Audio.playMP3(speakFile);
+	Playback.playMP3(speakFile);
 }
 
 TimeIntent::~TimeIntent()
@@ -133,7 +134,7 @@ void TimeIntent::loop(uint micros)
 {
 	if(_params.type == TimeIntentType::TIME)
 	{
-		if(!Audio.isRunning() && !audioStopped)
+		if(!Playback.isRunning() && !audioStopped)
 		{
 			audioStopped = 1;
 			elapsedMillis = millis();

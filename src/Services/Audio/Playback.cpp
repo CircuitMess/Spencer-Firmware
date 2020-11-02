@@ -1,20 +1,20 @@
-#include "Audio.h"
+#include "Playback.h"
 #include "Compression.h"
 #include <SerialFlash.h>
-AudioImpl Audio;
-AudioImpl::AudioImpl()
+PlaybackImpl Playback;
+PlaybackImpl::PlaybackImpl()
 {
 	wav = new AudioGeneratorWAV();
 	mp3 = new AudioGeneratorMP3();
 	i2s = new I2S();
 }
 
-AudioImpl::~AudioImpl()
+PlaybackImpl::~PlaybackImpl()
 {
 	if(file == nullptr) return;
 	delete file;
 }
-void AudioImpl::begin(I2S* i2s)
+void PlaybackImpl::begin(I2S* i2s)
 {
 	this->i2s = i2s;
 	out = new AudioOutputI2S(0,0,16,0);
@@ -24,7 +24,7 @@ void AudioImpl::begin(I2S* i2s)
 	out->SetOutputModeMono(1);
 	out->SetGain(0.1);
 }
-void AudioImpl::loop(uint _time)
+void PlaybackImpl::loop(uint _time)
 {
 	if(wav != nullptr)
 	{
@@ -45,21 +45,21 @@ void AudioImpl::loop(uint _time)
 		}
 	}
 }
-void AudioImpl::playWAV(AudioFileSource* _file)
+void PlaybackImpl::playWAV(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	i2s->begin();
 	file = _file;
 	wav->begin(file, out);
 }
-void AudioImpl::playWAV(const char* path)
+void PlaybackImpl::playWAV(const char* path)
 {
 	if(path == nullptr) return;
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	wav->begin(file, out);
 }
-void AudioImpl::playMP3(AudioFileSource* _file)
+void PlaybackImpl::playMP3(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
 	i2s->begin();
@@ -69,14 +69,14 @@ void AudioImpl::playMP3(AudioFileSource* _file)
 		return;
 	}
 }
-void AudioImpl::playMP3(const char* path)
+void PlaybackImpl::playMP3(const char* path)
 {
 	if(path == nullptr) return;
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
-void AudioImpl::stopPlayback()
+void PlaybackImpl::stopPlayback()
 {
 	if(wav != nullptr)
 	{
@@ -92,7 +92,7 @@ void AudioImpl::stopPlayback()
 	}
 	i2s->stop();
 }
-bool AudioImpl::isRunning()
+bool PlaybackImpl::isRunning()
 {
 	return i2s->isInited();
 }

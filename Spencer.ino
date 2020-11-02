@@ -4,7 +4,7 @@
 #include <CircuitOS.h>
 #include <Input/InputGPIO.h>
 #include "src/Speech/SpeechToIntent.h"
-#include "src/Services/Audio/Audio.h"
+#include "src/Services/Audio/Playback.h"
 #include "Spencer.hpp"
 #include "src/LEDmatrix/LEDmatrix.h"
 #include "src/State/State.h"
@@ -46,11 +46,11 @@ void setup(){
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
 	i2s->begin();
 
-	Audio.begin(i2s);
+	Playback.begin(i2s);
 	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
-	LoopManager::addListener(&Audio);
+	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());

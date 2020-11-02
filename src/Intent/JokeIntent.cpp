@@ -1,5 +1,5 @@
 #include "JokeIntent.h"
-#include "../Services/Audio/Audio.h"
+#include "../Services/Audio/Playback.h"
 JokeIntent::JokeIntent()
 {
 
@@ -26,7 +26,7 @@ JokeIntent::JokeIntent()
 	char buff[3] = {0};
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
-	Audio.playMP3(file);
+	Playback.playMP3(file);
 }
 JokeIntent::~JokeIntent()
 {
@@ -34,9 +34,9 @@ JokeIntent::~JokeIntent()
 }
 void JokeIntent::loop(uint micros)
 {
-	if(!Audio.isRunning() && !badumFlag)
+	if(!Playback.isRunning() && !badumFlag)
 	{
-		Audio.playMP3(SampleStore::load(SampleGroup::Special, "badum"));
+		Playback.playMP3(SampleStore::load(SampleGroup::Special, "badum"));
 		badumFlag = 1;
 		//end
 	}

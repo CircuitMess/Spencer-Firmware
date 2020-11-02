@@ -1,5 +1,5 @@
-#ifndef SPENCER_AUDIO_H
-#define SPENCER_AUDIO_H
+#ifndef SPENCER_PLAYBACK_H
+#define SPENCER_PLAYBACK_H
 
 #include "I2S.h"
 #include "AudioFileSourceSerialFlash.h"
@@ -11,11 +11,11 @@
 #include "SampleStore.h"
 #include <Loop/LoopListener.h>
 
-class AudioImpl : public LoopListener
+class PlaybackImpl : public LoopListener
 {
 public:
-	AudioImpl();
-	~AudioImpl();
+	PlaybackImpl();
+	~PlaybackImpl();
 	void begin(I2S* i2s);
 	/**
 	 * Starts WAV audio playback from an AudioFileSource pointer.
@@ -51,6 +51,6 @@ private:
 
 };
 
-extern AudioImpl Audio;
+extern PlaybackImpl Playback;
 
 #endif
