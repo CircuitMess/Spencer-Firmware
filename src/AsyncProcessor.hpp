@@ -35,7 +35,7 @@ private:
 
 template<typename T>
 AsyncProcessor<T>::AsyncProcessor(const char* name) : task(name, taskFunc, 4096, this){
-	task.start();
+	task.start(10, 1);
 }
 
 template<typename T>
