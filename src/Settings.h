@@ -4,7 +4,10 @@
 #include <Arduino.h>
 
 struct SettingsData {
-
+	char SSID[64];
+	char pass[64];
+	char TTS_key[40];
+	char STT_key[40];
 };
 
 class SettingsImpl {

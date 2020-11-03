@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <loop/LoopManager.h>
 #include <SerialFlash.h>
+#include "../Settings.h"
 HTTPserver* HTTPserver::instance = nullptr;
 const char* HTTPserver::index_html = nullptr;
 
@@ -93,17 +94,13 @@ void HTTPserver::start()
 		instance->server.send(200, "text/html", output);
 	});
 	server.on("/savesettings", HTTP_GET, [](){
-		char apikey1[40];
-		char apikey2[40];
-		char connect_ssid[64];
-		char connect_pass[64];
-		instance->server.arg(0).toCharArray(connect_ssid, 64);
-		instance->server.arg(1).toCharArray(connect_pass, 64);
-		instance->server.arg(2).toCharArray(apikey1, 40);
-		instance->server.arg(3).toCharArray(apikey2, 40);
-		instance->server.send(200, "text/html", "Connecting to network " + String(connect_ssid) +
-			" with password " + String(connect_pass) + ". Key1: " + String(apikey1) + ", key2: " + String(apikey2));
-		
+		instance->server.arg(0).toCharArray(Settings.get().SSID, 64);
+		instance->server.arg(1).toCharArray(Settings.get().pass, 64);
+		instance->server.arg(2).toCharArray(Settings.get().TTS_key, 40);
+		instance->server.arg(3).toCharArray(Settings.get().STT_key, 40);
+		Settings.store();
+		instance->server.send(200, "text/html", "Connecting to network " + instance->server.arg(0) +
+			" with password " + instance->server.arg(1) + ". Key1: " + instance->server.arg(2) + ", key2: " + instance->server.arg(3));
 	});
 	server.begin();
 	Serial.println("Server started");
