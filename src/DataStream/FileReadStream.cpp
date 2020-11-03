@@ -1,18 +1,19 @@
 #include <queue>
 #include "FileReadStream.h"
 
-FileReadStream::FileReadStream(SerialFlashFile source) : source(source){
+FileReadStream::FileReadStream(SerialFlashFile* source) : source(source){
 	buffer.reserve(bufferSize);
 }
 
 bool FileReadStream::available(){
-	return !buffer.empty() || source.position() < source.size();
+	bool a = source->position() < source->size();
+	return !buffer.empty() || a;
 }
 
 unsigned char FileReadStream::get(){
 	if(buffer.empty()){
 		buffer.resize(bufferSize);
-		source.read(buffer.data(), buffer.size());
+		source->read(buffer.data(), buffer.size());
 	}
 
 	if(buffer.empty()) return 0;

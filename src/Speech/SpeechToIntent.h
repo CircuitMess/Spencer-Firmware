@@ -1,8 +1,11 @@
 #ifndef SPENCER_SPEECH2INTENT_H
 #define SPENCER_SPEECH2INTENT_H
 
-#include <HTTPClient.h>
-#include "../Util/StreamableHTTPClient.h"
+#include <queue>
+#include <Sync/BinarySemaphore.h>
+#include <Sync/Mutex.h>
+#include <Util/Task.h>
+#include "../AsyncProcessor.hpp"
 
 struct IntentResult {
 	const char* transcript;
@@ -10,10 +13,20 @@ struct IntentResult {
 	float confidence;
 };
 
-class SpeechToIntentImpl {
+struct STIJob {
+	const char* recordingFilename;
+	IntentResult** result;
+};
+
+class SpeechToIntentImpl : public AsyncProcessor<STIJob> {
 public:
 	SpeechToIntentImpl();
-	void identifyVoice(void (* callback)(IntentResult*), const char* fileName = "recording.wav");
+
+protected:
+	void doJob(const STIJob& job) override;
+
+private:
+	IntentResult* identifyVoice(const char* filename);
 
 };
 

@@ -1,16 +1,21 @@
 #ifndef SPENCER_PREPAREDSTATEMENT_H
 #define SPENCER_PREPAREDSTATEMENT_H
 
-#include <Util/Vector.h>
+#include <vector>
 #include <AudioFileSource.h>
 #include "Services/Audio/CompositeAudioFileSource.h"
+#include <Loop/LoopListener.h>
 
-class PreparedStatement {
+class PreparedStatement : public LoopListener {
 public:
+	virtual ~PreparedStatement();
+
 	void addSample(AudioFileSource* sample);
+
 	void addTTS(const char* text);
 
-	CompositeAudioFileSource* generate();
+	void play(void (*playbackStarted)());
+	void loop(uint micros) override;
 
 private:
 	struct Part {
@@ -18,8 +23,10 @@ private:
 		void* content;
 	};
 
-	Vector<Part> parts;
+	std::vector<Part> parts;
+	std::vector<const char*> files;
 
+	void (*playbackStarted)() = nullptr;
 };
 
 

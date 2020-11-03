@@ -1,20 +1,24 @@
-#include <sstream>
 #include <SerialFlash.h>
+#include <ArduinoJson.h>
 #include "SpeechToIntent.h"
 #include "../Util/Base64Encode.h"
 #include "../DataStream/FileReadStream.h"
-#include <ArduinoJson.h>
+#include "../Util/StreamableHTTPClient.h"
 
 #define KEY "AIzaSyCHrLm1YLWFO1UpDEaaiIdJtm49aVODfDE"
 #define CA "EB:6D:04:1A:C9:07:50:C7:52:C5:BC:69:E0:79:87:A6:5A:E5:2F:A8:23:D7:93:52:8C:9F:E8:62:27:AB:65:47"
 
 SpeechToIntentImpl SpeechToIntent;
 
-SpeechToIntentImpl::SpeechToIntentImpl(){
+SpeechToIntentImpl::SpeechToIntentImpl() : AsyncProcessor("STI_Job"){
 
 }
 
-void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const char* fileName){
+void SpeechToIntentImpl::doJob(const STIJob& job){
+	*job.result = identifyVoice(job.recordingFilename);
+}
+
+IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	const char prefix[] = "{"
 						  "'config': {"
 						  "'sampleRateHertz': 16000,"
@@ -23,11 +27,10 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 						  "}, 'audio': { 'content': '";
 	const char suffix[] = "' }}";
 
-	SerialFlashFile file = SerialFlash.open(fileName);
+	SerialFlashFile file = SerialFlash.open(filename);
 	if(!file){
 		Serial.println("Couldn't open file for reading");
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	int wavSize = 0;
@@ -40,7 +43,7 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 	wavSize+=8;
 	file.seek(0);
 
-	FileReadStream fileStream(file);
+	FileReadStream fileStream(&file);
 	Base64Encode encodeStream(&fileStream);
 
 	StreamableHTTPClient http;
@@ -59,8 +62,7 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	if(!http.send((uint8_t*) prefix, sizeof(prefix) - 1)){
@@ -68,25 +70,30 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	uint sent = 0;
-	for(uint i = 0; i < wavSize; i++)
-	{
-		if(!encodeStream.available()) break;
-
-		unsigned char byte = encodeStream.get();
+	auto sendFunc = [&http, &sent](unsigned char byte){
 		if(!http.send(&byte, 1)){
 			Serial.println("Error sending data");
 			http.end();
 			http.getStream().stop();
 			http.getStream().flush();
-			callback(nullptr);
-			return;
+			return nullptr;
 		}
 		sent += 1;
+	};
+
+	for(uint i = 0; i < wavSize; i++){
+		if(!encodeStream.available()) break;
+		sendFunc(encodeStream.get());
+	}
+
+	file.seek(file.size());
+
+	while(encodeStream.available()){
+		sendFunc(encodeStream.get());
 	}
 
 	if(!http.send((uint8_t*) suffix, sizeof(suffix) - 1)){
@@ -94,8 +101,7 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	sent += sizeof(prefix) - 1;
@@ -108,8 +114,7 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 			http.end();
 			http.getStream().stop();
 			http.getStream().flush();
-			callback(nullptr);
-			return;
+			return nullptr;
 		}
 
 		sent++;
@@ -121,11 +126,10 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
-	const int SIZE = 2*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(6) + 200;
+	const int SIZE = 2 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(6) + 200;
 	DynamicJsonDocument json(SIZE);
 	DeserializationError error = deserializeJson(json, http.getStream());
 
@@ -136,14 +140,12 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	if(!json.containsKey("transcript")){
 		Serial.println("Failed recognizing");
-		callback(nullptr);
-		return;
+		return nullptr;
 	}
 
 	IntentResult* result = new IntentResult;
@@ -151,5 +153,5 @@ void SpeechToIntentImpl::identifyVoice(void (* callback)(IntentResult*), const c
 	result->intent = json["intent"]["result"].as<const char*>();
 	result->confidence = json["intent"]["confidence"].as<float>();
 
-	callback(result);
+	return result;
 }

@@ -9,7 +9,7 @@
 
 class FileReadStream : public ReadStream {
 public:
-	explicit FileReadStream(SerialFlashFile source);
+	explicit FileReadStream(SerialFlashFile* source);
 
 	bool available() override;
 	unsigned char get() override;
@@ -17,7 +17,7 @@ public:
 private:
 	const uint32_t bufferSize = 256;
 
-	SerialFlashFile source;
+	SerialFlashFile* source;
 	std::vector<unsigned char> buffer;
 
 };
