@@ -17,6 +17,7 @@
 #include "src/Intent/TimeIntent.h"
 #include "src/Services/Audio/Recording.h"
 #include <Util/Task.h>
+#include "src/State/SetupState.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -55,7 +56,7 @@ void setup(){
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());
 
-	State::changeState(new IdleState());
+	State::changeState(new SetupState());
 
 	LoopManager::setStackSize(10240);
 	Task::setPinned(true);

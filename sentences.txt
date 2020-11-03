@@ -1,6 +1,7 @@
 generic HELLO Why hello there! How do you do fellow kids!
 generic NO_INTENT Sorry, I didnt quite catch that.
 generic and and
+generic startup Hello! I’m Spencer, your own personal assistant! First things first, in order to work I need an active internet connection. Ive set up a WiFi hotspot you can connect to, open your browser, and configure a network I can use.
 numbers 1 1
 numbers 2 2
 numbers 3 3
