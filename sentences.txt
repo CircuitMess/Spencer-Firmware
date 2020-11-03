@@ -1,5 +1,5 @@
 generic HELLO Why hello there! How do you do fellow kids!
-generic/NO_INTENT Sorry, I didnt quite catch that.
+generic NO_INTENT Sorry, I didnt quite catch that.
 generic and and
 numbers 1 1
 numbers 2 2

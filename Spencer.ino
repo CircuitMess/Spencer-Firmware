@@ -27,7 +27,6 @@ void setup(){
 		Serial.println("Flash fail");
 		return;
 	}
-
 	// WiFi.begin("CircuitMess", "MAKERphone!");
 	// while(WiFi.status() != WL_CONNECTED);
 

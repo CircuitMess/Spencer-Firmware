@@ -13,8 +13,9 @@ public:
 	void stop();
 	~HTTPserver();
 	void loop(uint _time) override;
+	
 private:
-
+	void sendContentFromFlash(const char* path);
 	const char* host_ssid = "SpencerHotspot";
 	IPAddress local_ip;
 	IPAddress gateway;

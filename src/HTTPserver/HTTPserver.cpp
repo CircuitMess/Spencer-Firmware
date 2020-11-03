@@ -1,6 +1,7 @@
 #include "HTTPserver.h"
 #include <WiFi.h>
 #include <loop/LoopManager.h>
+#include <SerialFlash.h>
 HTTPserver* HTTPserver::instance = nullptr;
 const char* HTTPserver::index_html = nullptr;
 
@@ -55,7 +56,7 @@ void HTTPserver::start()
 
 	// Send web page with input fields to client
 	server.on("/", HTTP_GET, [](){
-		instance->server.send(200, "text/html", index_html);
+		instance->sendContentFromFlash("index.html");
 
 	});
 	server.onNotFound([](){
@@ -102,6 +103,7 @@ void HTTPserver::start()
 		instance->server.arg(3).toCharArray(apikey2, 40);
 		instance->server.send(200, "text/html", "Connecting to network " + String(connect_ssid) +
 			" with password " + String(connect_pass) + ". Key1: " + String(apikey1) + ", key2: " + String(apikey2));
+		
 	});
 	server.begin();
 	Serial.println("Server started");
@@ -112,4 +114,25 @@ void HTTPserver::loop(uint _time)
 {
 	dnsServer.processNextRequest();
 	server.handleClient();
+}
+
+void HTTPserver::sendContentFromFlash(const char* path)
+{
+	char buffer[100];
+	SerialFlashFile file = SerialFlash.open(path);
+	if(!file){
+		Serial.println("error opening file");
+		return;
+	}
+	server.setContentLength(file.size());
+	server.send(200, "text/html", "");
+	uint readBytes = 1;
+	while((readBytes = file.read(buffer, 100)) > 0){
+		for(uint8_t i = 0; i < readBytes;i++)
+		{
+			Serial.print(buffer[i]);
+		}
+		server.sendContent_P(buffer, readBytes);
+	}
+
 }
