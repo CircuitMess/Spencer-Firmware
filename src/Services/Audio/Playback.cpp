@@ -30,8 +30,7 @@ void PlaybackImpl::loop(uint _time)
 	{
 		if (wav->isRunning()) {
 			if (!wav->loop()){
-				wav->stop();
-				i2s->stop();
+				stopPlayback(true);
 			}
 		}
 	}
@@ -39,8 +38,7 @@ void PlaybackImpl::loop(uint _time)
 	{
 		if (mp3->isRunning()) {
 			if (!mp3->loop()){
-				mp3->stop();
-				i2s->stop();
+				stopPlayback(true);
 			}
 		}
 	}
@@ -76,7 +74,7 @@ void PlaybackImpl::playMP3(const char* path)
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
-void PlaybackImpl::stopPlayback()
+void PlaybackImpl::stopPlayback(bool executeCallback)
 {
 	if(wav != nullptr)
 	{
@@ -91,8 +89,17 @@ void PlaybackImpl::stopPlayback()
 		}
 	}
 	i2s->stop();
+	if(playbackDoneCallback != nullptr && executeCallback)
+	{
+		playbackDoneCallback();
+	}
 }
 bool PlaybackImpl::isRunning()
 {
 	return i2s->isInited();
+}
+void PlaybackImpl::setPlaybackDoneCallback(void (*callback)())
+{
+	if(callback == nullptr || !isRunning()) return;
+	playbackDoneCallback = callback;
 }

@@ -37,8 +37,16 @@ public:
 	 * @param path Path of the file on the flash chip.
 	 */
 	void playMP3(const char* path);
-	void stopPlayback();
-
+	/**
+	 * Stops audio playback.
+	 * @param executeCallback Flag to execute callback after playing. False by default.
+	 */
+	void stopPlayback(bool executeCallback = false);
+	/**
+	 * Sets playback to be executed when a track is finished. Only works when a track is currently being played!
+	 * @param callback Function to be executed after a track is finished.
+	 */
+	void setPlaybackDoneCallback(void (*callback)());
 	void loop(uint _time) override;
 	bool isRunning();
 
@@ -48,6 +56,7 @@ private:
 	AudioGeneratorMP3 *mp3;
 	AudioOutputI2S *out;
 	AudioFileSource *file;
+	void(*playbackDoneCallback)();
 
 };
 
