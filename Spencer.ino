@@ -43,6 +43,8 @@ void setup(){
 	LEDmatrix.setBrightness(20);
 	LEDmatrix.setRotation(2);
 
+	Settings.begin();
+
 	I2S* i2s = new I2S();
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
 	i2s->begin();
