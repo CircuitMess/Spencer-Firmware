@@ -17,15 +17,19 @@ SetupState::~SetupState(){
 
 void SetupState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
-	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "startup"));
+	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
 	Playback.setPlaybackDoneCallback([](){
 		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
 	});
+	server.start();
 	LoopManager::addListener(this);
+	LoopManager::addListener(&server);
 }
 
 void SetupState::exit(){
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
+	LoopManager::removeListener(this);
+	LoopManager::removeListener(&server);
 }
 
 void SetupState::loop(uint _time)

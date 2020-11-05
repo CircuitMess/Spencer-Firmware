@@ -133,3 +133,12 @@ void HTTPserver::sendContentFromFlash(const char* path)
 	}
 
 }
+
+void HTTPserver::stop()
+{
+	server.stop();
+	dnsServer.stop();
+	server.stop();
+	delay(500);
+	WiFi.softAPdisconnect();
+}

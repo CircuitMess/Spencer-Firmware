@@ -3,6 +3,7 @@
 
 #include "State.h"
 #include <Loop/LoopListener.h>
+#include "../HTTPserver/HTTPserver.h"
 class SetupState : public State, public LoopListener {
 public:
 	SetupState();
@@ -14,6 +15,7 @@ public:
 
 private:
 	static SetupState* instance;
+	HTTPserver server;
 
 };
 
