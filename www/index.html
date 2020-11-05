@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Spencer Settings</title>
+	<link rel="stylesheet" type="text/css" href="res/style.css">
+	<script type="text/javascript" src="res/jquery.min.js"></script>
+	<script type="text/javascript" src="res/script.js"></script>
+</head>
+<body>
+<div id="container">
+	<div id="content">
+		<form action="save" method="post">
+			<img id="logo" src="img/logo.png"/>
+
+			<div class="field" id="status">
+				<p></p>
+			</div>
+
+			<div class="field">
+				<label for="ssid">WiFi access point</label>
+
+				<select name="ssid" id="ssid">
+				</select>
+
+				<div class="dropdown" data-parent="ssid">
+					<div class="selected">&nbsp;</div>
+					<div class="modal">
+					</div>
+				</div>
+
+				<div class="button active"><span></span></div>
+			</div>
+
+			<div class="field">
+				<label for="pass">Password</label>
+				<div class="toggleable">
+					<input type="text" name="pas" id="pass"/>
+					<a class="btn"></a>
+				</div>
+			</div>
+
+			<div class="field">
+				<label for="tts">TTS key</label>
+				<input type="text" name="tts" id="tts"/>
+			</div>
+
+			<div class="field">
+				<label for="stt">STT key</label>
+				<input type="text" name="tts" id="stt"/>
+			</div>
+
+			<input type="submit" id="submit" value="Save"/>
+		</form>
+	</div>
+</div>
+</body>
+</html>

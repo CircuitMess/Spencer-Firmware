@@ -2,9 +2,9 @@
 #include <Input/Input.h>
 #include "../../Spencer.hpp"
 #include "../LEDmatrix/LEDmatrix.h"
-#include "../HTTPserver/HTTPserver.h"
 #include "../Services/Audio/Playback.h"
-#include <loop/LoopManager.h>
+#include <Loop/LoopManager.h>
+
 SetupState* SetupState::instance = nullptr;
 
 SetupState::SetupState(){
@@ -17,7 +17,7 @@ SetupState::~SetupState(){
 
 void SetupState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
-	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "startup"));
+	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
 	Playback.setPlaybackDoneCallback([](){
 		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
 	});
