@@ -3,6 +3,7 @@
 #include "JokeIntent.h"
 #include "StopwatchIntent.h"
 #include "../Services/TimeService/TimeService.h"
+#include "Funpack/Name.hpp"
 
 std::map<const char*, IntentInfo, IntentStore::CStrCompare> IntentStore::storage;
 
@@ -25,6 +26,12 @@ void IntentStore::fillStorage(){
 	storage["stopwatch"] = {
 			"stopwatch",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new StopwatchIntent(); },
+			nullptr
+	};
+
+	storage["funpack.name"] = {
+			"funpack.name",
+			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackName(); },
 			nullptr
 	};
 }

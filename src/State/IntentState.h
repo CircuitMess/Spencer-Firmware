@@ -9,7 +9,7 @@ class Intent;
 
 class IntentState : public State, public LoopListener {
 public:
-	IntentState(Intent* info, IntentInfo::Upsell* upsell);
+	IntentState(Intent* intent, IntentInfo::Upsell* upsell);
 	virtual ~IntentState();
 
 	void enter() override;
