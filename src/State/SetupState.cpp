@@ -5,6 +5,8 @@
 #include "../HTTPserver/HTTPserver.h"
 #include "../Services/Audio/Playback.h"
 #include <loop/LoopManager.h>
+#include <Input/InputGPIO.h>
+#include "../State/IdleState.h"
 SetupState* SetupState::instance = nullptr;
 
 SetupState::SetupState(){
@@ -24,6 +26,9 @@ void SetupState::enter(){
 	server.start();
 	LoopManager::addListener(this);
 	LoopManager::addListener(&server);
+	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+		changeState(new IdleState());
+	});
 }
 
 void SetupState::exit(){
