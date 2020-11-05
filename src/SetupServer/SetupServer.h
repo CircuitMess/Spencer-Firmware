@@ -12,6 +12,9 @@ public:
 	SetupServer();
 	~SetupServer();
 	void loop(uint _time) override;
+
+	void start();
+	void stop();
 	
 private:
 	static SetupServer *instance;

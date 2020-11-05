@@ -9,9 +9,13 @@ SetupServer* SetupServer::instance = nullptr;
 
 SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80){
 	instance = this;
+}
 
-	Serial.println("Configuring access point...");
+SetupServer::~SetupServer(){
+	instance = nullptr;
+}
 
+void SetupServer::start(){
 	WiFi.mode(WIFI_AP_STA);
 	delay(2000);
 	WiFi.softAP(SSID, "");
@@ -22,18 +26,17 @@ SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80){
 	registerHandlers();
 
 	server.begin();
-	Serial.println("Server started");
+
 	LoopManager::addListener(this);
 }
 
-SetupServer::~SetupServer(){
+void SetupServer::stop(){
 	server.stop();
 	dnsServer.stop();
 	delay(500);
 	WiFi.softAPdisconnect();
 
 	LoopManager::removeListener(this);
-	instance = nullptr;
 }
 
 void SetupServer::loop(uint _time){

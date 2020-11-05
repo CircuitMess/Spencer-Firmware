@@ -28,8 +28,11 @@ void SetupState::enter(){
 	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		changeState(new IdleState());
 	});
+
+	server.start();
 }
 
 void SetupState::exit(){
+	server.stop();
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 }
