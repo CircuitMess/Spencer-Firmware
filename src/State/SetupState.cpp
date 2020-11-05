@@ -4,6 +4,8 @@
 #include "../LEDmatrix/LEDmatrix.h"
 #include "../Services/Audio/Playback.h"
 #include <Loop/LoopManager.h>
+#include <Input/InputGPIO.h>
+#include "../State/IdleState.h"
 
 SetupState* SetupState::instance = nullptr;
 
@@ -18,16 +20,16 @@ SetupState::~SetupState(){
 void SetupState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
+
 	Playback.setPlaybackDoneCallback([](){
 		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
 	});
-	LoopManager::addListener(this);
+
+	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+		changeState(new IdleState());
+	});
 }
 
 void SetupState::exit(){
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
-}
-
-void SetupState::loop(uint _time)
-{
 }

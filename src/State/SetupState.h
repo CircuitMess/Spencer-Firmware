@@ -3,17 +3,19 @@
 
 #include "State.h"
 #include <Loop/LoopListener.h>
-class SetupState : public State, public LoopListener {
+#include "../SetupServer/SetupServer.h"
+
+class SetupState : public State {
 public:
 	SetupState();
 	virtual ~SetupState();
 
 	void enter() override;
 	void exit() override;
-	void loop(uint _time) override;
 
 private:
 	static SetupState* instance;
+	SetupServer server;
 
 };
 
