@@ -58,7 +58,7 @@ void setup(){
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());
 
-	State::changeState(new SetupState());
+	State::changeState(new IdleState());
 
 	LoopManager::setStackSize(10240);
 	Task::setPinned(true);
