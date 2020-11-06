@@ -5,7 +5,7 @@
 #include "../Util/Base64Decode.h"
 
 #define KEY "AIzaSyAQqImCEX2tEnIs-sgEZbcubCeFkTNaIOo"
-#define CA "EB:6D:04:1A:C9:07:50:C7:52:C5:BC:69:E0:79:87:A6:5A:E5:2F:A8:23:D7:93:52:8C:9F:E8:62:27:AB:65:47"
+#define CA "EE:44:9F:C9:73:17:0C:59:0D:AE:C0:10:A2:77:78:B0:FB:1F:13:01:18:75:2A:35:48:C2:E9:D2:AB:CF:EB:5F"
 
 const char* stash[] = {
 		"recording-1.mp3",
