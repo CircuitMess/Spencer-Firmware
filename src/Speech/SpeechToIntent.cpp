@@ -6,7 +6,7 @@
 #include "../Util/StreamableHTTPClient.h"
 
 #define KEY "AIzaSyCHrLm1YLWFO1UpDEaaiIdJtm49aVODfDE"
-#define CA "EE:44:9F:C9:73:17:0C:59:0D:AE:C0:10:A2:77:78:B0:FB:1F:13:01:18:75:2A:35:48:C2:E9:D2:AB:CF:EB:5F"
+#define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 
 SpeechToIntentImpl SpeechToIntent;
 
