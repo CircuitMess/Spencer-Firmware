@@ -18,6 +18,7 @@
 #include "src/Services/Audio/Recording.h"
 #include <Util/Task.h>
 #include "src/State/SetupState.h"
+#include "src/Settings.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -43,7 +44,10 @@ void setup(){
 	LEDmatrix.setBrightness(20);
 	LEDmatrix.setRotation(2);
 
-	Settings.begin();
+	if(!Settings.begin()){
+		Settings.reset();
+		Settings.store();
+	}
 
 	I2S* i2s = new I2S();
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
