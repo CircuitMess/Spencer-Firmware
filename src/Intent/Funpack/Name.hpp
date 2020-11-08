@@ -3,12 +3,15 @@
 
 #include "FunpackIntent.h"
 
-const char* FunpackNameResponses[] = { "jokes-0.mp3", "jokes-1.mp3" };
-
 class FunpackName : public FunpackIntent {
 public:
-	FunpackName() : FUNPACK(FunpackNameResponses){}
+	FunpackName() : FunpackIntent(responses, 2){}
+
+private:
+	static const char* responses[];
 
 };
+
+const char* FunpackName::responses[] = { "jokes-0.mp3", "jokes-1.mp3" };
 
 #endif //SPENCER_NAME_HPP

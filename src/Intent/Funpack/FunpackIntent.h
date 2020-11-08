@@ -3,9 +3,6 @@
 
 #include "../Intent.hpp"
 
-#define SIZEOF_ARR(arr) (sizeof(arr) / sizeof(arr[0]))
-#define FUNPACK(arr) FunpackIntent(arr, SIZEOF_ARR(arr))
-
 class FunpackIntent : public Intent {
 public:
 	void loop(uint micros) override;
