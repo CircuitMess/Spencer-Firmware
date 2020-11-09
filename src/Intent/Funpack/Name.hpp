@@ -5,13 +5,13 @@
 
 class FunpackName : public FunpackIntent {
 public:
-	FunpackName() : FunpackIntent(responses, 2){}
+	FunpackName() : FunpackIntent(responses, 4){}
 
 private:
 	static const char* responses[];
 
 };
 
-const char* FunpackName::responses[] = { "jokes-0.mp3", "jokes-1.mp3" };
+const char* FunpackName::responses[] = {"funpack-name0.mp3", "funpack-name1.mp3", "funpack-name2.mp3", "funpack-name3.mp3"};
 
-#endif //SPENCER_NAME_HPP
+#endif
