@@ -351,9 +351,7 @@ funpack tellstory1 I don't have any good stories in my pocket right now. Do you 
 funpack tellstory2 Once upon a time, in the joyful kingdom of robots, there was a handsome little robot called Spencer. He was the best and smartest of all robots—the end.
 funpack tellstory3 I don't gladly admit that I'm not good at something, but I'm really not the best at telling stories. Can you tell me a good one?
 funpack whatsoundfiretruck0 wee woo wee woo wee woo wee woo. Wee woo wee woo wee woo. There is fire to be extinguished and we need to go fast. Fire up your engines. wee woo wee woo. wee woo wee woo. Wroom. wroom. wroom. wee woo wee woo. wroom. I hate my job.
-
 funpack whatsoundfiretruck1 wee woo wee woo wee woo wee woo. Wee woo wee woo wee woo. I am a fire truck. I am a road vehicle. usually a truck. that functions as a firefighting apparatus. The primary purpose of me is transporting firefighters and water. wee woo. Wroom. wroom. wroom. wee woo wee woo. wroom. 
-
 funpack whatsoundfiretruck2 wee woo wee woo. I am a fireman transporation engine. I am normally fitted with sirens and emergency vehicle lighting. as well as communication equipment such as two-way radios. and mobile computer technology. wee woo wee woo. I am a firetruck.
 funpack whatsoundfiretruck3 wee woo wee woo. There is fire. Get out of the way people. I am a fast truck. My goal is fire elimination. Fire. Prepare to be eliminated. wee woo wee woo. 
 funpack catsounds0 meow. Meow. I am a cat. meow meow. meow. meow meow. silence. meow meow. meow
