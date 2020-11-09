@@ -294,16 +294,6 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackTurkeysound(); },
 			nullptr
 	};
-	storage["funpack.mosquitosound"] = {
-			"funpack.mosquitosound",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackMosquitosound(); },
-			nullptr
-	};
-	storage["funpack.cricketsound"] = {
-			"funpack.cricketsound",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackCricketsound(); },
-			nullptr
-	};
 	storage["funpack.frogsound"] = {
 			"funpack.frogsound",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackFrogsound(); },
@@ -354,11 +344,6 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackFavoritefood(); },
 			nullptr
 	};
-	storage["funpack.compliment"] = {
-			"funpack.compliment",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackCompliment(); },
-			nullptr
-	};
 	storage["funpack.believeinlove"] = {
 			"funpack.believeinlove",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackBelieveinlove(); },
@@ -399,24 +384,9 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackIsthisreallife(); },
 			nullptr
 	};
-	storage["funpack.coronavirus"] = {
-			"funpack.coronavirus",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackCoronavirus(); },
-			nullptr
-	};
 	storage["funpack.callmom"] = {
 			"funpack.callmom",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackCallmom(); },
-			nullptr
-	};
-	storage["funpack.callmom"] = {
-			"funpack.callmom",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackCallmom(); },
-			nullptr
-	};
-	storage["funpack.findphone"] = {
-			"funpack.findphone",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackFindphone(); },
 			nullptr
 	};
 	storage["funpack.turnlights"] = {
@@ -484,14 +454,9 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackWhatdoyouthinkofme(); },
 			nullptr
 	};
-	storage["funpack.howdoilook"] = {
-			"funpack.howdoilook",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackHowdoilook(); },
-			nullptr
-	};
-	storage["funpack.favoritekanyewestsong"] = {
-			"funpack.favoritekanyewestsong",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackFavoritekanyewestsong(); },
+	storage["funpack.favoritesong"] = {
+			"funpack.favoritesong",
+			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackFavoritesong(); },
 			nullptr
 	};
 	storage["funpack.highfive"] = {
@@ -514,11 +479,6 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackWhatispassword(); },
 			nullptr
 	};
-	storage["funpack.buyaboat"] = {
-			"funpack.buyaboat",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackBuyaboat(); },
-			nullptr
-	};
 	storage["funpack.package"] = {
 			"funpack.package",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackPackage(); },
@@ -537,21 +497,6 @@ void IntentStore::fillStorage(){
 	storage["funpack.like"] = {
 			"funpack.like",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackLike(); },
-			nullptr
-	};
-	storage["funpack.actorsinmovie"] = {
-			"funpack.actorsinmovie",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackActorsinmovie(); },
-			nullptr
-	};
-	storage["funpack.bedtimestory"] = {
-			"funpack.bedtimestory",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackBedtimestory(); },
-			nullptr
-	};
-	storage["funpack.orderitem"] = {
-			"funpack.orderitem",
-			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackOrderitem(); },
 			nullptr
 	};
 	storage["funpack.scarystory"] = {
@@ -609,6 +554,7 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new FunpackBeammeupscotty(); },
 			nullptr
 	};
+
 
 }
 

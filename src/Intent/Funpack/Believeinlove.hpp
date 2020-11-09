@@ -5,13 +5,13 @@
 
 class FunpackBelieveinlove : public FunpackIntent {
 public:
-	FunpackBelieveinlove() : FunpackIntent(responses, 0){}
+	FunpackBelieveinlove() : FunpackIntent(responses, 4){}
 
 private:
 	static const char* responses[];
 
 };
 
-const char* FunpackBelieveinlove::responses[] = {};
+const char* FunpackBelieveinlove::responses[] = {"funpack-believeinlove0.mp3", "funpack-believeinlove1.mp3", "funpack-believeinlove2.mp3", "funpack-believeinlove3.mp3"};
 
 #endif

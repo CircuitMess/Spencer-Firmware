@@ -5,13 +5,13 @@
 
 class FunpackPigsound : public FunpackIntent {
 public:
-	FunpackPigsound() : FunpackIntent(responses, 0){}
+	FunpackPigsound() : FunpackIntent(responses, 4){}
 
 private:
 	static const char* responses[];
 
 };
 
-const char* FunpackPigsound::responses[] = {};
+const char* FunpackPigsound::responses[] = {"funpack-pigsound0.mp3", "funpack-pigsound1.mp3", "funpack-pigsound2.mp3", "funpack-pigsound3.mp3"};
 
 #endif
