@@ -1,5 +1,6 @@
 #include <SerialFlash.h>
 #include "FlashTools.h"
+#include <SD.h>
 
 void FlashTools::erase(){
 	SerialFlash.eraseAll();
@@ -78,4 +79,72 @@ void FlashTools::listFiles(){
 			break; // no more files
 		}
 	}
+}
+
+void FlashTools::uploadSD(){
+	SPIClass spiSD(2);
+	spiSD.begin(13, 12, 15, 14);
+
+	Serial.println("Waiting for SD");
+	while(!SD.begin(14, spiSD, 16000000)){
+		delay(500);
+	}
+
+	uint32_t time = millis();
+
+	Serial.println("Erasing...");
+	erase();
+	Serial.println("Uploading...");
+
+	File root = SD.open("/");
+	copyDirSD(root);
+	root.close();
+	spiSD.end();
+
+	Serial.println("Upload done");
+	Serial.printf("Total time: %.2f m\n", (float) (millis() - time) / (1000.0f * 60.0f));
+}
+
+
+void FlashTools::copyDirSD(File& dir, const char* prefix){
+	File fileSD;
+	char* buf = static_cast<char*>(malloc(2048));
+
+	while((fileSD = dir.openNextFile())){
+		const char* fileSDname;
+		const char* nameptr = fileSD.name();
+		while(*++nameptr != '\0'){
+			if(*nameptr == '/') fileSDname = nameptr;
+		}
+		fileSDname++;
+
+		char filename[MAX_FILENAME];
+
+		if(fileSD.isDirectory()){
+			sprintf(filename, "%s%s%s-", prefix, prefix[0] == '\0' ? "" : "-", fileSDname);
+			copyDirSD(fileSD, filename);
+			fileSD.close();
+			continue;
+		}
+
+		sprintf(filename, "%s%s", prefix, fileSDname);
+
+		if(SerialFlash.exists(filename)){
+			SerialFlash.remove(filename);
+		}
+
+		SerialFlash.create(filename, fileSD.size());
+		SerialFlashFile fileFlash = SerialFlash.open(filename);
+
+		uint32_t read;
+
+		while((read = fileSD.readBytes(buf, 2048))){
+			fileFlash.write(buf, read);
+		}
+
+		fileFlash.close();
+		fileSD.close();
+	}
+
+	free(buf);
 }

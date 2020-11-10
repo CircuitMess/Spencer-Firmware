@@ -3,6 +3,8 @@
 
 #define MAX_FILENAME 255
 
+#include <FS.h>
+
 class FlashTools {
 public:
 
@@ -17,9 +19,17 @@ public:
 	 */
 	static void upload();
 
+	/**
+	 * Uploads files to the flash chip from SD card. The FS on the SD card will be flattened, replacing
+	 * slashes with dashes. Ex. /special/badum.mp3 becomes `special-badum.mp3` on the flash FS.
+	 * MISO 12, SCK 13, CS 14, MOSI 15
+	 */
+	static void uploadSD();
+
 	static void listFiles();
 
 private:
+	static void copyDirSD(File& dir, const char* prefix = "");
 
 };
 
