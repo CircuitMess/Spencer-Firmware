@@ -84,15 +84,15 @@ months 9 September
 months 10 October
 months 11 November
 months 12 December
-jokes 1	How did the programmer die in the shower? He read the shampoo bottle instructions. Lather, Rinse, Repeat!
-jokes 2	I will be giving away empty batteries later today. Free of charge!
-jokes 3	Never trust atoms. They make up everything!
-jokes 4	What did the pirate say on his 80th birthday? AYE MATEY!
-jokes 5	What's the best part about living in Switzerland? I don't know, but the flag is a big plus.
-jokes 6	Why couldn't the bike stand up by itself? It was two tired.
-jokes 7	How many tickles does it take to make an octopus laugh? Ten-tickles.
-jokes 8	Did you hear about the circus fire? It was in tents!
-jokes 9	What do you get when you cross a snowman with a vampire? Frostbite.
+jokes 1 How did the programmer die in the shower? He read the shampoo bottle instructions. Lather, Rinse, Repeat!
+jokes 2 I will be giving away empty batteries later today. Free of charge!
+jokes 3 Never trust atoms. They make up everything!
+jokes 4 What did the pirate say on his 80th birthday? AYE MATEY!
+jokes 5 What's the best part about living in Switzerland? I don't know, but the flag is a big plus.
+jokes 6 Why couldn't the bike stand up by itself? It was two tired.
+jokes 7 How many tickles does it take to make an octopus laugh? Ten-tickles.
+jokes 8 Did you hear about the circus fire? It was in tents!
+jokes 9 What do you get when you cross a snowman with a vampire? Frostbite.
 jokes 10 Want to hear a joke about paper? Never mind. It's tearable.
 jokes 11 What did the drummer call his twin daughters? Anna one, Anna two!
 jokes 12 What sound does a witches car make? Broom Broom.
