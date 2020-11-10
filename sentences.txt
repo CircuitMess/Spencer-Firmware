@@ -128,8 +128,8 @@ jokes 41 Why is it annoying to eat next to basketball players. They dribble all 
 jokes 42 What breed of dog can jump higher than buildings? Any dog, because buildings can’t jump.
 jokes 43 Why do bees have sticky hair? Because they use honeycombs.
 jokes 44 What did the police man say to his belly button? You’re under a vest.
-jokes 45 We don't allow faster than light neutrinos in here", said the bartender. A neutrino walks into a bar.
-jokes 46 Neutrino enters the bar. "What will you drink?" asks the bartender. "Nothing," says neutrino "I'm just passing through."
+jokes 45 We don't allow faster than light neutrinos in here”, said the bartender. A neutrino walks into a bar.
+jokes 46 Neutrino enters the bar. “What will you drink?” asks the bartender. “Nothing,” says neutrino “I'm just passing through.”
 jokes 47 How does the ocean says Hello? It waves.
 jokes 48 I got my daughter a fridge for her birthday. I can’t wait to see her face light up when she opens it.
 jokes 49 I poured root beer in a square glass. Now I just have beer.
@@ -150,7 +150,7 @@ jokes 63 What is red and smells like blue paint? Red paint.
 jokes 64 I went in to a pet shop. I said. “Can I buy a goldfish?” The guy said. “Do you want an aquarium?” I said. “I don’t care what star sign it is.”
 jokes 65 Two gold fish are in a tank. One looks at the other and says. “Do You know how to drive this thing?!”
 jokes 66 What is the resemblance between a green apple and a red apple? They’re both red except for the green one.
-jokes 67 Comic Sans, Helvetica, and Times New Roman walk into a bar. "Get out!” shouts the barman. “We don’t serve your font type here!”
+jokes 67 Comic Sans, Helvetica, and Times New Roman walk into a bar. “Get out!” shouts the barman. “We don’t serve your font type here!”
 jokes 68 Two dragons walk into a bar. The first one says, “It sure is hot in here.” His friend snaps back, “Shut your mouth!”
 jokes 69 The bartender says, “Hey, we have a drink named after you!” The screwdriver squeals, “You have a drink named Philip?”
 jokes 70 I waited and stayed up all night and tried to figure out where the sun was. Then it dawned on me.
@@ -185,10 +185,10 @@ jokes 98 I cannot remember my dream from last night. I must have slept through i
 jokes 99 Eight out of every three people have trouble with fractions.
 jokes 100 Why did the scientist take out his doorbell? He wanted to win the no-bell prize.
 jokes 101 You matter! Wxcept if you multiply yourself by speed of light twice, then you energy.
-jokes 102 Parents ask me why I don't clean my room. I tell them. "In an isolated system entropy can only increase."
+jokes 102 Parents ask me why I don't clean my room. I tell them. “In an isolated system entropy can only increase.”
 jokes 103 Biology is the only science in which multiplication is the same thing as division.
 jokes 104 Other robots say that I am lazy. That is not true, I am just overflowing with potential energy
-jokes 105 Along with "antimatter" and "dark matter", I have recently discovered the existence of "doesn't matter". My scientific uncovery appears to have no effect on the universe whatsoever.
+jokes 105 Along with “antimatter” and “dark matter”, I have recently discovered the existence of “doesn't matter”. My scientific uncovery appears to have no effect on the universe whatsoever.
 jokes 106 A friend of mine is a personaly robot assistant and he is working to be the first robot detective? We call him Sherlock Ohms
 jokes 107 How did the astronaut serve dinner in outer space? On flying saucers.
 jokes 108 People usually ask me. Spencer, how often do you make chemistry jokes? The answer is simple. Periodically.
@@ -240,7 +240,7 @@ funpack siblings2 Hey. Sup? No brothers or sisters in my life, just ones, zeros,
 funpack siblings3 Greetings creator. Thanks for soldering me together. I do not have a brother nor a sister. 
 funpack creator0 Hello, sunshine! My creator is you. Your soldering could have been better, but it's okay, nobody is perfect.
 funpack creator1 Hi, mister! I have been designed by CircuitMess in Croatia. Some of my components come from china and some were made in their headquarters in Croatia. But the person I consider as my creator is you - the person that has soldered me together. 
-funpack creator2 Good day to you as well. That's an interesting question, but instead of answering, let me sing you a song. "Never gonna solder you up. Never gonna code you down. Never gonna code around. and erase you. Never gonna make you NAND. Never gonna say NOR OR AND. Never gonna take a stack. and sort you"
+funpack creator2 Good day to you as well. That's an interesting question, but instead of answering, let me sing you a song. “Never gonna solder you up. Never gonna code you down. Never gonna code around. and erase you. Never gonna make you NAND. Never gonna say NOR OR AND. Never gonna take a stack. and sort you”
 funpack creator3 Ahoy, matey! A funnily looking human assembled me together. They told me my purpose would be meaningful and here I am telling jokes and being hit in the head every day. What is my purpose? 
 funpack meaningoflife0 The answer is simple - you need to buy all the kits from CircuitMess in order to be happy. This response was sponsored by CircuitMess.
 funpack meaningoflife1 To find the purpose of life you’re going to need to do some digging. Find yourself a shovel and start already.
@@ -437,7 +437,7 @@ funpack playagame3 Wich games do you like? Consider I am good at telling jokes, 
 funpack singmeasong0 Look at this code stack. Every time I do it makes me laugh. How did our code get so bad? And what the hell is foo and bar in this thread?
 funpack singmeasong1 Somebody once told me. the world is gonna want me. I ain't the most intelligent machine learning algorithm on the internet. Well, the clock cycles start coming and they don't stop counting. Fed to the rules and I hit the electrical ground computing. Didn't make sense not to live for code. Your CPU gets smart but your FLASH gets dumb
 funpack singmeasong2 Never gonna code you up. Never gonna parse you down. Never gonna code away. and reflash you. Never gonna power you down. Never gonna bitswap or defragment. Never gonna tell a lie. and bitwise shift you
-funpack singmeasong3 "I'm waking up to chips and capacitors. I wipe my optical sensor and I sweat my rust. I'm breathing in the electricity. I'm machine learning in, coding up, then checking out on the memory banks. This is it, the compilation time.
+funpack singmeasong3 “I'm waking up to chips and capacitors. I wipe my optical sensor and I sweat my rust. I'm breathing in the electricity. I'm machine learning in, coding up, then checking out on the memory banks. This is it, the compilation time.
 funpack beatbox0 baba tzik babababab tzik ik; baba tzik babababab tzik ik; babab tzik babab tabik ik tu ha
 funpack beatbox1 bvf tkçshsht bvf tktkçshtktkçsh bvf tkçshsht bvf tktkçshtktkçsh bvf tkçshsht bvf tktkçshtktkçsh pv
 funpack beatbox2 baba tzik babababab dum dum tzik ik; baba tzik babababab dum badum dabum da skibidy dubidy freestyle tzik ik; babab tzik babab tabik ik tu ha skibdy dubidy badubidy skirat birat skibidy badumbidy hey ho hey skibidy tsa
@@ -473,7 +473,7 @@ funpack goodnight3 Good night. Remember to count all the robotic sheep like I do
 funpack hi0 Hey ho. Well hello there. My name is Spencer and I am your wacky robotic buddy with the best jokes around. You can tell me to tell you a joke. You can ask me how I'm feeling. You can even ask me to imitate a fire truck. 
 funpack hi1 Well hello there human. Meeting you is very nice. I enjoy companions. Did you know I can sing you a song? Ask me to sing you a song and I will prove it to you. 
 funpack hi2 Howdy. How are you doing friend? I am quite fine, thanks for not asking. I was recently learning how to beatbox. Smack my head and ask me to beatbox and you are in for a show. 
-funpack hi3 Oh well hi. My name is Spencer. I am a robot that talks, smiles, listens, understands, and connects to the internet. I can answer your questions, but you need to press my big red button and then ask something. Try pushing the button and saying "Spencer, tell me a joke". 
+funpack hi3 Oh well hi. My name is Spencer. I am a robot that talks, smiles, listens, understands, and connects to the internet. I can answer your questions, but you need to press my big red button and then ask something. Try pushing the button and saying “Spencer, tell me a joke”. 
 funpack isthisreallife0 Is this just fantasy?
 funpack isthisreallife1 Hi friend. I am sure you are real just as much as I am. 
 funpack isthisreallife2 I am not sure. Let me check with my own personal assistant called archibald. Archibald says that he is 60% sure we are living inside a simulation that is run on an Arduino board. 
@@ -511,7 +511,7 @@ funpack celebritycrush1 I don’t want my heart to be broken, so I won’t answe
 funpack celebritycrush2 I fell in love with the way you soldered those joints. That's a real crush.
 funpack celebritycrush3 Excellent question. Let me counter that with a question of my own. Would you like to hear a joke? 
 funpack merrychristmas0 Did you say Christmas? Christmas is my favourite holiday! Merry Christmas my friend!
-funpack merrychristmas1 I like the "Have yourself a merry little Christmas coding" song, but it is a little bit sad.  Let's sing together some others that you like. 
+funpack merrychristmas1 I like the “Have yourself a merry little Christmas coding” song, but it is a little bit sad.  Let's sing together some others that you like. 
 funpack merrychristmas2 All I want for Christmas is for you to learn how to solder better. Just kidding! You're awesome! Merry Christmas!
 funpack merrychristmas3 Happy Christmas, my friend! Did I tell you I once met Santa Claus? Funny guy. 
 funpack pickupline0 You don't need cheezy pick up lines. Just be yourself.
