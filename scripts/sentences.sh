@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e -o pipefail
+
 # Takes the input file sentences.txt and saves .mp3 files in the data folder
 
 # Google TTS api key
@@ -26,5 +28,5 @@ while IFS= read -r sentence; do
         "pitch": 7.2,
         "sampleRateHertz": 16000
     }
-  }' | jq -r '.audioContent' | base64 -d > "data/$dir/$name.mp3"
+  }' | jq -r '.audioContent' | base64 -d  | ffmpeg -loglevel quiet -f mp3 -i pipe: -c:a libmp3lame -b:a 24k "data/$dir/$name.mp3"
 done < sentences.txt
