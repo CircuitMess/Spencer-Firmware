@@ -22,7 +22,7 @@ public:
 	/**
 	 * Uploads files to the flash chip from SD card. The FS on the SD card will be flattened, replacing
 	 * slashes with dashes. Ex. /special/badum.mp3 becomes `special-badum.mp3` on the flash FS.
-	 * MISO 12, SCK 13, CS 14, MOSI 15
+	 * CS 12 (not used), SCK 13, MISO 14, MOSI 15
 	 */
 	static void uploadSD();
 

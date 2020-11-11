@@ -83,7 +83,7 @@ void FlashTools::listFiles(){
 
 void FlashTools::uploadSD(){
 	SPIClass spiSD(2);
-	spiSD.begin(13, 12, 15, 14);
+	spiSD.begin(13, 14, 15, 12);
 
 	Serial.println("Waiting for SD");
 	while(!SD.begin(14, spiSD, 16000000)){
@@ -112,7 +112,7 @@ void FlashTools::copyDirSD(File& dir, const char* prefix){
 
 	while((fileSD = dir.openNextFile())){
 		const char* fileSDname;
-		const char* nameptr = fileSD.name();
+		const char* nameptr = fileSD.name()-1;
 		while(*++nameptr != '\0'){
 			if(*nameptr == '/') fileSDname = nameptr;
 		}
@@ -121,7 +121,12 @@ void FlashTools::copyDirSD(File& dir, const char* prefix){
 		char filename[MAX_FILENAME];
 
 		if(fileSD.isDirectory()){
-			sprintf(filename, "%s%s%s-", prefix, prefix[0] == '\0' ? "" : "-", fileSDname);
+			if(prefix[0] == '\0'){
+				sprintf(filename, "%s-", fileSDname);
+			}else{
+				sprintf(filename, "%s%s-", prefix, fileSDname);
+			}
+
 			copyDirSD(fileSD, filename);
 			fileSD.close();
 			continue;
