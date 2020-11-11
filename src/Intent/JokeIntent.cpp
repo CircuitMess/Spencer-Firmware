@@ -1,5 +1,6 @@
 #include "JokeIntent.h"
 #include "../Services/Audio/Playback.h"
+#include "../LEDmatrix/LEDmatrix.h"
 JokeIntent::JokeIntent()
 {
 	randomSeed(micros()*millis());
@@ -7,7 +8,7 @@ JokeIntent::JokeIntent()
 	bool jokeFound = 1;
 	do
 	{
-		jokeIndex = random(0, 11);
+		jokeIndex = random(0, numJokes);
 		for(uint i = 0; i < jokeVector.size(); i++)
 		{
 			if(jokeVector[i] == jokeIndex)
@@ -27,6 +28,7 @@ JokeIntent::JokeIntent()
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
 	Playback.playMP3(file);
+	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
 }
 JokeIntent::~JokeIntent()
 {
@@ -36,9 +38,15 @@ void JokeIntent::loop(uint micros)
 {
 	if(!Playback.isRunning() && !badumFlag)
 	{
-		Playback.playMP3(SampleStore::load(SampleGroup::Special, "badum"));
+		uint8_t badumNumber = random(0, 4);
+		char badum[7];
+		sprintf(badum, "badum%d", badumNumber);
+		Playback.playMP3(SampleStore::load(SampleGroup::Special, badum));
+		Playback.setPlaybackDoneCallback([](){
+			done();
+		});
+		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
 		badumFlag = 1;
-		//end
 	}
 }
 
