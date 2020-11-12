@@ -39,13 +39,13 @@ void JokeIntent::loop(uint micros)
 	if(!Playback.isRunning() && !badumFlag)
 	{
 		uint8_t badumNumber = random(0, 4);
-		char badum[7];
+		char badum[8];
 		sprintf(badum, "badum%d", badumNumber);
 		Playback.playMP3(SampleStore::load(SampleGroup::Special, badum));
 		Playback.setPlaybackDoneCallback([](){
 			done();
 		});
-		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
+		LEDmatrix.startAnimation(new Animation("GIF-laugh.gif"), 1);
 		badumFlag = 1;
 	}
 }
