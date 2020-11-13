@@ -2,20 +2,25 @@
 #include <WiFi.h>
 #include <Loop/LoopManager.h>
 #include <SerialFlash.h>
+#include <esp_wifi.h>
 #include "../Settings.h"
 #include "SetupRequestHandler.h"
 
 SetupServer* SetupServer::instance = nullptr;
 
-SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80){
+SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80),
+		task("AP_Task", SetupServer::taskFunc, 4096){
 	instance = this;
 }
 
 SetupServer::~SetupServer(){
+	task.stop(true);
 	instance = nullptr;
 }
 
 void SetupServer::start(){
+	Serial.printf("WiFi task pinned to core %d\n", WIFI_TASK_CORE_ID);
+
 	WiFi.mode(WIFI_AP_STA);
 	delay(2000);
 	WiFi.softAP(SSID, "");
@@ -27,21 +32,25 @@ void SetupServer::start(){
 
 	server.begin();
 
-	LoopManager::addListener(this);
+	task.start(0, 1);
 }
 
 void SetupServer::stop(){
-	server.stop();
-	dnsServer.stop();
-	delay(500);
-	WiFi.softAPdisconnect();
-
-	LoopManager::removeListener(this);
+	task.stop(true);
 }
 
-void SetupServer::loop(uint _time){
-	dnsServer.processNextRequest();
-	server.handleClient();
+void SetupServer::taskFunc(Task* task){
+
+	while(task->running){
+		instance->dnsServer.processNextRequest();
+		instance->server.handleClient();
+		yield();
+	}
+
+	instance->server.stop();
+	instance->dnsServer.stop();
+	delay(500);
+	WiFi.softAPdisconnect();
 }
 
 #define ARR_SIZEOF(x) (sizeof(x) / sizeof(x[0]))
