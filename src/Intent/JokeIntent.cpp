@@ -38,7 +38,7 @@ void JokeIntent::loop(uint micros)
 	{
 		Playback.playMP3(SampleStore::load(SampleGroup::Special, "badum"));
 		badumFlag = 1;
-		//end
+		done();
 	}
 }
 
