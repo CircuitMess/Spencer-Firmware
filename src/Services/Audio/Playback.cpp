@@ -91,7 +91,9 @@ void PlaybackImpl::stopPlayback(bool executeCallback)
 	i2s->stop();
 	if(playbackDoneCallback != nullptr && executeCallback)
 	{
-		playbackDoneCallback();
+		void (*callback)() = playbackDoneCallback;
+		playbackDoneCallback = nullptr;
+		callback();
 	}
 }
 bool PlaybackImpl::isRunning()
