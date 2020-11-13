@@ -17,8 +17,9 @@
 #include "src/Intent/TimeIntent.h"
 #include "src/Services/Audio/Recording.h"
 #include <Util/Task.h>
-#include "src/State/SetupState.h"
 #include "src/Settings.h"
+#include "src/Net.h"
+#include "src/State/SetupState.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -33,8 +34,7 @@ void setup(){
 		return;
 	}
 
-	WiFi.begin("CircuitMess", "MAKERphone!");
-	while(WiFi.status() != WL_CONNECTED);
+	pinMode(BTN_LED, OUTPUT);
 
 	if(!LEDmatrix.begin()){
 		Serial.println("couldn't start matrix");
@@ -57,12 +57,35 @@ void setup(){
 	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
+	LoopManager::addListener(&Net);
 	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());
 
-	State::changeState(new IdleState());
+	if(!Settings.begin()){
+		Settings.reset();
+		Settings.store();
+
+		Playback.playMP3(SampleStore::load(Generic, "firstStartup"));
+		Playback.setPlaybackDoneCallback([](){
+			State::changeState(new SetupState());
+		});
+	}else{
+		Net.set(Settings.get().SSID, Settings.get().pass);
+		Net.connect();
+	}
+
+	Net.setStatusCallback([](wl_status_t status){
+		if(status != WL_CONNECTED){
+			Playback.playMP3(SampleStore::load(Generic, "noNet"));
+			Playback.setPlaybackDoneCallback([](){
+				State::changeState(new SetupState());
+			});
+		}else{
+			State::changeState(new IdleState());
+		}
+	});
 
 	LoopManager::setStackSize(10240);
 	Task::setPinned(true);

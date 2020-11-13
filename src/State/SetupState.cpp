@@ -3,9 +3,8 @@
 #include "../../Spencer.hpp"
 #include "../LEDmatrix/LEDmatrix.h"
 #include "../Services/Audio/Playback.h"
-#include <Loop/LoopManager.h>
-#include <Input/InputGPIO.h>
-#include "../State/IdleState.h"
+#include "../Net.h"
+#include "../Settings.h"
 
 SetupState* SetupState::instance = nullptr;
 
@@ -25,8 +24,9 @@ void SetupState::enter(){
 		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
 	});
 
-	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
-		changeState(new IdleState());
+	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+		if(instance == nullptr) return;
+		instance->exit();
 	});
 
 	server.start();
@@ -35,4 +35,7 @@ void SetupState::enter(){
 void SetupState::exit(){
 	server.stop();
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
+
+	Net.set(Settings.get().SSID, Settings.get().pass);
+	Net.connect();
 }

@@ -1,8 +1,8 @@
-generic HELLO Why hello there! How do you do fellow kids!
-generic NO_INTENT Sorry, I didnt quite catch that.
+generic NO_INTENT Sorry, I didn't quite catch that.
 generic and and
 generic firstStartup Hello! I’m Spencer, your own personal assistant! First things first. In order to work I need an active internet connection.
 generic setupMode I have set up a WiFi hotspot you can connect to. Open your browser, and configure a network I can use.
+generic noNet Looks like I'm having some trouble connecting to a WiFi network.
 numbers 1 1
 numbers 2 2
 numbers 3 3
