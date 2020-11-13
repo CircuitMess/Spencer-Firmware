@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include "LEDmatrix/LEDmatrix.h"
 #include "Net.h"
 
 NetImpl Net;
@@ -13,6 +14,8 @@ void NetImpl::set(const char* ssid, const char* pass){
 }
 
 void NetImpl::connect(){
+	LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
+
 	connectRetries = 0;
 	connecting = true;
 	tryConnect();
