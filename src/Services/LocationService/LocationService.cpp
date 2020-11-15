@@ -1,7 +1,7 @@
 #include "LocationService.h"
 #include <NTPClient.h>
 #include <WiFi.h>
-
+#include <string>
 #define CA "EB:6D:04:1A:C9:07:50:C7:52:C5:BC:69:E0:79:87:A6:5A:E5:2F:A8:23:D7:93:52:8C:9F:E8:62:27:AB:65:47"
 
 LocationServiceImpl LocationService;
@@ -40,7 +40,12 @@ bool LocationServiceImpl::fetchLocation()
 	strcpy(data.city, json["city"].as<const char*>());
 	strcpy(data.countryCode, json["country"].as<const char*>());
 	strcpy(data.timezone, json["timezone"].as<const char*>());
-
+	//"loc": "45.8144,15.9780"
+	std::string loc = json["loc"];
+	size_t pos = loc.find(",");
+	std::string str3 = loc.substr(pos + 1);
+	data.lat = atof(loc.substr(0, pos-1).c_str());
+	data.lon = atof(loc.substr(pos + 1).c_str());
 	//timezone offset request
 	HTTPClient http2;
 	http2.begin("https://spencer.circuitmess.com:8443/timezone", CA);
