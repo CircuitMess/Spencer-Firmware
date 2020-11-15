@@ -22,6 +22,8 @@ private:
 
 	void processRecording();
 	void processIntent();
+	void playRandomBleep();
+	bool bleepPlayed = 0;
 };
 
 

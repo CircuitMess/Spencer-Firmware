@@ -24,7 +24,7 @@ JokeIntent::JokeIntent()
 	{
 		jokeVector.erase(jokeVector.begin());
 	}
-	char buff[3] = {0};
+	char buff[5] = {0};
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
 	Playback.playMP3(file);

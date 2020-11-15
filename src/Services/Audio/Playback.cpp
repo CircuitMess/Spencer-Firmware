@@ -22,7 +22,7 @@ void PlaybackImpl::begin(I2S* i2s)
 	out->SetPinout(16, 27, 4);
 	out->SetChannels(1);
 	out->SetOutputModeMono(1);
-	out->SetGain(0.1);
+	out->SetGain(volume);
 }
 void PlaybackImpl::loop(uint _time)
 {
@@ -102,4 +102,13 @@ void PlaybackImpl::setPlaybackDoneCallback(void (*callback)())
 {
 	if(callback == nullptr || !isRunning()) return;
 	playbackDoneCallback = callback;
+}
+void PlaybackImpl::setVolume(float vol)
+{
+	volume = vol;
+	out->SetGain(volume);
+}
+float PlaybackImpl::getVolume()
+{
+	return volume;
 }
