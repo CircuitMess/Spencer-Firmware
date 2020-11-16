@@ -17,8 +17,9 @@
 #include "src/Intent/TimeIntent.h"
 #include "src/Services/Audio/Recording.h"
 #include <Util/Task.h>
-#include "src/State/SetupState.h"
 #include "src/Settings.h"
+#include "src/Net.h"
+#include "src/State/SetupState.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -33,8 +34,7 @@ void setup(){
 		return;
 	}
 
-	WiFi.begin("CircuitMess", "MAKERphone!");
-	while(WiFi.status() != WL_CONNECTED);
+	pinMode(BTN_LED, OUTPUT);
 
 	if(!LEDmatrix.begin()){
 		Serial.println("couldn't start matrix");
@@ -43,11 +43,6 @@ void setup(){
 	LEDmatrix.clear();
 	LEDmatrix.setBrightness(20);
 	LEDmatrix.setRotation(2);
-
-	if(!Settings.begin()){
-		Settings.reset();
-		Settings.store();
-	}
 
 	I2S* i2s = new I2S();
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
@@ -62,12 +57,32 @@ void setup(){
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());
 
-	State::changeState(new IdleState());
+	if(!Settings.begin()){
+		Settings.reset();
+		Settings.store();
+
+		Playback.playMP3(SampleStore::load(Generic, "firstStartup"));
+		Playback.setPlaybackDoneCallback([](){
+			State::changeState(new SetupState());
+		});
+	}else{
+		Net.set(Settings.get().SSID, Settings.get().pass);
+		Net.connect();
+	}
+
+	Net.setStatusCallback([](wl_status_t status){
+		if(status != WL_CONNECTED){
+			Playback.playMP3(SampleStore::load(Generic, "noNet"));
+			Playback.setPlaybackDoneCallback([](){
+				State::changeState(new SetupState());
+			});
+		}else{
+			State::changeState(new IdleState());
+		}
+	});
 
 	LoopManager::setStackSize(10240);
-	Task::setPinned(true);
-	LoopManager::startTask(10);
-	Task::setPinned(false);
+	LoopManager::startTask(2, 1);
 }
 
 void loop(){
