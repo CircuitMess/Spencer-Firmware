@@ -44,11 +44,6 @@ void setup(){
 	LEDmatrix.setBrightness(20);
 	LEDmatrix.setRotation(2);
 
-	if(!Settings.begin()){
-		Settings.reset();
-		Settings.store();
-	}
-
 	I2S* i2s = new I2S();
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
 	i2s->begin();
@@ -87,9 +82,7 @@ void setup(){
 	});
 
 	LoopManager::setStackSize(10240);
-	Task::setPinned(true);
-	LoopManager::startTask(10);
-	Task::setPinned(false);
+	LoopManager::startTask(2, 1);
 }
 
 void loop(){

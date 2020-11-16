@@ -7,25 +7,28 @@
 #include <DNSServer.h>
 #include <Util/Task.h>
 
-class SetupServer {
+class SetupServer : public LoopListener {
 public:
 	SetupServer();
 	~SetupServer();
 
 	void start();
 	void stop();
-	
+	void loop(uint micros) override;
+
 private:
 	static SetupServer *instance;
-
-	Task task;
-	static void taskFunc(Task* task);
 
 	const char* SSID = "SpencerHotspot";
 
 	const IPAddress spencerIP;
 	WebServer server;
 	DNSServer dnsServer;
+
+	void scan();
+
+	bool scanning = false;
+	String scanned = "";
 
 	void registerHandlers();
 };

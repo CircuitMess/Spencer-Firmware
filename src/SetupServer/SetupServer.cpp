@@ -8,49 +8,42 @@
 
 SetupServer* SetupServer::instance = nullptr;
 
-SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80),
-		task("AP_Task", SetupServer::taskFunc, 4096){
+SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80){
 	instance = this;
-}
 
-SetupServer::~SetupServer(){
-	task.stop(true);
-	instance = nullptr;
-}
-
-void SetupServer::start(){
 	Serial.printf("WiFi task pinned to core %d\n", WIFI_TASK_CORE_ID);
 
-	WiFi.mode(WIFI_AP_STA);
 	delay(2000);
+	esp_wifi_set_ps(WIFI_PS_NONE);
 	WiFi.softAP(SSID, "");
 	WiFi.softAPConfig(spencerIP, spencerIP, IPAddress(255, 255, 255, 0));
 
 	dnsServer.start(53, "*", spencerIP);
 
 	registerHandlers();
+}
 
+SetupServer::~SetupServer(){dnsServer.stop();
+	delay(500);
+	WiFi.softAPdisconnect();
+
+	instance = nullptr;
+}
+
+void SetupServer::start(){
 	server.begin();
-
-	task.start(0, 1);
+	LoopManager::addListener(this);
 }
 
 void SetupServer::stop(){
-	task.stop(true);
+	LoopManager::removeListener(this);
+	server.stop();
 }
 
-void SetupServer::taskFunc(Task* task){
-
-	while(task->running){
-		instance->dnsServer.processNextRequest();
-		instance->server.handleClient();
-		yield();
-	}
-
-	instance->server.stop();
-	instance->dnsServer.stop();
-	delay(500);
-	WiFi.softAPdisconnect();
+void SetupServer::loop(uint micros){
+	dnsServer.processNextRequest();
+	server.handleClient();
+	vTaskDelay(1);
 }
 
 #define ARR_SIZEOF(x) (sizeof(x) / sizeof(x[0]))
@@ -61,17 +54,9 @@ void SetupServer::registerHandlers(){
 	server.on("/scan", HTTP_POST, [](){
 		if(instance == nullptr) return;
 
-		int n = WiFi.scanNetworks();
-		String content = "";
-		for(int i = 0; i < n; i++){
-			content += WiFi.SSID(i);
+		instance->scan();
 
-			if(i != n-1){
-				content += "\n";
-			}
-		}
-
-		instance->server.send(200, "text/plain", content);
+		instance->server.send(200, "text/plain", instance->scanned);
 	});
 
 	server.on("/get", HTTP_POST, [](){
@@ -103,4 +88,22 @@ void SetupServer::registerHandlers(){
 
 		instance->server.send(200, "text/html", "ok");
 	});
+}
+
+void SetupServer::scan(){
+	if(scanning) return;
+
+	scanning = true;
+	int n = WiFi.scanNetworks();
+	String scanned = "";
+	for(int i = 0; i < n; i++){
+		scanned += WiFi.SSID(i);
+
+		if(i != n-1){
+			scanned += "\n";
+		}
+	}
+
+	this->scanned = scanned;
+	scanning = false;
 }

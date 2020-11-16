@@ -56,5 +56,6 @@ void SetupRequestHandler::sendFile(WebServer& server, const char* path){
 	uint readBytes;
 	while(readBytes = file.read(buffer, 1024)){
 		server.sendContent_P(buffer, readBytes);
+		vTaskDelay(1);
 	}
 }

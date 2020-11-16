@@ -21,15 +21,16 @@ void SetupState::enter(){
 	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
 
 	Playback.setPlaybackDoneCallback([](){
+		if(instance == nullptr) return;
+
 		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
+		instance->server.start();
 	});
 
 	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		if(instance == nullptr) return;
 		instance->exit();
 	});
-
-	server.start();
 }
 
 void SetupState::exit(){
