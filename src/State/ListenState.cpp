@@ -29,7 +29,6 @@ void ListenState::exit(){
 }
 
 void ListenState::processRecording(){
-	LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
 	SpeechToIntent.addJob({ recordResult, &intentResult });
 }
 
@@ -47,12 +46,36 @@ void ListenState::processIntent(){
 
 void ListenState::loop(uint micros){
 	if(recordResult != nullptr){
-		processRecording();
-		recordResult = nullptr;
+		if(!bleepPlayed){
+			processRecording();
+			playRandomBleep();
+		}else if(!Playback.isRunning()){
+			Playback.setVolume(Playback.getVolume()*2);
+			recordResult = nullptr;
+			LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
+		}
 		return;
 	}
 
 	if(intentResult != nullptr){
+		Serial.println("recognition done");
 		processIntent();
 	}
+}
+
+void ListenState::playRandomBleep()
+{
+	if(random(0,2) == 1)
+	{
+		LEDmatrix.startAnimation(new Animation("GIF-loading2.gif"), 1);
+		char randomSound[15];
+		sprintf(randomSound, "randomNoise%d", random(0, 12));
+		Playback.setVolume(Playback.getVolume()/2);
+		Playback.playMP3(SampleStore::load(SampleGroup::Special, randomSound));
+	}
+	else{
+		LEDmatrix.startAnimation(new Animation("GIF-loading1.gif"), true);
+	}
+	
+	bleepPlayed = 1;
 }

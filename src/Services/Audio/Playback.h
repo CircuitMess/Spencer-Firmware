@@ -47,6 +47,16 @@ public:
 	 * @param callback Function to be executed after a track is finished.
 	 */
 	void setPlaybackDoneCallback(void (*callback)());
+	/**
+	 * Sets playback volume.
+	 * @param vol Volume, float from 0.0 to 4.0;
+	 */
+	void setVolume(float vol);
+	/**
+	 * Gets playback volume.
+	 * @return Volume, float from 0.0 to 4.0;
+	 */
+	float getVolume();
 	void loop(uint _time) override;
 	bool isRunning();
 
@@ -57,6 +67,7 @@ private:
 	AudioOutputI2S *out;
 	AudioFileSource *file;
 	void(*playbackDoneCallback)();
+	float volume = 0.1;
 
 };
 
