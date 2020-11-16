@@ -29,6 +29,7 @@ void NetImpl::connect(){
 void NetImpl::tryConnect(){
 	WiFi.disconnect(true, true);
 	WiFi.enableSTA(true);
+	WiFi.setSleep(false);
 	WiFi.begin(ssid, pass);
 
 	connectTime = millis();
@@ -42,6 +43,7 @@ void NetImpl::retryConnect(){
 			statusCallback(WL_DISCONNECTED);
 		}
 
+		LoopManager::removeListener(this);
 		return;
 	}
 
