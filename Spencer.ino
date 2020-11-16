@@ -57,7 +57,6 @@ void setup(){
 	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
-	LoopManager::addListener(&Net);
 	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);

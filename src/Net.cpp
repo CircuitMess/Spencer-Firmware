@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <Loop/LoopManager.h>
 #include "LEDmatrix/LEDmatrix.h"
 #include "Net.h"
 
@@ -15,6 +16,8 @@ void NetImpl::set(const char* ssid, const char* pass){
 
 void NetImpl::connect(){
 	LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
+
+	LoopManager::addListener(this);
 
 	connectRetries = 0;
 	connecting = true;
@@ -46,21 +49,22 @@ void NetImpl::retryConnect(){
 }
 
 void NetImpl::loop(uint micros){
-	if(connecting){
-		wl_status_t status = WiFi.status();
+	if(!connecting) return;
 
-		if(!status || status >= WL_DISCONNECTED){
-			// still connecting
-			if(millis() - connectTime >= 10000){ // 10 sec timeout
-				retryConnect();
-			}
-		}else{
-			// done connecting, process result
-			connecting = false;
+	wl_status_t status = WiFi.status();
 
-			if(statusCallback){
-				statusCallback(status);
-			}
+	if(!status || status >= WL_DISCONNECTED){
+		// still connecting
+		if(millis() - connectTime >= 10000){ // 10 sec timeout
+			retryConnect();
+		}
+	}else{
+		// done connecting, process result
+		connecting = false;
+		LoopManager::removeListener(this);
+
+		if(statusCallback){
+			statusCallback(status);
 		}
 	}
 }
