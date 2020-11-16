@@ -20,6 +20,7 @@
 #include "src/Settings.h"
 #include "src/Net.h"
 #include "src/State/SetupState.h"
+#include "src/Services/SerialSetup.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -52,6 +53,7 @@ void setup(){
 	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
+	LoopManager::addListener(new SerialSetup());
 	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
@@ -72,6 +74,7 @@ void setup(){
 
 	Net.setStatusCallback([](wl_status_t status){
 		if(status != WL_CONNECTED){
+			LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
 			Playback.playMP3(SampleStore::load(Generic, "noNet"));
 			Playback.setPlaybackDoneCallback([](){
 				State::changeState(new SetupState());

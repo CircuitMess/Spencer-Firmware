@@ -1,7 +1,7 @@
 generic NO_INTENT Sorry, I didn't quite catch that.
 generic and and
 generic firstStartup Hello! I’m Spencer, your own personal assistant! First things first. In order to work I need an active internet connection.
-generic setupMode I have set up a WiFi hotspot you can connect to. Visit setup.circuitmess.com or enter 10.0.0.1 in your address bar, and configure a network I can use. Tap my button when you're done.
+generic setupMode Open up CircuitBlocks and configure a network I can use.
 generic noNet Looks like I'm having some trouble connecting to a WiFi network.
 numbers 1 1
 numbers 2 2

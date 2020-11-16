@@ -1,6 +1,7 @@
 #ifndef SPENCER_NET_H
 #define SPENCER_NET_H
 
+#include <WiFi.h>
 #include <Loop/LoopListener.h>
 
 class NetImpl : public LoopListener {
