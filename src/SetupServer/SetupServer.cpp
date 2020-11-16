@@ -8,7 +8,7 @@
 
 SetupServer* SetupServer::instance = nullptr;
 
-SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80){
+SetupServer::SetupServer() : spencerIP(10, 0, 0, 1), server(80){
 	instance = this;
 
 	Serial.printf("WiFi task pinned to core %d\n", WIFI_TASK_CORE_ID);
@@ -18,7 +18,7 @@ SetupServer::SetupServer() : spencerIP(8, 8, 4, 4), server(80){
 	WiFi.softAP(SSID, "");
 	WiFi.softAPConfig(spencerIP, spencerIP, IPAddress(255, 255, 255, 0));
 
-	dnsServer.start(53, "*", spencerIP);
+	dnsServer.start(53, "setup.circuitmess.com", spencerIP);
 
 	registerHandlers();
 }
