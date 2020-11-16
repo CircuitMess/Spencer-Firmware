@@ -25,8 +25,13 @@ bool TimeServiceImpl::fetchTime()
 		return false;
 	}
 	setTime(timeClient->getEpochTime());
+	srand(timeClient->getEpochTime());
+
 	timeClient->end();
 	ntpUDP->stop();
+	delete timeClient;
+	delete ntpUDP;
+
 	return true;
 }
 void TimeServiceImpl::loop(uint _time)
