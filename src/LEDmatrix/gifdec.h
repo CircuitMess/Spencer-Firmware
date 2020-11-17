@@ -7,7 +7,7 @@ Library is modified to work with Paul Stoffregen's SerialFlash library.
 (https://github.com/PaulStoffregen/SerialFlash)
 */
 #include <Arduino.h>
-class SerialFlashFile;
+#include <SerialFlash.h>
 
 typedef struct gd_Palette {
     int size;
@@ -23,7 +23,7 @@ typedef struct gd_GCE {
 } gd_GCE;
 
 typedef struct gd_GIF {
-    SerialFlashFile *fd;
+    SerialFlashFile fd;
     off_t anim_start;
     uint16_t width, height;
     uint16_t depth;

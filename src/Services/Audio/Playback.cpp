@@ -1,6 +1,5 @@
 #include "Playback.h"
 #include "Compression.h"
-#include <SerialFlash.h>
 PlaybackImpl Playback;
 PlaybackImpl::PlaybackImpl()
 {
@@ -11,7 +10,6 @@ PlaybackImpl::PlaybackImpl()
 
 PlaybackImpl::~PlaybackImpl()
 {
-	if(file == nullptr) return;
 	delete file;
 }
 void PlaybackImpl::begin(I2S* i2s)
@@ -26,26 +24,21 @@ void PlaybackImpl::begin(I2S* i2s)
 }
 void PlaybackImpl::loop(uint _time)
 {
-	if(wav != nullptr)
-	{
-		if (wav->isRunning()) {
-			if (!wav->loop()){
-				stopPlayback(true);
-			}
+	if(wav != nullptr && wav->isRunning()){
+		if(!wav->loop()){
+			stopPlayback(true);
 		}
 	}
-	if(mp3 != nullptr)
-	{
-		if (mp3->isRunning()) {
-			if (!mp3->loop()){
-				stopPlayback(true);
-			}
+	if(mp3 != nullptr && mp3->isRunning()){
+		if(!mp3->loop()){
+			stopPlayback(true);
 		}
 	}
 }
 void PlaybackImpl::playWAV(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
+	stopPlayback();
 	i2s->begin();
 	file = _file;
 	wav->begin(file, out);
@@ -53,6 +46,7 @@ void PlaybackImpl::playWAV(AudioFileSource* _file)
 void PlaybackImpl::playWAV(const char* path)
 {
 	if(path == nullptr) return;
+	stopPlayback();
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	wav->begin(file, out);
@@ -60,6 +54,7 @@ void PlaybackImpl::playWAV(const char* path)
 void PlaybackImpl::playMP3(AudioFileSource* _file)
 {
 	if(_file == nullptr) return;
+	stopPlayback();
 	i2s->begin();
 	file = _file;
 	if(!mp3->begin(file, out))
@@ -70,29 +65,28 @@ void PlaybackImpl::playMP3(AudioFileSource* _file)
 void PlaybackImpl::playMP3(const char* path)
 {
 	if(path == nullptr) return;
+	stopPlayback();
 	i2s->begin();
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
 void PlaybackImpl::stopPlayback(bool executeCallback)
 {
-	if(wav != nullptr)
-	{
-		if(wav->isRunning()){
-			wav->stop();
-		}
+	if(wav != nullptr && wav->isRunning()){
+		wav->stop();
 	}
-	if(mp3 != nullptr)
-	{
-		if(mp3->isRunning()){
-			mp3->stop();
-		}
+	if(mp3 != nullptr && mp3->isRunning()){
+		mp3->stop();
 	}
+
 	i2s->stop();
-	if(playbackDoneCallback != nullptr && executeCallback)
-	{
-		playbackDoneCallback();
+	delete file;
+	file = nullptr;
+
+	if(playbackDoneCallback != nullptr && executeCallback){
+		void (* callback)() = playbackDoneCallback;
 		playbackDoneCallback = nullptr;
+		callback();
 	}
 }
 bool PlaybackImpl::isRunning()

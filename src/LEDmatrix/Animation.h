@@ -2,6 +2,7 @@
 #define SPENCER_ANIMATION_H
 
 #include <Arduino.h>
+#include <vector>
 #include "gifdec.h"
 
 /*!
@@ -29,13 +30,15 @@ public:
 	~Animation();
 	void rewind();
 	AnimationFrame* getNextFrame();
-	uint getWidth();
-	uint getHeight();
-	uint currentFrame = 0;
+	uint16_t getWidth();
+	uint16_t getHeight();
 
 private:
 	std::vector<AnimationFrame> frames;
-	gd_GIF *gif;
+	uint currentFrame = 0;
+
+	uint16_t width;
+	uint16_t height;
 };
 
 

@@ -15,7 +15,6 @@ public:
 
 private:
 	static SetupState* instance;
-	SetupServer server;
 
 };
 

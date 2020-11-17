@@ -4,10 +4,6 @@ const char *suffixes[7] = {"months", "numbers", "jokes", "generic", "time", "spe
 AudioFileSource* SampleStore::load(SampleGroup group, char* label)
 {
 	char fileName[40];
-	sprintf(fileName, "%s-%s.mp3", suffixes[(int)group], label);
+	sprintf(fileName, "%s-%s.mp3", prefixes[(int) group], label);
 	return new AudioFileSourceSerialFlash(fileName);
-}
-AudioFileSource* SampleStore::load(SampleGroup group, const char* label)
-{
-	return SampleStore::load(group, (char*)label);
 }

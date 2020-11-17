@@ -5,17 +5,17 @@
 #include <WiFi.h>
 #include <Loop/LoopListener.h>
 #include <DNSServer.h>
+#include <Util/Task.h>
 
-class SetupServer : public LoopListener
-{
+class SetupServer : public LoopListener {
 public:
 	SetupServer();
 	~SetupServer();
-	void loop(uint _time) override;
 
 	void start();
 	void stop();
-	
+	void loop(uint micros) override;
+
 private:
 	static SetupServer *instance;
 
@@ -24,6 +24,11 @@ private:
 	const IPAddress spencerIP;
 	WebServer server;
 	DNSServer dnsServer;
+
+	void scan();
+
+	bool scanning = false;
+	String scanned = "";
 
 	void registerHandlers();
 };

@@ -9,7 +9,7 @@ enum SampleGroup{
 class SampleStore
 {
 public:
-	static AudioFileSource* load(SampleGroup group, char* label);
+
 	static AudioFileSource* load(SampleGroup group, const char* label);
 };
 

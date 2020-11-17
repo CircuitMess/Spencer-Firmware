@@ -37,7 +37,7 @@ LEDmatrixImpl::LEDmatrixImpl(uint8_t _width, uint8_t _height)
 */
 /**************************************************************************/
 bool LEDmatrixImpl::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
-	Wire.begin(22, 21, addr);
+	Wire.begin(sda, scl, addr);
 	Wire.setClock(400000);
 
 	_i2caddr = addr;
@@ -386,10 +386,13 @@ void LEDmatrixImpl::push()
 /**************************************************************************/
 void LEDmatrixImpl::startAnimation(Animation* _animation, bool loop)
 {
+	stopAnimation();
+
 	animation = _animation;
 	animationLoop = loop;
 	animationFrame = animation->getNextFrame();
 	drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
+	push();
 	currentFrameTime = 0;
 }
 
@@ -400,6 +403,7 @@ void LEDmatrixImpl::startAnimation(Animation* _animation, bool loop)
 /**************************************************************************/
 void LEDmatrixImpl::stopAnimation()
 {
+	delete animation;
 	animation = nullptr;
 	animationFrame = nullptr;
 	currentFrameTime = 0;
@@ -423,8 +427,10 @@ void LEDmatrixImpl::loop(uint _time)
 				if(animationLoop){
 					animation->rewind();
 					animationFrame = animation->getNextFrame();
+				}else{
+					stopAnimation();
+					return;
 				}
-				else return;
 			}
 			drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
 		}

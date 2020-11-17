@@ -1,11 +1,7 @@
 #include "SetupState.h"
-#include <Input/Input.h>
-#include "../../Spencer.hpp"
 #include "../LEDmatrix/LEDmatrix.h"
 #include "../Services/Audio/Playback.h"
-#include <Loop/LoopManager.h>
-#include <Input/InputGPIO.h>
-#include "../State/IdleState.h"
+#include "../Settings.h"
 
 SetupState* SetupState::instance = nullptr;
 
@@ -20,19 +16,17 @@ SetupState::~SetupState(){
 void SetupState::enter(){
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
-
 	Playback.setPlaybackDoneCallback([](){
-		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
+		LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
 	});
 
-	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
-		changeState(new IdleState());
-	});
-
-	server.start();
+	/*Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+		if(instance == nullptr) return;
+		instance->exit();
+	});*/
 }
 
 void SetupState::exit(){
-	server.stop();
-	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
+	/*Input::getInstance()->removeBtnPressCallback(BTN_PIN);
+	Net.connect();*/
 }

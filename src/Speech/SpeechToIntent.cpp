@@ -35,10 +35,8 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 
 	int wavSize = 0;
 	file.seek(4); //skip RIFF on start of file
-	for(int8_t i = 0; i < 4; i++)
-	{
+	for(int8_t i = 0; i < 4; i++){
 		file.read(&(((char*)(void*)&wavSize)[i]), 1);
-		Serial.println((((char*)(void*)&wavSize)[i]), BIN);
 	}
 	wavSize+=8;
 	file.seek(0);
@@ -143,15 +141,21 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return nullptr;
 	}
 
+	IntentResult* result = new IntentResult;
+
 	if(!json.containsKey("transcript")){
 		Serial.println("Failed recognizing");
-		return nullptr;
+		result->transcript = "";
+		result->intent = "none";
+		result->confidence = 1;
+		return result;
 	}
 
-	IntentResult* result = new IntentResult;
 	result->transcript = json["transcript"].as<const char*>();
 	result->intent = json["intent"]["result"].as<const char*>();
 	result->confidence = json["intent"]["confidence"].as<float>();
+
+	if(result->intent[0] == '\0') result->intent = "none";
 
 	return result;
 }
