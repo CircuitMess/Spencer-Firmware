@@ -24,6 +24,7 @@ LEDmatrixImpl::LEDmatrixImpl(uint8_t _width, uint8_t _height)
 	width = _width;
 	height = _height;
 	brightness = 255;
+	prevBrightness = 0;
 	setRotation(0);
 	matrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
 	pastMatrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
@@ -312,7 +313,7 @@ void LEDmatrixImpl::drawString(int32_t x, int32_t y, const char* c, uint8_t _bri
 /**************************************************************************/
 /*!
 	@brief  Sets global brightness for the matrix.
-	@param   _brightness Global brightness for the matrix.
+	@param   _brightness Global brightness for the matrix. Ranges from 0 to 255.
 */
 /**************************************************************************/
 void LEDmatrixImpl::setBrightness(uint8_t _brightness)
@@ -436,11 +437,17 @@ void LEDmatrixImpl::loop(uint _time)
 		}
 	}
 	bool noChange = 1;
-	for(uint8_t i = 0; i < width*height; i++){
-		if(matrixBuffer[i] != pastMatrixBuffer[i]){
-			noChange = 0;
-			break;
+	if(prevBrightness == brightness)
+	{
+		for(uint8_t i = 0; i < width*height; i++){
+			if(matrixBuffer[i] != pastMatrixBuffer[i]){
+				noChange = 0;
+				break;
+			}
 		}
+	}else{
+		noChange = 0;
+		prevBrightness = brightness;
 	}
 	if(!noChange){
 		push();
