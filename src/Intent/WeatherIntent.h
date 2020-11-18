@@ -24,9 +24,15 @@ private:
 	bool currentWeather();
 	bool tomorrowForecast();
 	bool weeklyForecast();
+	void generateWeeklyDay();
 	static WeatherIntent* instance;
 	AudioFileSource* weatherSpeak;
 	Animation* weatherAnimation;
+	int8_t weeklyIndex = -1;
+	int weeklyTemp[7] = {0};
+	uint16_t weeklyWeatherCode[7] = {0};
+	bool weeklyDayNight[7] = {0};
+	AudioFileSource* weeklyTempSpeak[7] = {0};
 };
 
 
