@@ -126,7 +126,11 @@ bool WeatherIntent::currentWeather()
 			//sunny/clear sky
 		}else{
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "cloudy");
-			weatherAnimation = new Animation("GIF-clouds.gif");
+			if(weatherCode == 801){
+				weatherAnimation = new Animation("GIF-sunClouds.gif");
+			}else{
+				weatherAnimation = new Animation("GIF-clouds.gif");
+			}
 			//cloudy
 		}
 		
@@ -265,7 +269,11 @@ bool WeatherIntent::tomorrowForecast()
 			//sunny/clear sky
 		}else{
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastCloudy");
-			weatherAnimation = new Animation("GIF-clouds.gif");
+			if(weatherCode == 801){
+				weatherAnimation = new Animation("GIF-sunClouds.gif");
+			}else{
+				weatherAnimation = new Animation("GIF-clouds.gif");
+			}
 			//cloudy
 		}
 		
@@ -433,7 +441,11 @@ void WeatherIntent::generateWeeklyDay()
 			//sunny/clear sky
 		}else{
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastCloudy");
-			weatherAnimation = new Animation("GIF-clouds.gif");
+			if(weeklyWeatherCode[weeklyIndex] == 801){
+				weatherAnimation = new Animation("GIF-sunClouds.gif");
+			}else{
+				weatherAnimation = new Animation("GIF-clouds.gif");
+			}
 			//cloudy
 		}
 		
