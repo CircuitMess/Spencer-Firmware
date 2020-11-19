@@ -18,12 +18,7 @@ public:
 
 private:
 	const char* recordResult = nullptr;
-	IntentResult* intentResult = nullptr;
 
-	void processRecording();
-	void processIntent();
-	void playRandomBleep();
-	bool bleepPlayed = 0;
 };
 
 

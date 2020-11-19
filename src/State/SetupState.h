@@ -14,7 +14,6 @@ public:
 	void exit() override;
 
 private:
-	static SetupState* instance;
 
 };
 

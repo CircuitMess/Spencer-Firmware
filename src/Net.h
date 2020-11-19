@@ -14,6 +14,19 @@ public:
 
 	void setStatusCallback(void (* statusCallback)(wl_status_t));
 
+	/**
+	 * Checks if a working Internet connection is established. First, by checking if the WiFi is connected,
+	 * and then trying to establish a connection to spencer.circuitmess.com. This is a blocking function.
+	 * @return True is all OK, false otherwise
+	 */
+	bool checkConnection();
+
+	/**
+	 * Reconnects the WiFi in a blocking fashion. 2 tries, 5s timeout
+	 * @return True if succeeded, false otherwise
+	 */
+	bool reconnect();
+
 private:
 	const char* ssid;
 	const char* pass;
