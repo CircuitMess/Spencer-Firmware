@@ -1,6 +1,6 @@
 #include "Animation.h"
 
-Animation::Animation(char* gifPath)
+Animation::Animation(const char* gifPath)
 {
 	gd_GIF* gif = gd_open_gif(gifPath);
 	if(gif == NULL){

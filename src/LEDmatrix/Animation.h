@@ -26,7 +26,7 @@ struct AnimationFrame
 class Animation
 {
 public:
-	Animation(char* gifPath);
+	Animation(const char* gifPath);
 	~Animation();
 	void rewind();
 	AnimationFrame* getNextFrame();
