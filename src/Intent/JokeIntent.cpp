@@ -1,6 +1,7 @@
 #include "JokeIntent.h"
 #include "../Services/Audio/Playback.h"
 #include "../LEDmatrix/LEDmatrix.h"
+std::vector<uint> JokeIntent::jokeVector;
 JokeIntent::JokeIntent()
 {
 	randomSeed(micros()*millis());
