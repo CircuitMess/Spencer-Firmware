@@ -2,18 +2,24 @@
 #define SPENCER_IDLESTATE_H
 
 #include "State.h"
-
-class IdleState : public State {
+#include <Loop/LoopListener.h>
+class IdleState : public State, public LoopListener{
 public:
 	IdleState();
 	virtual ~IdleState();
 
 	void enter() override;
 	void exit() override;
+	void loop(uint _micros) override;
 
 private:
 	static IdleState* instance;
-
+	static const uint totalAnimations = 3;
+	std::vector<uint> usedIdleAnimations;
+	std::vector<uint> unusedIdleAnimations;
+	void startRandomAnimation();
+	uint8_t animationLoopCounter = 0;
+	bool animationLoopDone = 0;
 };
 
 

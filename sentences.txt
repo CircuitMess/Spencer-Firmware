@@ -3,6 +3,7 @@ generic and and
 generic firstStartup Hello! I’m Spencer, your own personal assistant! First things first. In order to work I need an active internet connection.
 generic setupMode Open up CircuitBlocks and configure a network I can use.
 generic noNet Looks like I'm having some trouble connecting to a WiFi network.
+generic mess Uh oh! Look's like we messed up our circuits! Get it? 'Cause we're CircuitMess! HA. HA. HA. Hilarious. Anyways, please try again in a second.
 numbers 1 1
 numbers 2 2
 numbers 3 3

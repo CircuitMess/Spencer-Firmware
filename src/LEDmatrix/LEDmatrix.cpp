@@ -24,6 +24,7 @@ LEDmatrixImpl::LEDmatrixImpl(uint8_t _width, uint8_t _height)
 	width = _width;
 	height = _height;
 	brightness = 255;
+	prevBrightness = 0;
 	setRotation(0);
 	matrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
 	pastMatrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
@@ -312,7 +313,7 @@ void LEDmatrixImpl::drawString(int32_t x, int32_t y, const char* c, uint8_t _bri
 /**************************************************************************/
 /*!
 	@brief  Sets global brightness for the matrix.
-	@param   _brightness Global brightness for the matrix.
+	@param   _brightness Global brightness for the matrix. Ranges from 0 to 255.
 */
 /**************************************************************************/
 void LEDmatrixImpl::setBrightness(uint8_t _brightness)
@@ -394,6 +395,7 @@ void LEDmatrixImpl::startAnimation(Animation* _animation, bool loop)
 	drawBitmap(0, 0, animation->getWidth(), animation->getHeight(), animationFrame->data);
 	push();
 	currentFrameTime = 0;
+	animationStartMicros = micros();
 }
 
 /**************************************************************************/
@@ -425,6 +427,7 @@ void LEDmatrixImpl::loop(uint _time)
 			animationFrame = animation->getNextFrame();
 			if(animationFrame == nullptr){
 				if(animationLoop){
+					animationStartMicros = micros();
 					animation->rewind();
 					animationFrame = animation->getNextFrame();
 				}else{
@@ -436,11 +439,17 @@ void LEDmatrixImpl::loop(uint _time)
 		}
 	}
 	bool noChange = 1;
-	for(uint8_t i = 0; i < width*height; i++){
-		if(matrixBuffer[i] != pastMatrixBuffer[i]){
-			noChange = 0;
-			break;
+	if(prevBrightness == brightness)
+	{
+		for(uint8_t i = 0; i < width*height; i++){
+			if(matrixBuffer[i] != pastMatrixBuffer[i]){
+				noChange = 0;
+				break;
+			}
 		}
+	}else{
+		noChange = 0;
+		prevBrightness = brightness;
 	}
 	if(!noChange){
 		push();
@@ -488,4 +497,16 @@ void LEDmatrixImpl::drawBitmap(int x, int y, uint width, uint height, RGBpixel* 
 			drawPixel(x + j, y + i, data[i*width + j].r);
 		}
 	}
+}
+
+/**************************************************************************/
+/*!
+	@brief  Returns the completion rate in percentage for the current animation.
+	@return  Completion rate (in percentage 0-100) for the current animation. If none are played, then defaults to zero.
+*/
+/**************************************************************************/
+float LEDmatrixImpl::getAnimationCompletionRate()
+{
+	if(animationFrame == nullptr || animation == nullptr) return 0.0;
+	return ((float)(micros() - animationStartMicros)) / ((float)(animation->getLoopDuration()*1000))*100;
 }

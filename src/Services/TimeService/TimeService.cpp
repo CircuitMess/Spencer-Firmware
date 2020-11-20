@@ -2,46 +2,76 @@
 #include <NTPClient.h>
 #include <WiFi.h>
 #include "../LocationService/LocationService.h"
+#include <Util/Task.h>
+
 TimeServiceImpl TimeService;
-void TimeServiceImpl::setTime(uint unixTime)
-{
+
+TimeServiceImpl::TimeServiceImpl() : timeClient(ntpUDP){
+	fetchTask = new Task("TimeFetch", [](Task* task){
+		if(!Net.checkConnection()){
+			return;
+		}
+
+		TimeServiceImpl* instance = static_cast<TimeServiceImpl*>(task->arg);
+		NTPClient& client = instance->timeClient;
+
+		if(!client.forceUpdate()){
+			Serial.println("Time fetch failed");
+		}
+
+		instance->setTime(client.getEpochTime());
+		instance->fetching = false;
+		instance->refreshMicros = 0;
+	}, 2048, this);
+}
+
+void TimeServiceImpl::begin(){
+	if(running) return;
+
+	timeClient.begin();
+	running = true;
+
+	fetchTime();
+}
+
+void TimeServiceImpl::end(){
+	if(!running) return;
+
+	running = false;
+	timeClient.end();
+	ntpUDP.flush();
+	ntpUDP.stop();
+}
+
+void TimeServiceImpl::setTime(uint unixTime){
 	unixtime = unixTime;
 	currentMillis = millis();
 }
-uint TimeServiceImpl::getTime()
-{
+
+uint TimeServiceImpl::getTime(){
 	uint diff = (millis() - currentMillis) / 1000;
 	return (unixtime + LocationService.getLocation()->timezoneOffset + diff);
 }
-bool TimeServiceImpl::fetchTime()
-{
-	ntpUDP = new WiFiUDP();
-	timeClient = new NTPClient(*ntpUDP);
-	timeClient->begin();
-	
-	if(!timeClient->forceUpdate())
-	{
-		Serial.println("fetch failed");
-		return false;
-	}
-	setTime(timeClient->getEpochTime());
-	srand(timeClient->getEpochTime());
 
-	timeClient->end();
-	ntpUDP->stop();
-	delete timeClient;
-	delete ntpUDP;
-
-	return true;
+void TimeServiceImpl::fetchTime(){
+	if(!running || fetching) return;
+	fetching = true;
+	fetchTask->start(0, 0);
 }
-void TimeServiceImpl::loop(uint _time)
-{
-	if(!WiFi.status() == WL_CONNECTED) return;
 
-	refreshMicros+=_time;
-	if(refreshMicros > 300000000)
-	{
+void TimeServiceImpl::loop(uint _time){
+	if(!running) return;
+
+	refreshMicros += _time;
+	if(refreshMicros > 300000000){ // 5 min, 300000000 us
 		fetchTime();
-		refreshMicros = 0;
+	}
+}
+
+void TimeServiceImpl::state(wl_status_t status){
+	if(status == WL_CONNECTED){
+		begin();
+	}else{
+		end();
 	}
 }

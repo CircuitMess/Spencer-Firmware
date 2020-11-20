@@ -1,6 +1,6 @@
 #include "Animation.h"
 
-Animation::Animation(char* gifPath)
+Animation::Animation(const char* gifPath)
 {
 	gd_GIF* gif = gd_open_gif(gifPath);
 	if(gif == NULL){
@@ -20,6 +20,10 @@ Animation::Animation(char* gifPath)
 	height = gif->height;
 
 	gd_close_gif(gif);
+
+	for(AnimationFrame frame : frames){
+		totalDuration+=frame.duration;
+	}
 }
 
 Animation::~Animation()
@@ -48,4 +52,8 @@ uint16_t Animation::getWidth()
 uint16_t Animation::getHeight()
 {
 	return height;
+}
+uint32_t Animation::getLoopDuration()
+{
+	return totalDuration;
 }

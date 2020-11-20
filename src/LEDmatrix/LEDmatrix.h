@@ -53,6 +53,7 @@ public:
 	void drawBitmap(int x, int y, uint width, uint height, RGBpixel* data);
 
 	void startAnimation(Animation* _animation, bool loop);
+	float getAnimationCompletionRate();
 	void stopAnimation();
 	void loop(uint _time) override;
 
@@ -62,7 +63,7 @@ private:
 	uint8_t readRegister8(uint8_t bank, uint8_t reg);
 	uint8_t _i2caddr, ///< The I2C address we expect to find the chip
 		_frame;       ///< The frame (of 8) we are currently addressing
-	uint8_t width, height, brightness, rotation;
+	uint8_t width, height, brightness, rotation, prevBrightness;
 	uint8_t *matrixBuffer = nullptr;
 	uint8_t *pastMatrixBuffer = nullptr;
 
@@ -70,7 +71,7 @@ private:
 	Animation* animation = nullptr;
 	bool animationLoop = 0;
 	uint currentFrameTime = 0;
-
+	uint animationStartMicros = 0;
 };
 
 extern LEDmatrixImpl LEDmatrix;

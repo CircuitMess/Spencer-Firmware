@@ -2,6 +2,8 @@
 #define SPENCER_COMPOSITEAUDIOFILESOURCE_H
 
 #include <AudioFileSource.h>
+#include <vector>
+
 class CompositeAudioFileSource : public AudioFileSource
 {
 public:

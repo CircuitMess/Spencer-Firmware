@@ -8,6 +8,7 @@
 #include "../AsyncProcessor.hpp"
 
 struct IntentResult {
+	enum { OK = 0, OFFLINE, NETWORK, FILE, JSON, INTENT } error;
 	const char* transcript;
 	const char* intent;
 	float confidence;

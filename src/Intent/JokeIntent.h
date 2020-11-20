@@ -15,7 +15,7 @@ public:
 	void loop(uint) override;
 private:
 	static const uint numJokes = 109;
-	std::vector<uint> jokeVector;
+	static std::vector<uint> jokeVector;
 	AudioFileSource *file;
 	bool badumFlag = 0;
 

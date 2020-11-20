@@ -1,11 +1,12 @@
 #include "JokeIntent.h"
 #include "../Services/Audio/Playback.h"
 #include "../LEDmatrix/LEDmatrix.h"
+std::vector<uint> JokeIntent::jokeVector;
 JokeIntent::JokeIntent()
 {
 	randomSeed(micros()*millis());
 	uint jokeIndex = 0;
-	bool jokeFound = 1;
+	bool jokeFound = true;
 	do
 	{
 		jokeIndex = random(0, numJokes);
@@ -13,7 +14,7 @@ JokeIntent::JokeIntent()
 		{
 			if(jokeVector[i] == jokeIndex)
 			{
-				jokeFound = 0;
+				jokeFound = false;
 				break;
 			}
 		}
@@ -28,7 +29,7 @@ JokeIntent::JokeIntent()
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
 	Playback.playMP3(file);
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
+	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 }
 JokeIntent::~JokeIntent()
 {
@@ -45,8 +46,8 @@ void JokeIntent::loop(uint micros)
 		Playback.setPlaybackDoneCallback([](){
 			done();
 		});
-		LEDmatrix.startAnimation(new Animation("GIF-laugh.gif"), 1);
-		badumFlag = 1;
+		LEDmatrix.startAnimation(new Animation(random(0, 2) ? "GIF-laugh.gif" : "GIF-smile.gif"), true);
+		badumFlag = true;
 	}
 }
 

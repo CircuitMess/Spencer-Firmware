@@ -1,12 +1,22 @@
 #include "CompositeAudioFileSource.h"
-CompositeAudioFileSource::CompositeAudioFileSource()
-{
+CompositeAudioFileSource::CompositeAudioFileSource(){
+
 }
-CompositeAudioFileSource::CompositeAudioFileSource(AudioFileSource* file)
-{
-	CompositeAudioFileSource();
+
+CompositeAudioFileSource::CompositeAudioFileSource(AudioFileSource* file) : CompositeAudioFileSource(){
 	add(file);
 }
+
+CompositeAudioFileSource::~CompositeAudioFileSource()
+{
+	for (auto file : filePointers){
+		if(file != nullptr){
+			file->close();
+			delete file;
+		}
+	}
+}
+
 void CompositeAudioFileSource::add(AudioFileSource* file)
 {
 	filePointers.push_back(file);
@@ -18,19 +28,10 @@ AudioFileSource* CompositeAudioFileSource::getCurrentFile()
 	if(currentFileIndex >= filePointers.size()) return nullptr;
 	return filePointers[currentFileIndex];
 }
+
 bool CompositeAudioFileSource::open(const char *filename)
 {
 	return true; //files should already be opened before being added
-}
-
-CompositeAudioFileSource::~CompositeAudioFileSource()
-{
-	for (auto file : filePointers)
-	{
-		if(file != nullptr){
-			file->close();
-		}
-	}
 }
 
 uint32_t CompositeAudioFileSource::read(void *data, uint32_t len)

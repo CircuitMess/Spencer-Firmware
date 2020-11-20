@@ -72,8 +72,16 @@ void setup(){
 		Net.connect();
 	}
 
-	Net.setStatusCallback([](wl_status_t status){
+	Net.addStateListener(&TimeService);
+
+	// TODO: preraditi. dok network ode down tokom trajanja requesta, on prebacuje u SetupState, kao i ovaj callback
+	// TODO: postaviti SetupState koji se ne gasi dok veza nije uspostavljena
+	static bool setuped = false; // hurr
+	Net.addStateCallback([](wl_status_t status){
 		if(status != WL_CONNECTED){
+			if(setuped) return;
+			setuped = true;
+
 			LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
 			Playback.playMP3(SampleStore::load(Generic, "noNet"));
 			Playback.setPlaybackDoneCallback([](){

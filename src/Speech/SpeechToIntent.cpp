@@ -1,9 +1,11 @@
 #include <SerialFlash.h>
 #include <ArduinoJson.h>
+#include <WiFi.h>
 #include "SpeechToIntent.h"
 #include "../Util/Base64Encode.h"
 #include "../DataStream/FileReadStream.h"
 #include "../Util/StreamableHTTPClient.h"
+#include "../Net.h"
 
 #define KEY "AIzaSyCHrLm1YLWFO1UpDEaaiIdJtm49aVODfDE"
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
@@ -15,7 +17,19 @@ SpeechToIntentImpl::SpeechToIntentImpl() : AsyncProcessor("STI_Job"){
 }
 
 void SpeechToIntentImpl::doJob(const STIJob& job){
-	*job.result = identifyVoice(job.recordingFilename);
+	if(!Net.checkConnection() && !Net.reconnect()){
+		*job.result = new IntentResult{ IntentResult::NETWORK, nullptr, nullptr, 0 };
+		return;
+	}
+
+	IntentResult* result = identifyVoice(job.recordingFilename);
+
+	if(result->error != IntentResult::OK){
+		result->intent = result->transcript = nullptr;
+		result->confidence = 0;
+	}
+
+	*job.result = result;
 }
 
 IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
@@ -30,7 +44,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	SerialFlashFile file = SerialFlash.open(filename);
 	if(!file){
 		Serial.println("Couldn't open file for reading");
-		return nullptr;
+		return new IntentResult { IntentResult::FILE };
 	}
 
 	int wavSize = 0;
@@ -60,7 +74,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		return nullptr;
+		return new IntentResult { IntentResult::NETWORK };
 	}
 
 	if(!http.send((uint8_t*) prefix, sizeof(prefix) - 1)){
@@ -68,30 +82,42 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		return nullptr;
+		return new IntentResult { IntentResult::NETWORK };
 	}
 
 	uint sent = 0;
-	auto sendFunc = [&http, &sent](unsigned char byte){
+	auto sendFunc = [&http, &sent](unsigned char byte) -> bool {
 		if(!http.send(&byte, 1)){
 			Serial.println("Error sending data");
 			http.end();
 			http.getStream().stop();
 			http.getStream().flush();
-			return nullptr;
+			return false;
 		}
+
 		sent += 1;
+		return true;
 	};
 
 	for(uint i = 0; i < wavSize; i++){
 		if(!encodeStream.available()) break;
-		sendFunc(encodeStream.get());
+		if(!sendFunc(encodeStream.get())){
+			http.end();
+			http.getStream().stop();
+			http.getStream().flush();
+			return new IntentResult { IntentResult::NETWORK };
+		}
 	}
 
 	file.seek(file.size());
 
 	while(encodeStream.available()){
-		sendFunc(encodeStream.get());
+		if(!sendFunc(encodeStream.get())){
+			http.end();
+			http.getStream().stop();
+			http.getStream().flush();
+			return new IntentResult { IntentResult::NETWORK };
+		}
 	}
 
 	if(!http.send((uint8_t*) suffix, sizeof(suffix) - 1)){
@@ -99,7 +125,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		return nullptr;
+		return new IntentResult { IntentResult::NETWORK };
 	}
 
 	sent += sizeof(prefix) - 1;
@@ -112,7 +138,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 			http.end();
 			http.getStream().stop();
 			http.getStream().flush();
-			return nullptr;
+			return new IntentResult { IntentResult::NETWORK };
 		}
 
 		sent++;
@@ -124,7 +150,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		return nullptr;
+		return new IntentResult { IntentResult::NETWORK };
 	}
 
 	const int SIZE = 2 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(6) + 200;
@@ -138,19 +164,17 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
-		return nullptr;
+		return new IntentResult { IntentResult::JSON };
 	}
-
-	IntentResult* result = new IntentResult;
 
 	if(!json.containsKey("transcript")){
 		Serial.println("Failed recognizing");
-		result->transcript = "";
-		result->intent = "none";
-		result->confidence = 1;
-		return result;
+		return new IntentResult { IntentResult::INTENT };
 	}
 
+	// TODO: provjerit dal se vrši prijenos vlasništva
+	IntentResult* result = new IntentResult;
+	result->error = IntentResult::OK;
 	result->transcript = json["transcript"].as<const char*>();
 	result->intent = json["intent"]["result"].as<const char*>();
 	result->confidence = json["intent"]["confidence"].as<float>();
