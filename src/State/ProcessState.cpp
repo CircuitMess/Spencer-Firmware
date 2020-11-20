@@ -69,10 +69,13 @@ void ProcessState::processIntent(){
 void ProcessState::bleep(){
 	if(random(0,2)) return;
 
-	char randomSound[15];
-	sprintf(randomSound, "randomNoise%d", random(0, 12));
+	uint8_t index =  random(0, 12);
+	char randomSound[18];
+	sprintf(randomSound, "randomNoise%d", index);
 	// Playback.setVolume(Playback.getVolume()/2);
 	Playback.playMP3(SampleStore::load(SampleGroup::Special, randomSound));
+	sprintf(randomSound, "GIF-random%d.gif", index);
+	LEDmatrix.startAnimation(new Animation(randomSound), true);
 }
 
 void ProcessState::enter(){
