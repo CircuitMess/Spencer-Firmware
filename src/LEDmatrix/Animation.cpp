@@ -53,7 +53,7 @@ uint16_t Animation::getHeight()
 {
 	return height;
 }
-uint32_t Animation::getLoopLength()
+uint32_t Animation::getLoopDuration()
 {
 	return totalDuration;
 }

@@ -508,5 +508,5 @@ void LEDmatrixImpl::drawBitmap(int x, int y, uint width, uint height, RGBpixel* 
 float LEDmatrixImpl::getAnimationCompletionRate()
 {
 	if(animationFrame == nullptr || animation == nullptr) return 0.0;
-	return ((float)(micros() - animationStartMicros)) / ((float)(animation->getLoopDuration()*1000));
+	return ((float)(micros() - animationStartMicros)) / ((float)(animation->getLoopDuration()*1000))*100;
 }
