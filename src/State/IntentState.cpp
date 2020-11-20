@@ -18,6 +18,7 @@ void IntentState::intentDone(){
 }
 
 void IntentState::loop(uint micros){
+	if(intent == nullptr) return;
 	intent->loop(micros);
 }
 
@@ -27,4 +28,7 @@ void IntentState::enter(){
 
 void IntentState::exit(){
 	LoopManager::removeListener(this);
+
+	delete intent;
+	intent = nullptr;
 }
