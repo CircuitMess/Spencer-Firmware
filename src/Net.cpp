@@ -15,8 +15,24 @@ void NetImpl::set(const char* ssid, const char* pass){
 	this->pass = pass;
 }
 
+void NetImpl::setState(wl_status_t state){
+	if(this->state != state){
+		this->state = state;
+
+		for(const auto& listener : stateListeners){
+			listener->state(state);
+		}
+
+		for(const auto& callback : stateCallbacks){
+			callback(state);
+		}
+	}
+}
+
 void NetImpl::connect(){
 	LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
+
+	state = WL_DISCONNECTED;
 
 	LoopManager::addListener(this);
 
@@ -24,8 +40,6 @@ void NetImpl::connect(){
 	connecting = true;
 	tryConnect();
 }
-
-// status() || status() >= WL_DISCONNECTED
 
 void NetImpl::tryConnect(){
 	WiFi.disconnect(true);
@@ -40,9 +54,7 @@ void NetImpl::retryConnect(){
 	if(++connectRetries == 3){
 		connecting = false;
 
-		if(statusCallback){
-			statusCallback(WL_DISCONNECTED);
-		}
+		setState(WL_DISCONNECTED);
 
 		LoopManager::removeListener(this);
 		return;
@@ -62,8 +74,8 @@ void NetImpl::loop(uint micros){
 			retryConnect();
 		}
 	}else{
+		// WiFi can get messed up sometimes, so retry if failed after only one try
 		if(status != WL_CONNECTED && connectRetries == 0){
-			// WiFi can get messed up sometimes, so retry if failed after only one try
 			retryConnect();
 			return;
 		}
@@ -72,18 +84,23 @@ void NetImpl::loop(uint micros){
 		connecting = false;
 		LoopManager::removeListener(this);
 
-		if(statusCallback){
-			statusCallback(status);
-		}
+		setState(status);
 	}
 }
 
-void NetImpl::setStatusCallback(void (* statusCallback)(wl_status_t)){
-	NetImpl::statusCallback = statusCallback;
+void NetImpl::addStateCallback(NetStateCallback* callback){
+	stateCallbacks.push_back(callback);
+}
+
+void NetImpl::addStateListener(NetStateListener* listener){
+	stateListeners.push_back(listener);
 }
 
 bool NetImpl::checkConnection(){
-	if(WiFi.status() != WL_CONNECTED) return false;
+	if(WiFi.status() != WL_CONNECTED){
+		setState(WL_DISCONNECTED);
+		return false;
+	}
 
 	HTTPClient client;
 	client.setConnectTimeout(2000);
@@ -93,6 +110,7 @@ bool NetImpl::checkConnection(){
 	if(!client.begin("http://spencer.circuitmess.com:7979/index")){
 		client.end();
 		client.getStream().flush();
+		setState(WL_DISCONNECTED);
 		return false;
 	}
 
@@ -102,6 +120,7 @@ bool NetImpl::checkConnection(){
 	if(code != 200){
 		client.end();
 		client.getStream().flush();
+		setState(WL_DISCONNECTED);
 		return false;
 	}
 
@@ -109,7 +128,13 @@ bool NetImpl::checkConnection(){
 	client.end();
 	client.getStream().flush();
 
-	return data.substring(0, 2) == "OK";
+	if(data.substring(0, 2) != "OK"){
+		setState(WL_DISCONNECTED);
+		return false;
+	}
+
+	setState(WL_CONNECTED);
+	return true;
 }
 
 bool NetImpl::reconnect(){
@@ -122,8 +147,8 @@ bool NetImpl::reconnect(){
 			delay(500);
 			if(millis() - connectTime >= 5000) break;
 		}
-
 	}
 
-	return WiFi.status() == WL_CONNECTED;
+	setState(WiFi.status());
+	return state == WL_CONNECTED;
 }

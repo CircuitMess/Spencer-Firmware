@@ -12,7 +12,7 @@ class AsyncProcessor {
 public:
 
 	/**
-	 * Add a job to the queue. When completed, *job.result will point to an instance of *Result.
+	 * Add a job to the queue. When completed, Xjob.result will point to an instance of XResult.
 	 * Ownership of the object is transferred to the caller, and should be deallocated after use.
 	 * * @param job
 	 */
