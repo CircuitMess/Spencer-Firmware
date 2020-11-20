@@ -53,6 +53,7 @@ public:
 	void drawBitmap(int x, int y, uint width, uint height, RGBpixel* data);
 
 	void startAnimation(Animation* _animation, bool loop);
+	float getAnimationCompletionRate();
 	void stopAnimation();
 	void loop(uint _time) override;
 
@@ -70,7 +71,7 @@ private:
 	Animation* animation = nullptr;
 	bool animationLoop = 0;
 	uint currentFrameTime = 0;
-
+	uint animationStartMicros = 0;
 };
 
 extern LEDmatrixImpl LEDmatrix;

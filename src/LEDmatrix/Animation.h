@@ -32,6 +32,7 @@ public:
 	AnimationFrame* getNextFrame();
 	uint16_t getWidth();
 	uint16_t getHeight();
+	uint32_t getLoopDuration();
 
 private:
 	std::vector<AnimationFrame> frames;
@@ -39,6 +40,7 @@ private:
 
 	uint16_t width;
 	uint16_t height;
+	uint32_t totalDuration = 0;
 };
 
 
