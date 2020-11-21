@@ -34,7 +34,7 @@ private:
 };
 
 template<typename T>
-AsyncProcessor<T>::AsyncProcessor(const char* name, uint16_t queueSize) : task(name, taskFunc, 6144, this), semaphore(queueSize){
+AsyncProcessor<T>::AsyncProcessor(const char* name, uint16_t queueSize) : task(name, taskFunc, 8192, this), semaphore(queueSize){
 	task.start(1, 0);
 }
 
