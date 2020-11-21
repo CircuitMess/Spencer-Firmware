@@ -41,6 +41,7 @@ void PlaybackImpl::playWAV(AudioFileSource* _file)
 	stopPlayback(true);
 
 	i2s->begin();
+	delay(50);
 	file = _file;
 	wav->begin(file, out);
 }
@@ -50,6 +51,7 @@ void PlaybackImpl::playWAV(const char* path)
 	stopPlayback(true);
 
 	i2s->begin();
+	delay(50);
 	file = new AudioFileSourceSerialFlash(path);
 	wav->begin(file, out);
 }
@@ -59,6 +61,7 @@ void PlaybackImpl::playMP3(AudioFileSource* _file)
 	stopPlayback(true);
 
 	i2s->begin();
+	delay(50);
 	file = _file;
 	if(!mp3->begin(file, out))
 	{
@@ -71,6 +74,7 @@ void PlaybackImpl::playMP3(const char* path)
 	stopPlayback(true);
 
 	i2s->begin();
+	delay(50);
 	file = new AudioFileSourceSerialFlash(path);
 	mp3->begin(file, out);
 }
