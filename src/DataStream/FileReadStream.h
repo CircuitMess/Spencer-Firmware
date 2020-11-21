@@ -14,6 +14,8 @@ public:
 	bool available() override;
 	unsigned char get() override;
 
+	void clearBuffer();
+
 private:
 	const uint32_t bufferSize = 256;
 

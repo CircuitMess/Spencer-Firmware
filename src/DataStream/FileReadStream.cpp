@@ -23,3 +23,7 @@ unsigned char FileReadStream::get(){
 	buffer.erase(buffer.begin());
 	return byte;
 }
+
+void FileReadStream::clearBuffer(){
+	buffer.clear();
+}

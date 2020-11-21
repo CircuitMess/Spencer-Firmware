@@ -47,13 +47,15 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return new IntentResult { IntentResult::FILE };
 	}
 
-	int wavSize = 0;
+	uint wavSize = 0;
 	file.seek(4); //skip RIFF on start of file
 	for(int8_t i = 0; i < 4; i++){
 		file.read(&(((char*)(void*)&wavSize)[i]), 1);
 	}
 	wavSize+=8;
 	file.seek(0);
+
+	uint wavSendSize = ceil((float) wavSize * (4.0f / 3.0f)) + 8;
 
 	FileReadStream fileStream(&file);
 	Base64Encode encodeStream(&fileStream);
@@ -66,7 +68,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	http.addHeader("Content-Type", "application/json; charset=utf-8");
 	http.addHeader("Accept-Encoding", "identity");
 
-	uint length = sizeof(prefix) + sizeof(suffix) + ceil((float) wavSize * (4.0f / 3.0f)) + 20;
+	uint length = sizeof(prefix) + sizeof(suffix) + wavSendSize + 8;
 	http.addHeader("Content-Length", String(length));
 
 	if(!http.startPOST()){
@@ -99,7 +101,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return true;
 	};
 
-	for(uint i = 0; i < wavSize; i++){
+	for(uint i = 0; i < wavSendSize; i++){
 		if(!encodeStream.available()) break;
 		if(!sendFunc(encodeStream.get())){
 			http.end();
@@ -110,6 +112,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	}
 
 	file.seek(file.size());
+	fileStream.clearBuffer();
 
 	while(encodeStream.available()){
 		if(!sendFunc(encodeStream.get())){
