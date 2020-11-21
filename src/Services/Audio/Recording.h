@@ -24,8 +24,9 @@ private:
 	const uint16_t wavHeaderSize = 44;
 	const uint32_t i2sBufferSize = 1600;
 	const uint32_t sampleRate = 16000;
-	const float maxRecordTime = 3.0f; // in seconds
-	const float cutoffThreshold = 0.5f;
+	const float minRecordTime = 2.0f; // in seconds
+	const float maxRecordTime = 3.5f; // in seconds
+	const float cutoffThreshold = 0.3f;
 	const float cutoffTime = 1.0f; // in seconds, time where amplitude is below max*cutoffThreshold before recording is cut
 #define avgBufferSize 10
 

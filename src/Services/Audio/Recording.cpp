@@ -50,6 +50,9 @@ void RecordingImpl::record(){
 			int16_t sample = *(int16_t*) (&i2sBuffer[j + 2]) + 3705;
 			wavBuffer[j / 4] = sample;
 
+			// Don't record max first 0.5s
+			if(wavTotalWritten < 0.5 * 2 * sampleRate) continue;
+
 			ampBuffer[ampPointer++] = abs(sample);
 			if(ampPointer == avgBufferSize){
 				ampPointer = 0;
@@ -68,12 +71,15 @@ void RecordingImpl::record(){
 			}else if(underMax){
 				underMax = false;
 			}
-
 		}
 
 		file.write(wavBuffer, wavBufferSize);
 		wavTotalWritten += wavBufferSize;
-		if(underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
+		if((wavTotalWritten > minRecordTime * sampleRate * 2)
+		&& (wavTotalWritten > 0.5 * 2 * sampleRate + avgBufferSize*2) // don't cutoff if we didn't even begin measuring
+		&& underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
+			Serial.println("cutoff");
+			// wavTotalWritten -= cutoffTime * sampleRate; // half of cutoff time
 			break;
 		}
 	}
