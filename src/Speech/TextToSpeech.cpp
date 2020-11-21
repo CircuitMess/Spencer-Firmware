@@ -46,7 +46,7 @@ const char* TextToSpeechImpl::generateSpeech(const char* text, const char* filen
 						   "}, 'audioConfig': {"
 						   "'audioEncoding': 'MP3',"
 						   "'speakingRate': 0.96,"
-						   "'pitch': 7.2,"
+						   "'pitch': 5.5,"
 						   "'sampleRateHertz': 16000"
 						   "}}";
 

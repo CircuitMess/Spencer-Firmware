@@ -25,7 +25,7 @@ while IFS= read -r sentence; do
     "audioConfig": {
         "audioEncoding": "MP3",
         "speakingRate": 0.96,
-        "pitch": 7.2,
+        "pitch": 5.5,
         "sampleRateHertz": 16000
     }
   }' | jq -r '.audioContent' | base64 -d  | ffmpeg -loglevel quiet -f mp3 -i pipe: -c:a libmp3lame -b:a 24k "data/$dir/$name.mp3"
