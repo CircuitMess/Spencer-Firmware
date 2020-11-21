@@ -42,12 +42,13 @@ WeatherIntent::WeatherIntent(void* _params)
 		instance->doneFetching = true;
 		Serial.println("done fetching");
 
-	}, 40000);
+	}, 8000);
 	fetchTask->start(1, 0);
 }
 
 WeatherIntent::~WeatherIntent()
 {
+	delete fetchTask;
 }
 
 void WeatherIntent::loop(uint _time)
