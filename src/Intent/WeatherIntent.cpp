@@ -40,7 +40,6 @@ WeatherIntent::WeatherIntent(void* _params)
 			instance->weeklyForecast();
 		}
 		instance->doneFetching = true;
-		Serial.println("done fetching");
 
 	}, 8000);
 	fetchTask->start(1, 0);
@@ -55,7 +54,6 @@ void WeatherIntent::loop(uint _time)
 {
 	if(doneFetching){
 		if(result != nullptr){
-			Serial.println("result found");
 			switch (result->error)
 			{
 			case WeatherResult::OK:
@@ -108,7 +106,6 @@ void WeatherIntent::loop(uint _time)
 				break;
 			
 			case WeatherResult::JSON:
-				Serial.println("json error");
 				LEDmatrix.startAnimation(new Animation("GIF-error500.gif"), true);
 				Playback.playMP3("generic-mess.mp3");
 				delete result;
@@ -132,7 +129,6 @@ void WeatherIntent::currentWeather()
 	http.setReuse(false);
 	char *url = (char*)calloc(150, sizeof(char));
 	sprintf(url, "https://api.openweathermap.org/data/2.5/weather?appid=%s&lon=%.6f&lat=%.6f", KEY, LocationService.getLocation()->lon, LocationService.getLocation()->lat);
-	Serial.println(url);
 
 	bool httpOK = http.begin(url, CA);
 	free(url);
@@ -166,7 +162,6 @@ void WeatherIntent::currentWeather()
 		json.clear();
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
-		Serial.println(json.size());
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
@@ -196,7 +191,6 @@ void WeatherIntent::currentWeather()
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
-		Serial.println(json.size());
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		json.clear();
 		return;
@@ -204,7 +198,6 @@ void WeatherIntent::currentWeather()
 	// serializeJsonPretty(json, Serial);
 	
 	int temp = roundl(json["temp"].as<float>() - 273.15);
-	Serial.println(temp);
 	int feelsLike = roundl(json["feels_like"].as<float>() - 273.15);
 
 	json.clear();
@@ -353,7 +346,6 @@ void WeatherIntent::tomorrowForecast()
 		return;
 	}
 	int temp = roundl(json["day"].as<float>() - 273.15);
-	Serial.println(temp);
 
 	if(!http.getStream().find('[')){
 		instance->result = new WeatherResult{WeatherResult::JSON};
@@ -396,7 +388,6 @@ void WeatherIntent::weeklyForecast()
 	http.setReuse(false);
 	char *url = (char*)calloc(150, sizeof(char));
 	sprintf(url, "https://api.openweathermap.org/data/2.5/forecast/daily?appid=%s&lon=%.6f&lat=%.6f&cnt=8", KEY, LocationService.getLocation()->lon, LocationService.getLocation()->lat);
-	Serial.println(url);
 	bool httpOK = http.begin(url, CA);
 	free(url);
 	if(!httpOK){
@@ -501,11 +492,6 @@ void WeatherIntent::weeklyForecast()
 
 void WeatherIntent::generateWeeklyDay()
 {
-	Serial.println("-----------------------");
-	Serial.printf("weeklyDay: %d\n", weeklyIndex);
-	// Serial.println(weeklyTemp[weeklyIndex]);
-	// Serial.println(weeklyWeatherCode[weeklyIndex]);
-	// Serial.println(weeklyDayNight[weeklyIndex]);
 	if(weeklyIndex > 6){
 		done();
 		return;
@@ -517,7 +503,6 @@ void WeatherIntent::generateWeeklyDay()
 	if(currentDay > 7){
 		currentDay-=7;
 	}
-	Serial.println(currentDay);
 	sprintf(buff, "%d", currentDay);
 	tempSpeak->add(SampleStore::load(SampleGroup::Weekdays, buff));
 	tempSpeak->add(SampleStore::load(SampleGroup::Weather, "forecast"));
