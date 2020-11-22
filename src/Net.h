@@ -3,6 +3,7 @@
 
 #include <WiFi.h>
 #include <Loop/LoopListener.h>
+#include <Util/Vector.h>
 
 class NetStateListener {
 private: virtual void state(wl_status_t) = 0;
@@ -12,7 +13,13 @@ friend class NetImpl;
 class NetImpl : public LoopListener {
 public:
 	NetImpl();
+
 	void set(const char* ssid, const char* pass);
+
+	/**
+	 * A void function that takes a wl_status_t argument.
+	 */
+	typedef void (NetStateCallback)(wl_status_t);
 
 	/**
 	 * Connects to the WiFi in a non-blocking fashion, in the loop thread. 3 tries, 5s timeout.
@@ -20,15 +27,12 @@ public:
 	 * Net.connected() before making network requests.
 	 *
 	 * @see Net.connect()
+	 *
+	 * @param resultCallback will be called in the Loop thread
 	 */
-	void connect();
+	void connect(NetStateCallback* resultCallback = nullptr);
 
 	void loop(uint micros) override;
-
-	/**
-	 * A void function that takes a wl_status_t argument.
-	 */
-	typedef void (NetStateCallback)(wl_status_t);
 
 	/**
 	 * Register a state callback. This will not trigger when the network goes down for reconnection.
@@ -44,6 +48,8 @@ public:
 	 */
 	void addStateListener(NetStateListener* listener);
 
+	void removeStateListener(NetStateListener* listener);
+
 	/**
 	 * Checks if a working Internet connection is established. First, by checking if the WiFi is connected,
 	 * and then trying to establish a connection to spencer.circuitmess.com. This is a blocking function.
@@ -57,12 +63,18 @@ public:
 	 */
 	bool reconnect();
 
+	wl_status_t getState() const;
+
 private:
 	const char* ssid;
 	const char* pass;
 
-	std::vector<NetStateListener*> stateListeners;
+	void checkRemoveListeners();
+	Vector<NetStateListener*> stateListeners;
+	Vector<NetStateListener*> removeStateListeners;
 	std::vector<NetStateCallback*> stateCallbacks;
+
+	NetStateCallback* connectResultCallback = nullptr;
 
 	void setState(wl_status_t state);
 

@@ -17,7 +17,10 @@ void SerialSetup::loop(uint micros){
 	clearNL();
 	readSettings();
 	Serial.println("OK");
-	Net.connect();
+
+	if(settingsSetCallback){
+		settingsSetCallback();
+	}
 }
 
 void SerialSetup::readSettings(){
@@ -48,4 +51,8 @@ void SerialSetup::clearNL(){
 	while(Serial.available() && (Serial.peek() == '\n' || Serial.peek() == '\r')){
 		Serial.read();
 	}
+}
+
+void SerialSetup::setSettingsSetCallback(void (* connectCallback)()){
+	SerialSetup::settingsSetCallback = connectCallback;
 }

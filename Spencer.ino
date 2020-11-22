@@ -19,8 +19,8 @@
 #include <Util/Task.h>
 #include "src/Settings.h"
 #include "src/Net.h"
-#include "src/State/SetupState.h"
 #include "src/Services/SerialSetup.h"
+#include "src/State/StartupState.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -53,44 +53,16 @@ void setup(){
 	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
-	LoopManager::addListener(new SerialSetup());
 	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(new InputGPIO());
 
-	if(!Settings.begin()){
-		Settings.reset();
-		Settings.store();
-
-		Playback.playMP3(SampleStore::load(Generic, "firstStartup"));
-		Playback.setPlaybackDoneCallback([](){
-			State::changeState(new SetupState());
-		});
-	}else{
-		Net.set(Settings.get().SSID, Settings.get().pass);
-		Net.connect();
-	}
+	Net.set(Settings.get().SSID, Settings.get().pass);
 
 	Net.addStateListener(&TimeService);
 
-	// TODO: preraditi. dok network ode down tokom trajanja requesta, on prebacuje u SetupState, kao i ovaj callback
-	// TODO: postaviti SetupState koji se ne gasi dok veza nije uspostavljena
-	static bool setuped = false; // hurr
-	Net.addStateCallback([](wl_status_t status){
-		if(status != WL_CONNECTED){
-			if(setuped) return;
-			setuped = true;
-
-			LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
-			Playback.playMP3(SampleStore::load(Generic, "noNet"));
-			Playback.setPlaybackDoneCallback([](){
-				State::changeState(new SetupState());
-			});
-		}else{
-			State::changeState(new IdleState());
-		}
-	});
+	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 
 	LoopManager::setStackSize(10240);
 	LoopManager::startTask(2, 1);

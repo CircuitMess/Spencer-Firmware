@@ -8,11 +8,14 @@ TimeServiceImpl TimeService;
 
 TimeServiceImpl::TimeServiceImpl() : timeClient(ntpUDP){
 	fetchTask = new Task("TimeFetch", [](Task* task){
+		TimeServiceImpl* instance = static_cast<TimeServiceImpl*>(task->arg);
+
 		if(!Net.checkConnection()){
+			instance->fetching = false;
+			instance->refreshMicros = 0;
 			return;
 		}
 
-		TimeServiceImpl* instance = static_cast<TimeServiceImpl*>(task->arg);
 		NTPClient& client = instance->timeClient;
 
 		if(!client.forceUpdate()){

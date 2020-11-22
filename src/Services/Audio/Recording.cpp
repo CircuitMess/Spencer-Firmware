@@ -32,16 +32,14 @@ void RecordingImpl::record(){
 	file.erase();
 	file.seek(wavHeaderSize);
 
-	if(!i2s->isInited()){
-		i2s->begin();
-	}
-
 	uint16_t ampBuffer[avgBufferSize] = { 0 };
 	uint16_t ampPointer = 0;
 	uint16_t maxAmp = 0;
 	bool underMax = false;
 	uint underMaxTime = 0;
 	uint32_t wavTotalWritten = 0;
+
+	i2s->begin();
 
 	for(int i = 0; i < noReadings; i++){
 		i2s->Read(i2sBuffer, i2sBufferSize);
@@ -90,6 +88,8 @@ void RecordingImpl::record(){
 
 	free(i2sBuffer);
 	free(wavBuffer);
+
+	i2s->stop();
 
 	compress("recordingRaw.wav", "recording.wav", wavTotalWritten);
 }

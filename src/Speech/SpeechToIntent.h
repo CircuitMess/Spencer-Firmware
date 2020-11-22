@@ -8,10 +8,13 @@
 #include "../AsyncProcessor.hpp"
 
 struct IntentResult {
-	enum { OK = 0, OFFLINE, NETWORK, FILE, JSON, INTENT } error;
-	const char* transcript;
-	const char* intent;
+	enum Error { OK = 0, OFFLINE, NETWORK, FILE, JSON, INTENT } error;
+	char* transcript;
+	char* intent;
 	float confidence;
+
+	IntentResult(Error error);
+	virtual ~IntentResult();
 };
 
 struct STIJob {

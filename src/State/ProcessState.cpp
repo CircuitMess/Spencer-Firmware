@@ -3,9 +3,9 @@
 #include "../Intent/IntentInfo.hpp"
 #include "../LEDmatrix/LEDmatrix.h"
 #include "../Services/Audio/Playback.h"
-#include "SetupState.h"
 #include "../Intent/IntentStore.h"
 #include "IdleState.h"
+#include "ErrorState.h"
 
 ProcessState::ProcessState(const char* recordingFilename) : recordingFilename(recordingFilename){
 
@@ -18,33 +18,23 @@ void ProcessState::processIntent(){
 		delete intentResult;
 		intentResult = nullptr;
 
-		LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
-		Playback.playMP3(SampleStore::load(Generic, "noNet"));
-		Playback.setPlaybackDoneCallback([](){
-			State::changeState(new SetupState());
-		});
-
 		LoopManager::removeListener(this);
+		State::changeState(new ErrorState(ErrorType::WIFI));
 		return;
 	}else if(intentResult->error == IntentResult::NETWORK){
 		delete intentResult;
 		intentResult = nullptr;
 
 		if(retried){
-			LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
-			Playback.playMP3(SampleStore::load(Generic, "noNet"));
-			Playback.setPlaybackDoneCallback([](){
-				State::changeState(new SetupState());
-			});
-
 			LoopManager::removeListener(this);
+			State::changeState(new ErrorState(ErrorType::WIFI));
 			return;
 		}
 
 		retried = true;
 		SpeechToIntent.addJob({ recordingFilename, &intentResult });
 		return;
-	}else if(intentResult->error == IntentResult::INTENT || intentResult->error == IntentResult::JSON || (intent = IntentStore::findIntent(intentResult->intent)) == nullptr){
+	}else if(intentResult->error == IntentResult::INTENT || intentResult->error == IntentResult::JSON || intentResult->intent == nullptr || (intent = IntentStore::findIntent(intentResult->intent)) == nullptr){
 		if(intentResult->error == IntentResult::JSON){
 			LEDmatrix.startAnimation(new Animation("GIF-error500.gif"), true);
 			Playback.playMP3("generic-mess.mp3");

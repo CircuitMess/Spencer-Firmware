@@ -8,6 +8,8 @@ class SerialSetup : public LoopListener {
 public:
 	void loop(uint micros) override;
 
+	void setSettingsSetCallback(void (* connectCallback)());
+
 private:
 	char sig[3];
 	uint8_t cursor = 0;
@@ -16,6 +18,8 @@ private:
 
 	void readIntoBuffer(char* buffer, int limit);
 	void clearNL();
+
+	void (*settingsSetCallback)() = nullptr;
 };
 
 

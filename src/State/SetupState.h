@@ -4,6 +4,7 @@
 #include "State.h"
 #include <Loop/LoopListener.h>
 #include "../SetupServer/SetupServer.h"
+#include "../Services/SerialSetup.h"
 
 class SetupState : public State {
 public:
@@ -14,6 +15,7 @@ public:
 	void exit() override;
 
 private:
+	SerialSetup setup;
 
 };
 

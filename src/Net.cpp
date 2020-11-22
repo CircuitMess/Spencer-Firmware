@@ -19,6 +19,8 @@ void NetImpl::setState(wl_status_t state){
 	if(this->state != state){
 		this->state = state;
 
+		checkRemoveListeners();
+
 		for(const auto& listener : stateListeners){
 			listener->state(state);
 		}
@@ -26,10 +28,16 @@ void NetImpl::setState(wl_status_t state){
 		for(const auto& callback : stateCallbacks){
 			callback(state);
 		}
+
+		checkRemoveListeners();
 	}
 }
 
-void NetImpl::connect(){
+void NetImpl::connect(NetImpl::NetStateCallback* resultCallback){
+	if(connecting) return;
+
+	connectResultCallback = resultCallback;
+
 	LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
 
 	state = WL_DISCONNECTED;
@@ -55,6 +63,12 @@ void NetImpl::retryConnect(){
 		connecting = false;
 
 		setState(WL_DISCONNECTED);
+
+		if(connectResultCallback){
+			NetStateCallback* callback = connectResultCallback;
+			connectResultCallback = nullptr;
+			callback(WL_DISCONNECTED);
+		}
 
 		LoopManager::removeListener(this);
 		return;
@@ -85,6 +99,12 @@ void NetImpl::loop(uint micros){
 		LoopManager::removeListener(this);
 
 		setState(status);
+
+		if(connectResultCallback){
+			NetStateCallback* callback = connectResultCallback;
+			connectResultCallback = nullptr;
+			callback(status);
+		}
 	}
 }
 
@@ -96,7 +116,25 @@ void NetImpl::addStateListener(NetStateListener* listener){
 	stateListeners.push_back(listener);
 }
 
+void NetImpl::removeStateListener(NetStateListener* listener){
+	removeStateListeners.push_back(listener);
+}
+
+void NetImpl::checkRemoveListeners(){
+	for(NetStateListener* listener : removeStateListeners){
+		uint i = stateListeners.indexOf(listener);
+		if(i == (uint) -1) return;
+		stateListeners.remove(i);
+	}
+
+	removeStateListeners.clear();
+}
+
 bool NetImpl::checkConnection(){
+	while(connecting){
+		delay(100);
+	}
+
 	if(WiFi.status() != WL_CONNECTED){
 		setState(WL_DISCONNECTED);
 		return false;
@@ -151,4 +189,8 @@ bool NetImpl::reconnect(){
 
 	setState(WiFi.status());
 	return state == WL_CONNECTED;
+}
+
+wl_status_t NetImpl::getState() const{
+	return state;
 }
