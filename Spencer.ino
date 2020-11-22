@@ -35,7 +35,7 @@ void setup(){
 		return;
 	}
 
-	pinMode(BTN_LED, OUTPUT);
+	pinMode(LED_PIN, OUTPUT);
 
 	if(!LEDmatrix.begin()){
 		Serial.println("couldn't start matrix");

@@ -18,12 +18,14 @@ IdleState::~IdleState(){
 }
 
 void IdleState::enter(){
+	digitalWrite(LED_PIN, 0);
+
 	LoopManager::addListener(this);
 	startRandomAnimation();
 
 	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		if(instance == nullptr) return;
-
+		digitalWrite(LED_PIN, 1);
 		changeState(new ListenState());
 	});
 }
