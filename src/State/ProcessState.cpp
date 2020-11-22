@@ -6,6 +6,7 @@
 #include "../Intent/IntentStore.h"
 #include "IdleState.h"
 #include "ErrorState.h"
+#include "SetupState.h"
 
 ProcessState::ProcessState(const char* recordingFilename) : recordingFilename(recordingFilename){
 
@@ -13,6 +14,8 @@ ProcessState::ProcessState(const char* recordingFilename) : recordingFilename(re
 
 void ProcessState::processIntent(){
 	const IntentInfo* intent;
+
+	bool settings;
 
 	if(intentResult->error == IntentResult::OFFLINE){
 		delete intentResult;
@@ -34,7 +37,10 @@ void ProcessState::processIntent(){
 		retried = true;
 		SpeechToIntent.addJob({ recordingFilename, &intentResult });
 		return;
-	}else if(intentResult->error == IntentResult::INTENT || intentResult->error == IntentResult::JSON || intentResult->intent == nullptr || (intent = IntentStore::findIntent(intentResult->intent)) == nullptr){
+	}else if(intentResult->error == IntentResult::INTENT
+			|| intentResult->error == IntentResult::JSON
+			|| intentResult->intent == nullptr
+			|| (!(settings = std::string(intentResult->intent) == "settings") && (intent = IntentStore::findIntent(intentResult->intent)) == nullptr)){
 		if(intentResult->error == IntentResult::JSON){
 			LEDmatrix.startAnimation(new Animation("GIF-error500.gif"), true);
 			Playback.playMP3("generic-mess.mp3");
@@ -50,6 +56,11 @@ void ProcessState::processIntent(){
 			changeState(new IdleState());
 		});
 
+		return;
+	}
+
+	if(settings){
+		changeState(new SetupState());
 		return;
 	}
 
