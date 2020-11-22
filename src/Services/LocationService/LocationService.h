@@ -10,6 +10,8 @@ struct LocationData
 	char countryCode[3];
 	char timezone[30];
 	int timezoneOffset; //in seconds!
+	float lat;
+	float lon;
 };
 
 class LocationServiceImpl

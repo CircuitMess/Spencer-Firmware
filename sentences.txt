@@ -615,3 +615,27 @@ funpack beammeupscotty0 Logic is the beginning of wisdom, not the end.
 funpack beammeupscotty1 Computers make excellent and efficient servants, but I have no wish to serve under them.
 funpack beammeupscotty2 Go boldly go where no man has gone before.
 funpack beammeupscotty3 Live long, and prosper.
+weather temperature_is The temperature is:
+weather minus minus
+weather celsius degrees Celsius
+weather fahrenheit degrees Fahrenheit
+weather sunny It's sunny outside.
+weather cloudy It's a bit cloudy outside.
+weather rainy It's raining outside.
+weather foggy It's foggy outside.
+weather snowy It's snowing outside.
+weather clear The skies are clear.
+weather forecastSunny It will be sunny.
+weather forecastCloudy It will be a bit cloudy.
+weather forecastRainy There's a chance of rainfall.
+weather forecastFoggy It's going to be foggy.
+weather forecastSnowy There's a chance of snowfall.
+weather forecastClear The skies will be mostly clear.
+weather forecast The temperature will be around:
+weekdays 1 Monday
+weekdays 2 Tuesday
+weekdays 3 Wednesday
+weekdays 4 Thursday
+weekdays 5 Friday
+weekdays 6 Saturday
+weekdays 7 Sunday

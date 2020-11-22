@@ -2,6 +2,7 @@
 #include "TimeIntent.h"
 #include "JokeIntent.h"
 #include "StopwatchIntent.h"
+#include "WeatherIntent.h"
 #include "../Services/TimeService/TimeService.h"
 #include "FunpackInclude.hpp"
 
@@ -26,6 +27,14 @@ void IntentStore::fillStorage(){
 	storage["stopwatch"] = {
 			"stopwatch",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new StopwatchIntent(); },
+			nullptr
+	};
+
+	storage["weather"] = {
+			"weather",
+			[](const std::map<std::string, std::string>& params) -> Intent*{
+				WeatherIntentParam launchParams {params.at("time").c_str(), params.at("location").c_str()};
+				return new WeatherIntent(&launchParams); },
 			nullptr
 	};
 

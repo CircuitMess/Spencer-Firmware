@@ -88,7 +88,6 @@ void PlaybackImpl::stopPlayback(bool executeCallback)
 	}
 
 	i2s->stop();
-
 	delete file;
 	file = nullptr;
 
