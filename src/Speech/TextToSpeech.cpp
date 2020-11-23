@@ -3,8 +3,8 @@
 #include "TextToSpeech.h"
 #include "../DataStream/FileWriteStream.h"
 #include "../Util/Base64Decode.h"
+#include "../Settings.h"
 
-#define KEY "AIzaSyAQqImCEX2tEnIs-sgEZbcubCeFkTNaIOo"
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 
 const char* stash[] = {
@@ -57,7 +57,7 @@ const char* TextToSpeechImpl::generateSpeech(const char* text, const char* filen
 	http.useHTTP10(true);
 	http.setReuse(false);
 	http.begin("https://spencer.circuitmess.com:8443/tts/v1/text:synthesize", CA);
-	http.addHeader("Key", KEY);
+	http.addHeader("Key", Settings.get().google_key);
 	http.addHeader("Content-Type", "application/json; charset=utf-8");
 	http.addHeader("Accept-Encoding", "identity");
 	http.addHeader("Content-Length", String(length));
