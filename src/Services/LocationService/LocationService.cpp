@@ -1,7 +1,6 @@
 #include "LocationService.h"
 #include "../../Net.h"
 #include <NTPClient.h>
-#include <WiFi.h>
 #include <Loop/LoopManager.h>
 #include <string>
 

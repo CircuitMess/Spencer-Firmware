@@ -6,8 +6,7 @@
 struct SettingsData {
 	char SSID[64] = {0};
 	char pass[64] = {0};
-	char TTS_key[40] = {0};
-	char STT_key[40] = {0};
+	char google_key[40] = {0};
 };
 
 class SettingsImpl {

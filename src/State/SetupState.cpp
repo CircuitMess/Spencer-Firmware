@@ -18,7 +18,7 @@ SetupState::~SetupState(){
 }
 
 void SetupState::enter(){
-	LoopManager::addListener(&setup);
+	setup.start();
 
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
@@ -47,5 +47,5 @@ void SetupState::enter(){
 void SetupState::exit(){
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 	setup.setSettingsSetCallback(nullptr);
-	LoopManager::removeListener(&setup);
+	setup.stop();
 }

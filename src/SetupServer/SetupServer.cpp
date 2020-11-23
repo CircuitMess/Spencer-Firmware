@@ -66,8 +66,7 @@ void SetupServer::registerHandlers(){
 
 		content += Settings.get().SSID; content += '\n';
 		content += Settings.get().pass; content += '\n';
-		content += Settings.get().TTS_key; content += '\n';
-		content += Settings.get().STT_key;
+		content += Settings.get().google_key;
 
 		instance->server.send(200, "text/plain", content);
 	});
@@ -82,8 +81,7 @@ void SetupServer::registerHandlers(){
 
 		instance->server.arg(0).toCharArray(Settings.get().SSID, ARR_SIZEOF(SettingsData::SSID));
 		instance->server.arg(1).toCharArray(Settings.get().pass, ARR_SIZEOF(SettingsData::pass));
-		instance->server.arg(2).toCharArray(Settings.get().TTS_key, ARR_SIZEOF(SettingsData::TTS_key));
-		instance->server.arg(3).toCharArray(Settings.get().STT_key, ARR_SIZEOF(SettingsData::STT_key));
+		instance->server.arg(2).toCharArray(Settings.get().google_key, ARR_SIZEOF(SettingsData::google_key));
 		Settings.store();
 
 		instance->server.send(200, "text/html", "ok");
