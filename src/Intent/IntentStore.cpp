@@ -3,6 +3,8 @@
 #include "JokeIntent.h"
 #include "StopwatchIntent.h"
 #include "WeatherIntent.h"
+#include "VolumeIntent.h"
+#include "BrightnessIntent.h"
 #include "../Services/TimeService/TimeService.h"
 #include "FunpackInclude.hpp"
 
@@ -35,6 +37,20 @@ void IntentStore::fillStorage(){
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				WeatherIntentParam launchParams {params.at("time").c_str(), params.at("location").c_str()};
 				return new WeatherIntent(&launchParams); },
+			nullptr
+	};
+
+	storage["volume"] = {
+			"volume",
+			[](const std::map<std::string, std::string>& params) -> Intent*{
+				return new VolumeIntent((void*)params.at("level").c_str()); },
+			nullptr
+	};
+
+	storage["brightness"] = {
+			"brightness",
+			[](const std::map<std::string, std::string>& params) -> Intent*{
+				return new BrightnessIntent((void*)params.at("level").c_str()); },
 			nullptr
 	};
 

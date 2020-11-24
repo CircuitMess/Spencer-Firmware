@@ -639,3 +639,8 @@ weekdays 4 Thursday
 weekdays 5 Friday
 weekdays 6 Saturday
 weekdays 7 Sunday
+volume setTo Okay. Volume is set to
+brightness setTo Okay. Brightness is set to
+levels low low
+levels medium medium
+levels high high
