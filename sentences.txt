@@ -639,3 +639,11 @@ weekdays 4 Thursday
 weekdays 5 Friday
 weekdays 6 Saturday
 weekdays 7 Sunday
+volume setTo Okay. Volume is set to
+brightness setTo Okay. Brightness is set to
+volume unknown The available values are:
+volume trySaying Try asking me to increase or decrease the volume.
+brightness trySaying Try asking me to increase or decrease the brightness.
+levels low low
+levels medium medium
+levels high high

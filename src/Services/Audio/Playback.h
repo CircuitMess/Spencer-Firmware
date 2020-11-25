@@ -67,7 +67,7 @@ private:
 	AudioOutputI2S *out;
 	AudioFileSource *file;
 	void(*playbackDoneCallback)();
-	float volume = 0.1;
+	float volume = 0.3;
 
 };
 
