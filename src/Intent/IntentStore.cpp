@@ -20,6 +20,15 @@ void IntentStore::fillStorage(){
 			nullptr
 	};
 
+	storage["date"] = {
+			"date",
+			[](const std::map<std::string, std::string>& params) -> Intent*{
+				TimeIntentParam launchParams {TimeIntentType::DATE, TimeService.getTime()};
+				return new TimeIntent(&launchParams);
+			},
+			nullptr
+	};
+
 	storage["joke"] = {
 			"joke",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new JokeIntent(); },
