@@ -61,7 +61,7 @@ void IdleState::startRandomAnimation()
 		unusedIdleAnimations.push_back(usedIdleAnimations[0]);
 		usedIdleAnimations.erase(usedIdleAnimations.begin());
 	}
-	char buffer[15];
+	char buffer[20];
 	if(animationIndex == 0){
 		sprintf(buffer, "GIF-yawn.gif", animationIndex);
 		requiredAnimationLoops = 1;
@@ -70,7 +70,11 @@ void IdleState::startRandomAnimation()
 		requiredAnimationLoops = 1;
 	}else{
 		sprintf(buffer, "GIF-idle%d.gif", animationIndex);
-		requiredAnimationLoops = 3;
+		if(animationIndex == 4){
+			requiredAnimationLoops = 1;
+		}else{
+			requiredAnimationLoops = 3;
+		}
 	}
 	LEDmatrix.startAnimation(new Animation(buffer), true);
 	animationLoopCounter = 0;

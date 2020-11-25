@@ -81,8 +81,8 @@ void ProcessState::bleep(){
 
 void ProcessState::enter(){
 	uint8_t loadingAnimationIndex =  random(0, 8);
-	char randomAnimation[11];
-	sprintf(randomAnimation, "loading%d", loadingAnimationIndex);
+	char randomAnimation[20];
+	sprintf(randomAnimation, "GIF-loading%d.gif", loadingAnimationIndex);
 	LEDmatrix.startAnimation(new Animation(randomAnimation), true);
 	SpeechToIntent.addJob({ recordingFilename, &intentResult });
 	LoopManager::addListener(this);
