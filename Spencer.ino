@@ -62,6 +62,12 @@ void setup(){
 
 	Net.addStateListener(&TimeService);
 
+	Settings.begin();
+	uint8_t brightnessLevelValues[3] = {20, 100, 255};
+	LEDmatrix.setBrightness(brightnessLevelValues[Settings.get().brightnessLevel]);
+	float audioLevelValues[3] = {0.1, 0.3, 1.0};
+	Playback.setVolume(audioLevelValues[Settings.get().volumeLevel]);
+
 	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 
 	LoopManager::setStackSize(10240);
