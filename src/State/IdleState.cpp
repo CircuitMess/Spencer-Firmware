@@ -40,7 +40,7 @@ void IdleState::loop(uint _micros)
 	if(LEDmatrix.getAnimationCompletionRate() >= 99.0 && !animationLoopDone){
 		animationLoopCounter++;
 		animationLoopDone = true;
-		if(animationLoopCounter > 2){
+		if(animationLoopCounter > requiredAnimationLoops - 1){
 			startRandomAnimation();
 		}
 	}
@@ -64,8 +64,13 @@ void IdleState::startRandomAnimation()
 	char buffer[15];
 	if(animationIndex == 0){
 		sprintf(buffer, "GIF-yawn.gif", animationIndex);
+		requiredAnimationLoops = 1;
+	}else if(animationIndex == 11){
+		sprintf(buffer, "GIF-wink.gif", animationIndex);
+		requiredAnimationLoops = 1;
 	}else{
 		sprintf(buffer, "GIF-idle%d.gif", animationIndex);
+		requiredAnimationLoops = 3;
 	}
 	LEDmatrix.startAnimation(new Animation(buffer), true);
 	animationLoopCounter = 0;

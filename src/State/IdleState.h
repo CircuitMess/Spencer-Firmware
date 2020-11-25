@@ -14,12 +14,13 @@ public:
 
 private:
 	static IdleState* instance;
-	static const uint totalAnimations = 3;
+	static const uint totalAnimations = 12;
 	std::vector<uint> usedIdleAnimations;
 	std::vector<uint> unusedIdleAnimations;
 	void startRandomAnimation();
 	uint8_t animationLoopCounter = 0;
 	bool animationLoopDone = 0;
+	uint8_t requiredAnimationLoops = 0;
 };
 
 
