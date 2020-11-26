@@ -1,5 +1,5 @@
 #include "StopwatchIntent.h"
-#include <Input/InputGPIO.h>
+#include <Input/Input.h>
 #include "../../Spencer.hpp"
 #include "../Services/TimeService/TimeService.h"
 #include "../Services/Audio/Playback.h"
@@ -11,16 +11,19 @@ StopwatchIntent::StopwatchIntent()
 	state = waitingState;
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
 	Playback.playMP3(SampleStore::load(SampleGroup::Time, "PressToStart"));
-
-	InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+	Playback.setPlaybackDoneCallback([](){
+		instance->stopTalkingFlag = 1;
+		LEDmatrix.stopAnimation();
+	});
+	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		LEDmatrix.stopAnimation();
 		if(Playback.isRunning()){
 			Playback.stopPlayback(); //in case spencer is still talking when pressed
 		}
 		instance->state = runningState;
 		instance->start = DateTime((uint32_t)TimeService.getTime());
-		InputGPIO::getInstance()->setBtnPressCallback(BTN_PIN, [](){
-			InputGPIO::getInstance()->removeBtnPressCallback(BTN_PIN);
+		Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+			Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 			instance->state = finishedState;
 			instance->blinkState = 1;
 			instance->blinkTime = 0;
@@ -80,14 +83,9 @@ void StopwatchIntent::loop(uint _time)
 	switch (state)
 	{
 	case waitingState:
-		if(!Playback.isRunning()){
-			if(!stopTalkingFlag){
-				stopTalkingFlag = 1;
-				LEDmatrix.stopAnimation();
-			}
+		if(stopTalkingFlag){
 			blinkTime+=_time;
-			if((blinkTime > 500000 && blinkState) || (blinkTime > 200000 && !blinkState))
-			{
+			if((blinkTime > 500000 && blinkState) || (blinkTime > 200000 && !blinkState)){
 				blinkState = !blinkState;
 				blinkTime = 0;
 			}
@@ -101,6 +99,7 @@ void StopwatchIntent::loop(uint _time)
 
 	case runningState:
 		timeDiff = TimeSpan(TimeService.getTime() - start.unixtime());
+		Serial.println(timeDiff.totalseconds());
 		drawTime(timeDiff.minutes(), timeDiff.seconds());
 		if(timeDiff.hours() > 0){
 			LEDmatrix.clear();
