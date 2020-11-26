@@ -12,7 +12,7 @@ enum TimeIntentType
 class TimeIntent: public Intent
 {
 public:
-	TimeIntent(void* params);
+	TimeIntent(TimeIntentType type);
 	virtual ~TimeIntent() override;
 	void loop(uint micros) override;
 	void enter() override;
@@ -24,7 +24,7 @@ private:
 	uint32_t elapsedMillis = millis();
 	bool audioStopped = 0;
 	TimeIntentType _params;
-	char scrollingText[8];
+	char scrollingText[100];
 	int8_t textCursor = 0;
 	
 };

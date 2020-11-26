@@ -5,17 +5,20 @@
 #include "Intent.hpp"
 class AudioFileSource;
 
+enum BrightnessValue{
+	B_LO, B_MEDIUM, B_HI, B_INCREASE, B_DECREASE, B_NONE
+};
 class BrightnessIntent: public Intent
 {
 public:
-	BrightnessIntent(void* _params);
+	BrightnessIntent(BrightnessValue value);
 	virtual ~BrightnessIntent() override;
 	void loop(uint _time) override;
 	void enter() override;
 	void exit() override;
 	
 private:
-	const char* param;
+	BrightnessValue param;
 	uint8_t startingLevel = 0;
 	uint8_t brightnessLevel = 0;
 	uint8_t brightnessLevelValues[3] = {20, 100, 255};

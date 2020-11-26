@@ -5,17 +5,20 @@
 #include "Intent.hpp"
 class AudioFileSource;
 
+enum AudioValue{
+	A_LO, A_MEDIUM, A_HI, A_INCREASE, A_DECREASE, A_NONE
+};
 class VolumeIntent: public Intent
 {
 public:
-	VolumeIntent(void* _params);
+	VolumeIntent(AudioValue value);
 	virtual ~VolumeIntent() override;
 	void loop(uint _time) override;
 	void enter() override;
 	void exit() override;
 	
 private:
-	const char* param;
+	AudioValue param;
 	uint8_t startingLevel = 0;
 	uint8_t audioLevel = 0;
 	float audioLevelValues[3] = {0.1, 0.3, 1.0};

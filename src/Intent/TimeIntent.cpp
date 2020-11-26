@@ -4,12 +4,12 @@
 #include "../Services/Audio/Playback.h"
 #include "../LEDmatrix/LEDmatrix.h"
 TimeIntent* TimeIntent::instance = nullptr;
-TimeIntent::TimeIntent(void* params)
+TimeIntent::TimeIntent(TimeIntentType type)
 {
  	//start loading animation
 	instance = this;
 	//make prepared statement
-	_params = *static_cast<TimeIntentType*>(params);
+	_params = type;
 }
 
 TimeIntent::~TimeIntent()
@@ -42,7 +42,7 @@ void TimeIntent::enter()
 {
 	DateTime now = DateTime(TimeService.getTime());
 	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
-	char buff[4] = {0};
+	char buff[100] = {0};
 	speakFile = new CompositeAudioFileSource();
 	switch (_params)
 	{

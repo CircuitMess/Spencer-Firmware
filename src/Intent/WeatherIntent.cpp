@@ -17,10 +17,10 @@
 #define KEY "1f8e6989d4d112dc861b2853adc76265"
 WeatherIntent* WeatherIntent::instance = nullptr;
 
-WeatherIntent::WeatherIntent(void* _params)
+WeatherIntent::WeatherIntent(WeatherIntentParam value)
 {
 	instance = this;
-	params = *static_cast<WeatherIntentParam*>(_params);
+	params = value;
 	fetchTask = new Task("WeatherFetch", [](Task* task){
 		instance->doneFetching = false;
 		if(!Net.checkConnection()){
@@ -30,14 +30,19 @@ WeatherIntent::WeatherIntent(void* _params)
 				return;
 			}
 		}
-		if(instance->params.time == nullptr){
+		switch (instance->params)
+		{
+		case WeatherIntentParam::TODAY:
 			instance->currentWeather();
-		}else if(strcmp(instance->params.time, "today") == 0){
-			instance->currentWeather();
-		}else if(strcmp(instance->params.time, "tomorrow") == 0){
+			break;
+		case WeatherIntentParam::TOMORROW:
 			instance->tomorrowForecast();
-		}else if(strcmp(instance->params.time, "this week") == 0){
+			break;
+		case WeatherIntentParam::WEEK:
 			instance->weeklyForecast();
+			break;
+		default:
+			break;
 		}
 		instance->doneFetching = true;
 
@@ -47,6 +52,7 @@ WeatherIntent::WeatherIntent(void* _params)
 
 WeatherIntent::~WeatherIntent()
 {
+	fetchTask->kill();
 	delete fetchTask;
 }
 
@@ -57,14 +63,19 @@ void WeatherIntent::loop(uint _time)
 			switch (result->error)
 			{
 			case WeatherResult::OK:
-				if(instance->params.time == nullptr){
+				switch (instance->params)
+				{
+				case WeatherIntentParam::TODAY:
 					generateOutput(result->temperature, result->weatherCode, result->dayNight, 0);
-				}else if(strcmp(instance->params.time, "today") == 0){
-					generateOutput(result->temperature, result->weatherCode, result->dayNight, 0);
-				}else if(strcmp(instance->params.time, "tomorrow") == 0){
+					break;
+				case WeatherIntentParam::TOMORROW:
 					generateOutput(result->temperature, result->weatherCode, result->dayNight, 1);
-				}else if(strcmp(instance->params.time, "this week") == 0){
+					break;
+				case WeatherIntentParam::WEEK:
 					generateWeeklyDay();
+					break;
+				default:
+					break;
 				}
 				delete result;
 				result = nullptr;
@@ -82,26 +93,6 @@ void WeatherIntent::loop(uint _time)
 					return;
 				}
 				networkRetry = true;
-				fetchTask = new Task("WeatherFetch", [](Task* task){
-					instance->doneFetching = false;
-					if(!Net.checkConnection()){
-						if(!Net.reconnect()){
-							instance->doneFetching = true;
-							instance->result = new WeatherResult{ WeatherResult::NETWORK, 0, 0, 0};
-							return;
-						}
-					}
-					if(instance->params.time == nullptr){
-						instance->currentWeather();
-					}else if(strcmp(instance->params.time, "today") == 0){
-						instance->currentWeather();
-					}else if(strcmp(instance->params.time, "tomorrow") == 0){
-						instance->tomorrowForecast();
-					}else if(strcmp(instance->params.time, "this week") == 0){
-						instance->weeklyForecast();
-					}
-					instance->doneFetching = true;
-				}, 8000);
 				fetchTask->start(1, 0);
 				break;
 			
