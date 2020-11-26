@@ -24,9 +24,11 @@ void IntentState::loop(uint micros){
 
 void IntentState::enter(){
 	LoopManager::addListener(this);
+	intent->enter();
 }
 
 void IntentState::exit(){
+	intent->exit();
 	LoopManager::removeListener(this);
 
 	delete intent;

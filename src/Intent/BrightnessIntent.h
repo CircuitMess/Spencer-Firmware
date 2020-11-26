@@ -11,6 +11,9 @@ public:
 	BrightnessIntent(void* _params);
 	virtual ~BrightnessIntent() override;
 	void loop(uint _time) override;
+	void enter() override;
+	void exit() override;
+	
 private:
 	const char* param;
 	uint8_t startingLevel = 0;

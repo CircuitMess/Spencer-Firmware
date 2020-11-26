@@ -6,6 +6,19 @@ BrightnessIntent::BrightnessIntent(void* _params)
 {
 	startingLevel = Settings.get().brightnessLevel;
 	param = (const char*)(_params);
+}
+
+BrightnessIntent::~BrightnessIntent()
+{
+	
+}
+
+void BrightnessIntent::loop(uint _time)
+{
+}
+
+void BrightnessIntent::enter()
+{
 	CompositeAudioFileSource* output = new CompositeAudioFileSource();
 	if(param == nullptr){
 		output->add(SampleStore::load(SampleGroup::Volume, "unknown"));
@@ -39,11 +52,7 @@ BrightnessIntent::BrightnessIntent(void* _params)
 	});
 }
 
-BrightnessIntent::~BrightnessIntent()
+void BrightnessIntent::exit()
 {
 	
-}
-
-void BrightnessIntent::loop(uint _time)
-{
 }

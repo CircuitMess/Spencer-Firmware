@@ -15,6 +15,8 @@ public:
 	TimeIntent(void* params);
 	virtual ~TimeIntent() override;
 	void loop(uint micros) override;
+	void enter() override;
+	void exit() override;
 
 private:
 	static TimeIntent *instance;

@@ -9,74 +9,10 @@ StopwatchIntent::StopwatchIntent()
 {
 	instance = this;
 	state = waitingState;
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
-	Playback.playMP3(SampleStore::load(SampleGroup::Time, "PressToStart"));
-	Playback.setPlaybackDoneCallback([](){
-		instance->stopTalkingFlag = 1;
-		LEDmatrix.stopAnimation();
-	});
-	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
-		LEDmatrix.stopAnimation();
-		if(Playback.isRunning()){
-			Playback.stopPlayback(); //in case spencer is still talking when pressed
-		}
-		instance->state = runningState;
-		instance->start = DateTime((uint32_t)TimeService.getTime());
-		Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
-			Input::getInstance()->removeBtnPressCallback(BTN_PIN);
-			instance->state = finishedState;
-			instance->blinkState = 1;
-			instance->blinkTime = 0;
-
-			instance->timeDiff = TimeSpan(TimeService.getTime() - instance->start.unixtime());
-			CompositeAudioFileSource* finishedTrack = new CompositeAudioFileSource();
-			char buffer[3];
-			if(instance->timeDiff.minutes() > 0){
-				if(instance->timeDiff.minutes() > 19){
-					sprintf(buffer, "%d", (instance->timeDiff.minutes()/10)*10);
-					finishedTrack->add(SampleStore::load(Numbers, buffer));
-					if(instance->timeDiff.minutes() % 10 > 0){
-						sprintf(buffer, "%d", instance->timeDiff.minutes()%10);
-						finishedTrack->add(SampleStore::load(Numbers, buffer));
-					}
-				}
-				else{
-					sprintf(buffer, "%d", instance->timeDiff.minutes());
-					finishedTrack->add(SampleStore::load(Numbers, buffer));
-				}
-				finishedTrack->add(SampleStore::load(SampleGroup::Time, instance->timeDiff.minutes() > 1 ? "minutes" : "minute"));
-				finishedTrack->add(SampleStore::load(SampleGroup::Generic, "and"));
-			}
-
-			if(instance->timeDiff.seconds() > 19){
-				sprintf(buffer, "%d", (instance->timeDiff.seconds()/10)*10);
-				finishedTrack->add(SampleStore::load(Numbers, buffer));
-				if(instance->timeDiff.seconds() % 10 > 0){
-					sprintf(buffer, "%d", instance->timeDiff.seconds()%10);
-					finishedTrack->add(SampleStore::load(Numbers, buffer));
-				}
-			}
-			else if(instance->timeDiff.seconds() > 0){
-				sprintf(buffer, "%d", instance->timeDiff.seconds());
-				finishedTrack->add(SampleStore::load(Numbers, buffer));
-			}
-
-			if(instance->timeDiff.seconds() == 0 && instance->timeDiff.minutes() == 0){
-				finishedTrack->add(SampleStore::load(Time, "under"));
-				finishedTrack->add(SampleStore::load(Numbers, "1"));
-				finishedTrack->add(SampleStore::load(Time, "second"));
-			}else{
-				finishedTrack->add(SampleStore::load(SampleGroup::Time, instance->timeDiff.seconds() > 1 ? "seconds" : "second"));
-			}
-			
-			finishedTrack->add(SampleStore::load(SampleGroup::Time, "NewRecord"));
-			Playback.playMP3(finishedTrack);
-		});
-	});
 }
 StopwatchIntent::~StopwatchIntent()
 {
-	
+	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 }
 void StopwatchIntent::loop(uint _time)
 {
@@ -146,3 +82,75 @@ void StopwatchIntent::drawTime(uint minutes, uint seconds)
 	}
 }
 
+void StopwatchIntent::enter()
+{
+	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
+	Playback.playMP3(SampleStore::load(SampleGroup::Time, "PressToStart"));
+	Playback.setPlaybackDoneCallback([](){
+		instance->stopTalkingFlag = 1;
+		LEDmatrix.stopAnimation();
+	});
+	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+		LEDmatrix.stopAnimation();
+		if(Playback.isRunning()){
+			Playback.stopPlayback(); //in case spencer is still talking when pressed
+		}
+		instance->state = runningState;
+		instance->start = DateTime((uint32_t)TimeService.getTime());
+		Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
+			Input::getInstance()->removeBtnPressCallback(BTN_PIN);
+			instance->state = finishedState;
+			instance->blinkState = 1;
+			instance->blinkTime = 0;
+
+			instance->timeDiff = TimeSpan(TimeService.getTime() - instance->start.unixtime());
+			CompositeAudioFileSource* finishedTrack = new CompositeAudioFileSource();
+			char buffer[3];
+			if(instance->timeDiff.minutes() > 0){
+				if(instance->timeDiff.minutes() > 19){
+					sprintf(buffer, "%d", (instance->timeDiff.minutes()/10)*10);
+					finishedTrack->add(SampleStore::load(Numbers, buffer));
+					if(instance->timeDiff.minutes() % 10 > 0){
+						sprintf(buffer, "%d", instance->timeDiff.minutes()%10);
+						finishedTrack->add(SampleStore::load(Numbers, buffer));
+					}
+				}
+				else{
+					sprintf(buffer, "%d", instance->timeDiff.minutes());
+					finishedTrack->add(SampleStore::load(Numbers, buffer));
+				}
+				finishedTrack->add(SampleStore::load(SampleGroup::Time, instance->timeDiff.minutes() > 1 ? "minutes" : "minute"));
+				finishedTrack->add(SampleStore::load(SampleGroup::Generic, "and"));
+			}
+
+			if(instance->timeDiff.seconds() > 19){
+				sprintf(buffer, "%d", (instance->timeDiff.seconds()/10)*10);
+				finishedTrack->add(SampleStore::load(Numbers, buffer));
+				if(instance->timeDiff.seconds() % 10 > 0){
+					sprintf(buffer, "%d", instance->timeDiff.seconds()%10);
+					finishedTrack->add(SampleStore::load(Numbers, buffer));
+				}
+			}
+			else if(instance->timeDiff.seconds() > 0){
+				sprintf(buffer, "%d", instance->timeDiff.seconds());
+				finishedTrack->add(SampleStore::load(Numbers, buffer));
+			}
+
+			if(instance->timeDiff.seconds() == 0 && instance->timeDiff.minutes() == 0){
+				finishedTrack->add(SampleStore::load(Time, "under"));
+				finishedTrack->add(SampleStore::load(Numbers, "1"));
+				finishedTrack->add(SampleStore::load(Time, "second"));
+			}else{
+				finishedTrack->add(SampleStore::load(SampleGroup::Time, instance->timeDiff.seconds() > 1 ? "seconds" : "second"));
+			}
+			
+			finishedTrack->add(SampleStore::load(SampleGroup::Time, "NewRecord"));
+			Playback.playMP3(finishedTrack);
+		});
+	});
+}
+
+void StopwatchIntent::exit()
+{
+	
+}

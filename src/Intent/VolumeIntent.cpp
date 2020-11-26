@@ -5,8 +5,25 @@
 VolumeIntent::VolumeIntent(void* _params)
 {
 	startingLevel = Settings.get().volumeLevel;
-	
 	param = (const char*)(_params);
+}
+
+VolumeIntent::~VolumeIntent()
+{
+	
+}
+
+void VolumeIntent::loop(uint _time)
+{
+}
+
+bool VolumeIntent::floatEqual(float a, float b)
+{
+	return fabs(a - b) < 0.1;
+}
+
+void VolumeIntent::enter()
+{
 	CompositeAudioFileSource* output = new CompositeAudioFileSource();
 	if(param == nullptr){
 		output->add(SampleStore::load(SampleGroup::Volume, "unknown"));
@@ -40,16 +57,7 @@ VolumeIntent::VolumeIntent(void* _params)
 	});
 }
 
-VolumeIntent::~VolumeIntent()
+void VolumeIntent::exit()
 {
 	
-}
-
-void VolumeIntent::loop(uint _time)
-{
-}
-
-bool VolumeIntent::floatEqual(float a, float b)
-{
-	return fabs(a - b) < 0.1;
 }

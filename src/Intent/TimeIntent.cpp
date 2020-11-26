@@ -10,8 +10,37 @@ TimeIntent::TimeIntent(void* params)
 	instance = this;
 	//make prepared statement
 	_params = *static_cast<TimeIntentType*>(params);
+}
+
+TimeIntent::~TimeIntent()
+{
+}
+
+void TimeIntent::loop(uint micros)
+{
+	if(_params == TimeIntentType::TIME){
+		if(millis() - elapsedMillis > 3000 && audioStopped){
+			LEDmatrix.clear();
+			done();
+		}
+	}else{
+		if(textCursor > -45){
+			if(millis() - elapsedMillis > 150){
+				textCursor--;
+				elapsedMillis = millis();
+			}
+			LEDmatrix.clear();
+			LEDmatrix.drawString(textCursor, 1, scrollingText);
+		}else{
+			LEDmatrix.clear();
+			done();
+		}
+	}
+}
+
+void TimeIntent::enter()
+{
 	DateTime now = DateTime(TimeService.getTime());
-	Serial.println(TimeService.getTime());
 	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
 	char buff[4] = {0};
 	speakFile = new CompositeAudioFileSource();
@@ -132,28 +161,7 @@ TimeIntent::TimeIntent(void* params)
 	});
 }
 
-TimeIntent::~TimeIntent()
+void TimeIntent::exit()
 {
-}
-
-void TimeIntent::loop(uint micros)
-{
-	if(_params == TimeIntentType::TIME){
-		if(millis() - elapsedMillis > 3000 && audioStopped){
-			LEDmatrix.clear();
-			done();
-		}
-	}else{
-		if(textCursor > -45){
-			if(millis() - elapsedMillis > 150){
-				textCursor--;
-				elapsedMillis = millis();
-			}
-			LEDmatrix.clear();
-			LEDmatrix.drawString(textCursor, 1, scrollingText);
-		}else{
-			LEDmatrix.clear();
-			done();
-		}
-	}
+	
 }

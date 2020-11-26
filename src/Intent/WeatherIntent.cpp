@@ -588,3 +588,12 @@ void WeatherIntent::generateWeeklyDay()
 		LEDmatrix.startAnimation(instance->weatherAnimation, 1);
 	});
 }
+
+void WeatherIntent::enter()
+{
+
+}
+void WeatherIntent::exit()
+{
+	
+}

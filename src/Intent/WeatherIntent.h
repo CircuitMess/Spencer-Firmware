@@ -24,6 +24,8 @@ public:
 	WeatherIntent(void* params);
 	virtual ~WeatherIntent() override;
 	void loop(uint micros) override;
+	void enter() override;
+	void exit() override;
 
 private:
 	static WeatherIntent* instance;

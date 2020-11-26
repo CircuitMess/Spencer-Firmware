@@ -8,6 +8,8 @@ class Intent : public LoopListener
 {
 public:
     virtual ~Intent() = default;
+	virtual void enter() = 0;
+	virtual void exit() = 0;
 
 protected:
 	static void done(){

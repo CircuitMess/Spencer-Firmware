@@ -6,9 +6,12 @@
 class FunpackIntent : public Intent {
 public:
 	void loop(uint micros) override;
+	void enter() override;
+	void exit() override;
 
 protected:
 	FunpackIntent(const char* responses[], uint8_t noResponses);
+	const char* filePath = nullptr;
 };
 
 
