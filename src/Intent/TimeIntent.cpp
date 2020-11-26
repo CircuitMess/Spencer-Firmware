@@ -3,18 +3,19 @@
 #include "../Services/TimeService/TimeService.h"
 #include "../Services/Audio/Playback.h"
 #include "../LEDmatrix/LEDmatrix.h"
-
+TimeIntent* TimeIntent::instance = nullptr;
 TimeIntent::TimeIntent(void* params)
 {
  	//start loading animation
-
+	instance = this;
 	//make prepared statement
-	_params = *static_cast<TimeIntentParam*>(params);
-	DateTime now = DateTime(_params.unixTime);
+	_params = *static_cast<TimeIntentType*>(params);
+	DateTime now = DateTime(TimeService.getTime());
+	Serial.println(TimeService.getTime());
 	// Serial.printf("%d:%d:%d\n", now.hour(), now.minute(), now.second());
 	char buff[4] = {0};
 	speakFile = new CompositeAudioFileSource();
-	switch (_params.type)
+	switch (_params)
 	{
 	case TimeIntentType::TIME:
 		//parsing time to speech
@@ -101,8 +102,8 @@ TimeIntent::TimeIntent(void* params)
 	default:
 		break;
 	}
-
-	if(_params.type == TimeIntentType::TIME)
+	LEDmatrix.stopAnimation();
+	if(_params == TimeIntentType::TIME)
 	{
 		LEDmatrix.clear();
 		if(now.hour()/10 + '0' != '1'){
@@ -124,6 +125,11 @@ TimeIntent::TimeIntent(void* params)
 		elapsedMillis = millis();
 	}
 	Playback.playMP3(speakFile);
+	Playback.setPlaybackDoneCallback([](){
+		instance->audioStopped = 1;
+		instance->elapsedMillis = millis();
+
+	});
 }
 
 TimeIntent::~TimeIntent()
@@ -132,22 +138,14 @@ TimeIntent::~TimeIntent()
 
 void TimeIntent::loop(uint micros)
 {
-	if(_params.type == TimeIntentType::TIME)
-	{
-		if(!Playback.isRunning() && !audioStopped)
-		{
-			audioStopped = 1;
-			elapsedMillis = millis();
-		}
-		if(millis() - elapsedMillis > 3000 && audioStopped)
-		{
+	if(_params == TimeIntentType::TIME){
+		if(millis() - elapsedMillis > 3000 && audioStopped){
 			LEDmatrix.clear();
-			//end
+			done();
 		}
 	}else{
 		if(textCursor > -45){
-			if(millis() - elapsedMillis > 150)
-			{
+			if(millis() - elapsedMillis > 150){
 				textCursor--;
 				elapsedMillis = millis();
 			}
@@ -155,7 +153,7 @@ void TimeIntent::loop(uint micros)
 			LEDmatrix.drawString(textCursor, 1, scrollingText);
 		}else{
 			LEDmatrix.clear();
-			//end
+			done();
 		}
 	}
 }

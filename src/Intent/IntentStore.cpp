@@ -14,7 +14,7 @@ void IntentStore::fillStorage(){
 	storage["time"] = {
 			"time",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				TimeIntentParam launchParams {TimeIntentType::TIME, TimeService.getTime()};
+				TimeIntentType launchParams = TimeIntentType::TIME;
 				return new TimeIntent(&launchParams);
 			},
 			nullptr
@@ -23,7 +23,7 @@ void IntentStore::fillStorage(){
 	storage["date"] = {
 			"date",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				TimeIntentParam launchParams {TimeIntentType::DATE, TimeService.getTime()};
+				TimeIntentType launchParams = TimeIntentType::DATE;
 				return new TimeIntent(&launchParams);
 			},
 			nullptr

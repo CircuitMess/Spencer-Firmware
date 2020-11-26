@@ -9,11 +9,6 @@ enum TimeIntentType
 {
 	TIME, DATE
 };
-struct TimeIntentParam
-{
-	TimeIntentType type;
-	uint unixTime;
-};
 class TimeIntent: public Intent
 {
 public:
@@ -22,10 +17,11 @@ public:
 	void loop(uint micros) override;
 
 private:
+	static TimeIntent *instance;
 	CompositeAudioFileSource *speakFile;
 	uint32_t elapsedMillis = millis();
 	bool audioStopped = 0;
-	TimeIntentParam _params;
+	TimeIntentType _params;
 	char scrollingText[8];
 	int8_t textCursor = 0;
 	
