@@ -43,7 +43,7 @@ void IntentStore::fillStorage(){
 			"weather",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				WeatherIntentParam launchParams;
-				if(params.at("time").c_str() == nullptr){
+				if(params.find("time") == params.end()){
 					launchParams = WeatherIntentParam::TODAY;
 				}else{
 					if(strcmp(params.at("time").c_str(), "today") == 0){
@@ -61,11 +61,11 @@ void IntentStore::fillStorage(){
 	storage["volume"] = {
 			"volume",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				const char* param = params.at("level").c_str();
 				AudioValue value;
-				if(param == nullptr){
+				if(params.find("level") == params.end()){
 					value = AudioValue::A_NONE;
 				}else{
+					const char* param = params.at("level").c_str();
 					if(strcmp(param, "low") == 0 || strcmp(param, "min") == 0 || strcmp(param, "minimum") == 0){
 						value = AudioValue::A_LO;
 					}else if(strcmp(param, "medium") == 0){
@@ -85,11 +85,11 @@ void IntentStore::fillStorage(){
 	storage["brightness"] = {
 			"brightness",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				const char* param = params.at("level").c_str();
 				BrightnessValue value;
-				if(param == nullptr){
+				if(params.find("level") == params.end()){
 					value = BrightnessValue::B_NONE;
 				}else{
+					const char* param = params.at("level").c_str();
 					if(strcmp(param, "low") == 0 || strcmp(param, "min") == 0 || strcmp(param, "minimum") == 0){
 						value = BrightnessValue::B_LO;
 					}else if(strcmp(param, "medium") == 0){
