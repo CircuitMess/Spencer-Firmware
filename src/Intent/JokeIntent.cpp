@@ -4,7 +4,29 @@
 std::vector<uint> JokeIntent::jokeVector;
 JokeIntent::JokeIntent()
 {
-	randomSeed(micros()*millis());
+}
+JokeIntent::~JokeIntent()
+{
+
+}
+void JokeIntent::loop(uint micros)
+{
+	if(!Playback.isRunning() && !badumFlag)
+	{
+		uint8_t badumNumber = random(0, 4);
+		char badum[8];
+		sprintf(badum, "badum%d", badumNumber);
+		Playback.playMP3(SampleStore::load(SampleGroup::Special, badum));
+		Playback.setPlaybackDoneCallback([](){
+			done();
+		});
+		LEDmatrix.startAnimation(new Animation(random(0, 2) ? "GIF-laugh.gif" : "GIF-smile.gif"), true);
+		badumFlag = true;
+	}
+}
+
+void JokeIntent::enter()
+{
 	uint jokeIndex = 0;
 	bool jokeFound = true;
 	do
@@ -31,23 +53,8 @@ JokeIntent::JokeIntent()
 	Playback.playMP3(file);
 	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 }
-JokeIntent::~JokeIntent()
-{
 
-}
-void JokeIntent::loop(uint micros)
+void JokeIntent::exit()
 {
-	if(!Playback.isRunning() && !badumFlag)
-	{
-		uint8_t badumNumber = random(0, 4);
-		char badum[8];
-		sprintf(badum, "badum%d", badumNumber);
-		Playback.playMP3(SampleStore::load(SampleGroup::Special, badum));
-		Playback.setPlaybackDoneCallback([](){
-			done();
-		});
-		LEDmatrix.startAnimation(new Animation(random(0, 2) ? "GIF-laugh.gif" : "GIF-smile.gif"), true);
-		badumFlag = true;
-	}
+	
 }
-

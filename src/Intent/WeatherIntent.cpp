@@ -17,10 +17,10 @@
 #define KEY "1f8e6989d4d112dc861b2853adc76265"
 WeatherIntent* WeatherIntent::instance = nullptr;
 
-WeatherIntent::WeatherIntent(void* _params)
+WeatherIntent::WeatherIntent(WeatherIntentParam value)
 {
 	instance = this;
-	params = *static_cast<WeatherIntentParam*>(_params);
+	params = value;
 	fetchTask = new Task("WeatherFetch", [](Task* task){
 		instance->doneFetching = false;
 		if(!Net.checkConnection()){
@@ -30,15 +30,25 @@ WeatherIntent::WeatherIntent(void* _params)
 				return;
 			}
 		}
-		if(instance->params.time == nullptr){
+		if(instance == nullptr) return;
+		switch (instance->params)
+		{
+		case WeatherIntentParam::TODAY:
+			if(instance == nullptr) return;
 			instance->currentWeather();
-		}else if(strcmp(instance->params.time, "today") == 0){
-			instance->currentWeather();
-		}else if(strcmp(instance->params.time, "tomorrow") == 0){
+			break;
+		case WeatherIntentParam::TOMORROW:
+			if(instance == nullptr) return;
 			instance->tomorrowForecast();
-		}else if(strcmp(instance->params.time, "this week") == 0){
+			break;
+		case WeatherIntentParam::WEEK:
+			if(instance == nullptr) return;
 			instance->weeklyForecast();
+			break;
+		default:
+			break;
 		}
+		if(instance == nullptr) return;
 		instance->doneFetching = true;
 
 	}, 8000);
@@ -47,7 +57,26 @@ WeatherIntent::WeatherIntent(void* _params)
 
 WeatherIntent::~WeatherIntent()
 {
+	if(result != nullptr){
+		delete result;
+	}
+	if(result != nullptr){
+		delete result;
+	}
+	if(weatherSpeak != nullptr){
+		delete weatherSpeak;
+	}
+	if(weatherAnimation != nullptr){
+		delete weatherAnimation;
+	}
+	for(AudioFileSource* i : weeklyTempSpeak){
+		if(i != nullptr){
+			delete i;
+		}
+	}
+	fetchTask->kill();
 	delete fetchTask;
+	instance = nullptr;
 }
 
 void WeatherIntent::loop(uint _time)
@@ -57,14 +86,19 @@ void WeatherIntent::loop(uint _time)
 			switch (result->error)
 			{
 			case WeatherResult::OK:
-				if(instance->params.time == nullptr){
+				switch (instance->params)
+				{
+				case WeatherIntentParam::TODAY:
 					generateOutput(result->temperature, result->weatherCode, result->dayNight, 0);
-				}else if(strcmp(instance->params.time, "today") == 0){
-					generateOutput(result->temperature, result->weatherCode, result->dayNight, 0);
-				}else if(strcmp(instance->params.time, "tomorrow") == 0){
+					break;
+				case WeatherIntentParam::TOMORROW:
 					generateOutput(result->temperature, result->weatherCode, result->dayNight, 1);
-				}else if(strcmp(instance->params.time, "this week") == 0){
+					break;
+				case WeatherIntentParam::WEEK:
 					generateWeeklyDay();
+					break;
+				default:
+					break;
 				}
 				delete result;
 				result = nullptr;
@@ -82,26 +116,6 @@ void WeatherIntent::loop(uint _time)
 					return;
 				}
 				networkRetry = true;
-				fetchTask = new Task("WeatherFetch", [](Task* task){
-					instance->doneFetching = false;
-					if(!Net.checkConnection()){
-						if(!Net.reconnect()){
-							instance->doneFetching = true;
-							instance->result = new WeatherResult{ WeatherResult::NETWORK, 0, 0, 0};
-							return;
-						}
-					}
-					if(instance->params.time == nullptr){
-						instance->currentWeather();
-					}else if(strcmp(instance->params.time, "today") == 0){
-						instance->currentWeather();
-					}else if(strcmp(instance->params.time, "tomorrow") == 0){
-						instance->tomorrowForecast();
-					}else if(strcmp(instance->params.time, "this week") == 0){
-						instance->weeklyForecast();
-					}
-					instance->doneFetching = true;
-				}, 8000);
 				fetchTask->start(1, 0);
 				break;
 			
@@ -133,11 +147,13 @@ void WeatherIntent::currentWeather()
 	bool httpOK = http.begin(url, CA);
 	free(url);
 	if(!httpOK){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::NETWORK};
 		return;
 	}
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK) {
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::NETWORK};
 		return;
 	}
@@ -145,6 +161,7 @@ void WeatherIntent::currentWeather()
 	for(uint8_t i = 0; i < 3; i++)
 	{
 		if(!http.getStream().find('{')){
+		if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 		}
@@ -162,6 +179,7 @@ void WeatherIntent::currentWeather()
 		json.clear();
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
@@ -170,11 +188,15 @@ void WeatherIntent::currentWeather()
 
 	if(!http.getStream().find(']')){
 		json.clear();
+		free(buffer);
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
 	if(!http.getStream().find('{')){
 		json.clear();
+		free(buffer);
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
@@ -191,8 +213,9 @@ void WeatherIntent::currentWeather()
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
-		instance->result = new WeatherResult{WeatherResult::JSON};
 		json.clear();
+		if(instance == nullptr) return;
+		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
 	// serializeJsonPretty(json, Serial);
@@ -202,6 +225,7 @@ void WeatherIntent::currentWeather()
 
 	json.clear();
 	
+	if(instance == nullptr) return;
 	instance->result = new WeatherResult{WeatherResult::OK, temp, weatherCode, dayNight};
 }
 void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight, bool forecast)
@@ -282,9 +306,11 @@ void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight
 	}
 	Playback.playMP3(tempSpeak);
 	Playback.setPlaybackDoneCallback([](){
+		if(instance == nullptr) return;
 		Playback.playMP3(instance->weatherSpeak);
 		LEDmatrix.startAnimation(instance->weatherAnimation, 1);
 		Playback.setPlaybackDoneCallback([](){
+			if(instance == nullptr) return;
 			instance->done();
 			return;
 		});
@@ -301,31 +327,37 @@ void WeatherIntent::tomorrowForecast()
 	bool httpOK = http.begin(url, CA);
 	free(url);
 	if(!httpOK){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::NETWORK};
 		return;
 	}
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK) {
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::NETWORK};
 		return;
 	}
 
 	if(!http.getStream().find('[')){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 	} //"list":
 	for(uint8_t i = 0; i < 3; i++){
 		if(!http.getStream().find('{')){
+		if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 		}
 	}
 	if(!http.getStream().find(']')){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 	}
 	for(uint8_t i = 0; i < 2; i++){
 		if(!http.getStream().find('{')){
+		if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 		}//"temp" for tomorrow
@@ -342,16 +374,24 @@ void WeatherIntent::tomorrowForecast()
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
+		free(buffer);
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
 	int temp = roundl(json["day"].as<float>() - 273.15);
 
 	if(!http.getStream().find('[')){
+		free(buffer);
+		json.clear();
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	} //"weather":
 	if(!http.getStream().find('{')){
+		free(buffer);
+		json.clear();
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	} //first weather element
@@ -369,6 +409,7 @@ void WeatherIntent::tomorrowForecast()
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));
 		Serial.println(error.c_str());
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
@@ -376,6 +417,7 @@ void WeatherIntent::tomorrowForecast()
 	uint16_t weatherCode = json["id"].as<int>(); //weather code
 	json.clear();
 
+	if(instance == nullptr) return;
 	instance->result = new WeatherResult{WeatherResult::OK, temp, weatherCode, dayNight};
 
 }
@@ -391,31 +433,37 @@ void WeatherIntent::weeklyForecast()
 	bool httpOK = http.begin(url, CA);
 	free(url);
 	if(!httpOK){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::NETWORK};
 		return;
 	}
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK) {
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::NETWORK};
 		return;
 	}
 
 	if(!http.getStream().find('[')){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return; //"list":
 	}
 	for(uint8_t i = 0; i < 3; i++){
 		if(!http.getStream().find('{')){
+		if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 		}
 	}
 	if(!http.getStream().find(']')){
+		if(instance == nullptr) return;
 		instance->result = new WeatherResult{WeatherResult::JSON};
 		return;
 	}
 	for(uint8_t i = 0; i < 2; i++){
 		if(!http.getStream().find('{')){
+		if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;//"temp" for tomorrow
 		}
@@ -438,6 +486,8 @@ void WeatherIntent::weeklyForecast()
 		if(error){
 			Serial.print(F("Parsing JSON failed: "));
 			Serial.println(error.c_str());
+			free(buffer);
+			if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 		}
@@ -445,10 +495,16 @@ void WeatherIntent::weeklyForecast()
 
 
 		if(!http.getStream().find('[')){
+			free(buffer);
+			json.clear();
+			if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return; //"weather":
 		}
 		if(!http.getStream().find('{')){
+			free(buffer);
+			json.clear();
+			if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return; //first weather element
 		}
@@ -461,6 +517,8 @@ void WeatherIntent::weeklyForecast()
 		if(error){
 			Serial.print(F("Parsing JSON failed: "));
 			Serial.println(error.c_str());
+			free(buffer);
+			if(instance == nullptr) return;
 			instance->result = new WeatherResult{WeatherResult::JSON};
 			return;
 		}
@@ -469,11 +527,17 @@ void WeatherIntent::weeklyForecast()
 
 		if(i < 6){
 			if(!http.getStream().find(']')){
+				free(buffer);
+				json.clear();
+				if(instance == nullptr) return;
 				instance->result = new WeatherResult{WeatherResult::JSON};
 				return;
 			} //end of "weather":
 			for(uint8_t i = 0; i < 2; i++){
 				if(!http.getStream().find('{')){
+					free(buffer);
+					json.clear();
+					if(instance == nullptr) return;
 					instance->result = new WeatherResult{WeatherResult::JSON};
 					return;
 				}//"temp" for next day
@@ -486,6 +550,7 @@ void WeatherIntent::weeklyForecast()
 	http.getStream().stop();
 	http.getStream().flush();
 	weeklyIndex = 0;
+	if(instance == nullptr) return;
 	instance->result = new WeatherResult{WeatherResult::OK};
 
 }
@@ -579,12 +644,23 @@ void WeatherIntent::generateWeeklyDay()
 	}
 	Playback.playMP3(tempSpeak);
 	Playback.setPlaybackDoneCallback([](){
+		if(instance == nullptr) return;
 		Playback.playMP3(instance->weatherSpeak);
 		Playback.setPlaybackDoneCallback([](){
+			if(instance == nullptr) return;
 			Serial.printf("next callback set: %d\n", instance->weeklyIndex);
 			instance->weeklyIndex++;
 			instance->generateWeeklyDay();
 		});
 		LEDmatrix.startAnimation(instance->weatherAnimation, 1);
 	});
+}
+
+void WeatherIntent::enter()
+{
+
+}
+void WeatherIntent::exit()
+{
+	
 }

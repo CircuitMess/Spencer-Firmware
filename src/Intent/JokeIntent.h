@@ -13,6 +13,9 @@ public:
 	JokeIntent();
 	virtual ~JokeIntent() override;
 	void loop(uint) override;
+	void enter() override;
+	void exit() override;
+	
 private:
 	static const uint numJokes = 109;
 	static std::vector<uint> jokeVector;

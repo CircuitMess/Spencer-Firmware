@@ -7,11 +7,7 @@ class AudioFileSource;
 class Animation;
 class Task;
 
-struct WeatherIntentParam
-{
-	const char* time;
-	const char* location;
-};
+enum WeatherIntentParam{ TODAY, TOMORROW, WEEK};
 struct WeatherResult {
 	enum { OK = 0, NETWORK, JSON} error;
 	int temperature;
@@ -21,9 +17,11 @@ struct WeatherResult {
 class WeatherIntent : public Intent
 {
 public:
-	WeatherIntent(void* params);
+	WeatherIntent(WeatherIntentParam value);
 	virtual ~WeatherIntent() override;
 	void loop(uint micros) override;
+	void enter() override;
+	void exit() override;
 
 private:
 	static WeatherIntent* instance;
