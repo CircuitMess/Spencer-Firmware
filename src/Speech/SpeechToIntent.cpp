@@ -6,6 +6,7 @@
 #include "../Util/StreamableHTTPClient.h"
 #include "../Net.h"
 #include "../Settings.h"
+#include "../Services/LimitTrackingService/LimitTrackingService.h"
 
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 
@@ -53,12 +54,19 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return new IntentResult(IntentResult::FILE);
 	}
 
-	uint wavSize = 0;
+	uint32_t wavSize = 0;
 	file.seek(4); //skip RIFF on start of file
 	for(int8_t i = 0; i < 4; i++){
 		file.read(&(((char*)(void*)&wavSize)[i]), 1);
 	}
 	wavSize+=8;
+
+	file.seek(40);
+	uint32_t byteNumber = 0;
+	for(int8_t i = 0; i < 4; i++){
+		file.read(&(((char*)(void*)&byteNumber)[i]), 1);
+	}
+
 	file.seek(0);
 
 	uint wavSendSize = ceil((float) wavSize * (4.0f / 3.0f)) + 8;
@@ -172,6 +180,10 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	http.end();
 	http.getStream().stop();
 	http.getStream().flush();
+
+	
+	float totalSeconds = (float)byteNumber / (float)32000.0;
+	LimitTrackingService.addSTTusage(round(totalSeconds));
 
 	if(error){
 		Serial.print(F("Parsing JSON failed: "));

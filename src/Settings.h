@@ -2,13 +2,21 @@
 #define SPENCER_SETTINGS_H
 
 #include <Arduino.h>
-
+struct LimitTrackData{
+	bool allowOverLimit = 0;
+	uint32_t STTseconds = 0;
+	uint32_t TTSchars = 0;
+	uint32_t cycleStartTime = 0;
+	bool dailyWarning = 0;
+	uint32_t dailyWarningTime = 0;
+};
 struct SettingsData {
 	char SSID[64] = {0};
 	char pass[64] = {0};
 	char google_key[40] = {0};
 	uint8_t brightnessLevel = 1; //medium brightness
 	uint8_t volumeLevel = 1; //medium volume
+	LimitTrackData limitTrackData;
 };
 
 class SettingsImpl {

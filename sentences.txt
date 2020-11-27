@@ -647,3 +647,6 @@ brightness trySaying Try asking me to increase or decrease the brightness.
 levels low low
 levels medium medium
 levels high high
+warnings nearLimit Warning! You're nearing the monthly limit. If you would like to disable this limit at your own expense, you can do so in the Settings in CircuitBlocks.
+warnings overLimit You have reached the monthly limit. If you would like to disable this limit at your own expense, you can do so in the Settings in CircuitBlocks.
+warnings limitRemoval You have crossed the monthly limit, but you have overridden this in the Settings. This is just a reminder.

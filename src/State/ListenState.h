@@ -18,7 +18,7 @@ public:
 
 private:
 	const char* recordResult = nullptr;
-
+	static ListenState* instance;
 };
 
 
