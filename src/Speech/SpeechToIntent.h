@@ -10,7 +10,7 @@
 #include "../AsyncProcessor.hpp"
 
 struct IntentResult {
-	enum Error { OK = 0, OFFLINE, NETWORK, FILE, JSON, INTENT } error;
+	enum Error { OK = 0, NETWORK, FILE, JSON, INTENT, KEY } error;
 	char* transcript;
 	char* intent;
 	float confidence;

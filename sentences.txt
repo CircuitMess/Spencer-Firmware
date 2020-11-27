@@ -1,9 +1,13 @@
-generic NO_INTENT Sorry, I didn't quite catch that.
-generic and and
 generic firstStartup Hello! I’m Spencer, your own personal assistant! First things first. In order to work I need an active internet connection.
-generic setupMode Hook me up to your computer and open up CircuitBlocks to configure a network I can use.
-generic noNet Looks like I'm having some trouble connecting to a WiFi network.
-generic mess Uh oh! Look's like we messed up our circuits! Get it? 'Cause we're CircuitMess! HA. HA. HA. Hilarious. Anyways, please try again in a second.
+generic setupModeEntering Entering configuration mode.
+generic setupMode Hook me up to your computer and open up CircuitBlocks to configure my settings.
+generic and and
+error wifi Looks like I'm having some trouble connecting to a WiFi network.
+error net I'm connected to a WiFI network, but the network doesn't have a working internet connection.
+error mess Uh oh! Look's like we messed up our circuits! Get it? 'Cause we're CircuitMess! HA. HA. HA. Hilarious. Anyways, please try again in a second.
+error service Oh noes! It seems my speech recognition server is down. Without it, I'm as dumb as a brick. Please wait a few minutes and try again, or contact my maintainers at contact@circuitmess.com.
+error noIntent Sorry, I didn't quite catch that.
+error apiKey Hey, it would seem that the API key you've configured me to use is no good.
 numbers 1 1
 numbers 2 2
 numbers 3 3

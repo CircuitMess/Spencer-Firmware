@@ -1,6 +1,6 @@
 #include "SampleStore.h"
 #include "AudioFileSourceSerialFlash.h"
-const char *prefixes[11] = {"months", "numbers", "jokes", "generic", "time", "special", "weather", "weekdays", "volume", "brightness", "levels"};
+const char *prefixes[] = {"months", "numbers", "jokes", "generic", "time", "special", "weather", "weekdays", "volume", "brightness", "levels", "error"};
 AudioFileSource* SampleStore::load(SampleGroup group, const char* label)
 {
 	char fileName[40];

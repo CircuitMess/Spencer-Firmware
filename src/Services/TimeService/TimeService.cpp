@@ -25,7 +25,7 @@ TimeServiceImpl::TimeServiceImpl() : timeClient(ntpUDP){
 		instance->setTime(client.getEpochTime());
 		instance->fetching = false;
 		instance->refreshMicros = 0;
-	}, 2048, this);
+	}, 4096, this);
 }
 
 void TimeServiceImpl::begin(){

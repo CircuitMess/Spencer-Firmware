@@ -7,8 +7,7 @@
 #include "../Services/Audio/Playback.h"
 #include "../LEDmatrix/LEDmatrix.h"
 #include <Util/Task.h>
-#include "../State/SetupState.h"
-#include "../State/IdleState.h"
+#include "../State/ErrorState.h"
 
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 WeatherIntent* WeatherIntent::instance = nullptr;
@@ -38,7 +37,6 @@ WeatherIntent::WeatherIntent(WeatherIntentParam value)
 			instance->tomorrowForecast();
 			break;
 		case WeatherIntentParam::WEEK:
-			Serial.println("Week");
 			if(instance == nullptr) return;
 			instance->weeklyForecast();
 			break;
@@ -48,7 +46,7 @@ WeatherIntent::WeatherIntent(WeatherIntentParam value)
 		if(instance == nullptr) return;
 		instance->doneFetching = true;
 
-	}, 8000);
+	}, 8192);
 	fetchTask->start(1, 0);
 }
 
@@ -80,34 +78,25 @@ void WeatherIntent::loop(uint _time)
 				default:
 					break;
 				}
+
 				delete result;
 				result = nullptr;
 				break;
 
 			case WeatherResult::NETWORK:
-				delete result;
-				result = nullptr;
 				if(networkRetry){
-					LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
-					Playback.playMP3(SampleStore::load(Generic, "noNet"));
-					Playback.setPlaybackDoneCallback([](){
-						State::changeState(new SetupState());
-					});
+					State::changeState(new ErrorState(ErrorType::NETWORK));
 					return;
 				}
+
 				networkRetry = true;
 				fetchTask->start(1, 0);
 				break;
 			
 			case WeatherResult::JSON:
-				LEDmatrix.startAnimation(new Animation("GIF-error500.gif"), true);
-				Playback.playMP3("generic-mess.mp3");
-				delete result;
-				result = nullptr;
-				Playback.setPlaybackDoneCallback([](){
-					State::changeState(new IdleState());
-				});
-				break;
+				State::changeState(new ErrorState(ErrorType::JSON));
+				return;
+
 			default:
 				break;
 			}
@@ -371,7 +360,6 @@ void WeatherIntent::generateWeeklyDay()
 		Playback.playMP3(instance->weatherSpeak);
 		Playback.setPlaybackDoneCallback([](){
 			if(instance == nullptr) return;
-			Serial.printf("next callback set: %d\n", instance->weeklyIndex);
 			instance->weeklyIndex++;
 			instance->generateWeeklyDay();
 		});

@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include <Loop/LoopManager.h>
 #include <HTTPClient.h>
+#include <ESP32Ping.h>
 #include "LEDmatrix/LEDmatrix.h"
 #include "Net.h"
 
@@ -139,6 +140,14 @@ bool NetImpl::checkConnection(){
 
 	if(WiFi.status() != WL_CONNECTED){
 		setState(WL_DISCONNECTED);
+		lastError = WIFI;
+		return false;
+	}
+
+	bool internet = Ping.ping(IPAddress(8, 8, 8, 8));
+	if(!internet){
+		lastError = NET;
+		setState(WL_DISCONNECTED);
 		return false;
 	}
 
@@ -150,6 +159,7 @@ bool NetImpl::checkConnection(){
 	if(!client.begin("http://spencer.circuitmess.com:7979/index")){
 		client.end();
 		client.getStream().flush();
+		lastError = SERVICE;
 		setState(WL_DISCONNECTED);
 		return false;
 	}
@@ -160,6 +170,7 @@ bool NetImpl::checkConnection(){
 	if(code != 200){
 		client.end();
 		client.getStream().flush();
+		lastError = SERVICE;
 		setState(WL_DISCONNECTED);
 		return false;
 	}
@@ -169,10 +180,12 @@ bool NetImpl::checkConnection(){
 	client.getStream().flush();
 
 	if(data.substring(0, 2) != "OK"){
+		lastError = SERVICE;
 		setState(WL_DISCONNECTED);
 		return false;
 	}
 
+	lastError = OK;
 	setState(WL_CONNECTED);
 	return true;
 }
@@ -189,10 +202,19 @@ bool NetImpl::reconnect(){
 		}
 	}
 
-	setState(WiFi.status());
+	if(WiFi.status() == WL_CONNECTED && Ping.ping(IPAddress(8, 8, 8, 8))){
+		setState(WL_CONNECTED);
+	}else{
+		setState(WL_DISCONNECTED);
+	}
+
 	return state == WL_CONNECTED;
 }
 
 wl_status_t NetImpl::getState() const{
 	return state;
+}
+
+NetImpl::NetError NetImpl::getLastError() const{
+	return lastError;
 }

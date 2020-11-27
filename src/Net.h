@@ -14,6 +14,8 @@ class NetImpl : public LoopListener {
 public:
 	NetImpl();
 
+	enum NetError { OK, WIFI, NET, SERVICE };
+
 	void set(const char* ssid, const char* pass);
 
 	/**
@@ -65,6 +67,8 @@ public:
 
 	wl_status_t getState() const;
 
+	NetError getLastError() const;
+
 private:
 	const uint timeouts[3] = { 3000, 7000, 10000 };
 
@@ -87,6 +91,8 @@ private:
 	uint8_t connectRetries;
 
 	wl_status_t state = WL_DISCONNECTED;
+
+	NetError lastError = OK;
 };
 
 extern NetImpl Net;

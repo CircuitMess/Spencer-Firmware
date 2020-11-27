@@ -5,7 +5,6 @@
 #include "WeatherIntent.h"
 #include "VolumeIntent.h"
 #include "BrightnessIntent.h"
-#include "../Services/TimeService/TimeService.h"
 #include "FunpackInclude.hpp"
 
 std::map<const char*, IntentInfo, IntentStore::CStrCompare> IntentStore::storage;
@@ -68,11 +67,11 @@ void IntentStore::fillStorage(){
 				}else{
 					std::string param = params.at("level");
 
-					if(param == "low" || param == "min" || param == "minimum"){
+					if(param == "low" || param == "min" || param == "minimum" || param == "lowest" || param == "quietest" || param == "quiet"){
 						value = AudioValue::A_LO;
-					}else if(param == "medium"){
+					}else if(param == "medium" || param == "mid"){
 						value = AudioValue::A_MEDIUM;
-					}else if(param == "high" || param == "max" || param == "maximum"){
+					}else if(param == "high" || param == "max" || param == "maximum" || param == "highest" || param == "loudest" || param == "loud"){
 						value = AudioValue::A_HI;
 					}else if(param == "down" || param == "decrease"){
 						value = AudioValue::A_DECREASE;
@@ -98,7 +97,7 @@ void IntentStore::fillStorage(){
 						value = BrightnessValue::B_LO;
 					}else if(param == "medium"){
 						value = BrightnessValue::B_MEDIUM;
-					}else if(param == "high" || param == "max" || param == "maximum"){
+					}else if(param == "high" || param == "max" || param == "maximum" || param == "brightest"){
 						value = BrightnessValue::B_HI;
 					}else if(param == "down" || param == "decrease"){
 						value = BrightnessValue::B_DECREASE;

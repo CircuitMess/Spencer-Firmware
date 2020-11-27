@@ -17,40 +17,38 @@ void ProcessState::processIntent(){
 
 	bool settings;
 
-	if(intentResult->error == IntentResult::OFFLINE){
-		delete intentResult;
-		intentResult = nullptr;
-
-		LoopManager::removeListener(this);
-		State::changeState(new ErrorState(ErrorType::WIFI));
-		return;
-	}else if(intentResult->error == IntentResult::NETWORK){
+	if(intentResult->error == IntentResult::NETWORK){
 		delete intentResult;
 		intentResult = nullptr;
 
 		if(retried){
 			LoopManager::removeListener(this);
-			State::changeState(new ErrorState(ErrorType::WIFI));
+			State::changeState(new ErrorState(ErrorType::NETWORK));
 			return;
 		}
 
 		retried = true;
 		SpeechToIntent.addJob({ recordingFilename, &intentResult });
 		return;
-	}else if(intentResult->error == IntentResult::INTENT
-			|| intentResult->error == IntentResult::JSON
-			|| intentResult->intent == nullptr
-			|| (!(settings = std::string(intentResult->intent) == "settings") && (intent = IntentStore::findIntent(intentResult->intent)) == nullptr)){
-		if(intentResult->error == IntentResult::JSON){
-			LEDmatrix.startAnimation(new Animation("GIF-error500.gif"), true);
-			Playback.playMP3("generic-mess.mp3");
-		}else{
-			LEDmatrix.startAnimation(new Animation("GIF-questionMark.gif"), true);
-			Playback.playMP3("generic-NO_INTENT.mp3");
-		}
+	}else if(intentResult->error == IntentResult::KEY){
+		delete intentResult;
+		intentResult = nullptr;
+
+		changeState(new ErrorState(ErrorType::APIKEY));
+		return;
+	}else if(intentResult->error == IntentResult::JSON){
+		delete intentResult;
+		intentResult = nullptr;
+
+		changeState(new ErrorState(ErrorType::JSON));
+	}else if(intentResult->error == IntentResult::INTENT || intentResult->intent == nullptr
+			|| (!(settings = (std::string(intentResult->intent) == "Settings")) && (intent = IntentStore::findIntent(intentResult->intent)) == nullptr)){
 
 		delete intentResult;
 		intentResult = nullptr;
+
+		LEDmatrix.startAnimation(new Animation("GIF-questionMark.gif"), true);
+		Playback.playMP3(SampleStore::load(Error, "noIntent"));
 
 		Playback.setPlaybackDoneCallback([](){
 			changeState(new IdleState());
@@ -60,7 +58,17 @@ void ProcessState::processIntent(){
 	}
 
 	if(settings){
-		changeState(new SetupState());
+		delete intentResult;
+		intentResult = nullptr;
+
+		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+		Playback.playMP3(SampleStore::load(Generic, "setupModeEntering"));
+
+		Playback.setPlaybackDoneCallback([](){
+			Serial.println("set");
+			changeState(new SetupState());
+		});
+
 		return;
 	}
 
@@ -73,7 +81,6 @@ void ProcessState::bleep(){
 	uint8_t index =  random(0, 12);
 	char randomSound[18];
 	sprintf(randomSound, "randomNoise%d", index);
-	// Playback.setVolume(Playback.getVolume()/2);
 	Playback.playMP3(SampleStore::load(SampleGroup::Special, randomSound));
 	sprintf(randomSound, "GIF-random%d.gif", index);
 	LEDmatrix.startAnimation(new Animation(randomSound), true);

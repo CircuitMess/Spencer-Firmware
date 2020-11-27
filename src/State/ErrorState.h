@@ -6,7 +6,7 @@
 #include "../Net.h"
 
 enum ErrorType {
-	WIFI
+	WIFI, NETWORK, JSON, APIKEY
 };
 
 class ErrorState : public State {
@@ -20,6 +20,9 @@ private:
 	ErrorType type;
 
 	void doWifi();
+	void doNetwork();
+	void doJson();
+	void doApiKey();
 
 };
 

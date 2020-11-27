@@ -162,7 +162,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		return new IntentResult(IntentResult::NETWORK);
+		return new IntentResult(code == 400 ? IntentResult::KEY : IntentResult::NETWORK);
 	}
 
 	const int SIZE = JSON_ARRAY_SIZE(2) + 4 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 200;
