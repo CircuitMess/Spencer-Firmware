@@ -41,9 +41,6 @@ void setup(){
 		Serial.println("couldn't start matrix");
 		for(;;);
 	}
-	LEDmatrix.clear();
-	LEDmatrix.setBrightness(20);
-	LEDmatrix.setRotation(2);
 
 	I2S* i2s = new I2S();
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
@@ -59,14 +56,7 @@ void setup(){
 	LoopManager::addListener(new InputGPIO());
 
 	Net.set(Settings.get().SSID, Settings.get().pass);
-
 	Net.addStateListener(&TimeService);
-
-	Settings.begin();
-	uint8_t brightnessLevelValues[3] = {20, 100, 255};
-	LEDmatrix.setBrightness(brightnessLevelValues[Settings.get().brightnessLevel]);
-	float audioLevelValues[3] = {0.1, 0.3, 1.0};
-	Playback.setVolume(audioLevelValues[Settings.get().volumeLevel]);
 
 	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 

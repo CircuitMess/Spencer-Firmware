@@ -64,7 +64,7 @@ void ProcessState::processIntent(){
 		return;
 	}
 
-	changeState(new IntentState(intent->launch(std::map<std::string, std::string>{}), intent->upsell));
+	changeState(new IntentState(intent->launch(intentResult->entities), intent->upsell));
 }
 
 void ProcessState::bleep(){

@@ -11,7 +11,7 @@
 std::map<const char*, IntentInfo, IntentStore::CStrCompare> IntentStore::storage;
 
 void IntentStore::fillStorage(){
-	storage["time"] = {
+	storage["Time"] = {
 			"time",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				return new TimeIntent(TimeIntentType::TIME);
@@ -19,7 +19,7 @@ void IntentStore::fillStorage(){
 			nullptr
 	};
 
-	storage["date"] = {
+	storage["Date"] = {
 			"date",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				return new TimeIntent(TimeIntentType::DATE);
@@ -27,82 +27,87 @@ void IntentStore::fillStorage(){
 			nullptr
 	};
 
-	storage["joke"] = {
+	storage["Joke"] = {
 			"joke",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new JokeIntent(); },
 			nullptr
 	};
 
-	storage["stopwatch"] = {
+	storage["Stopwatch"] = {
 			"stopwatch",
 			[](const std::map<std::string, std::string>&) -> Intent*{ return new StopwatchIntent(); },
 			nullptr
 	};
 
-	storage["weather"] = {
+	storage["Weather"] = {
 			"weather",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				WeatherIntentParam launchParams;
 				if(params.find("time") == params.end()){
 					launchParams = WeatherIntentParam::TODAY;
 				}else{
-					if(strcmp(params.at("time").c_str(), "today") == 0){
-					launchParams = WeatherIntentParam::TODAY;
-					}else if(strcmp(params.at("time").c_str(), "tomorrow") == 0){
-					launchParams = WeatherIntentParam::TOMORROW;
-					}else if(strcmp(params.at("time").c_str(), "this week") == 0){
-					launchParams = WeatherIntentParam::WEEK;
+					if(params.at("time") == "today"){
+						launchParams = WeatherIntentParam::TODAY;
+					}else if(params.at("time") == "tomorrow"){
+						launchParams = WeatherIntentParam::TOMORROW;
+					}else if(params.at("time") == "this week"){
+						launchParams = WeatherIntentParam::WEEK;
 					}
 				}
-				return new WeatherIntent(launchParams); },
+				return new WeatherIntent(launchParams);
+			},
 			nullptr
 	};
 
-	storage["volume"] = {
+	storage["Volume"] = {
 			"volume",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				AudioValue value;
 				if(params.find("level") == params.end()){
 					value = AudioValue::A_NONE;
 				}else{
-					const char* param = params.at("level").c_str();
-					if(strcmp(param, "low") == 0 || strcmp(param, "min") == 0 || strcmp(param, "minimum") == 0){
+					std::string param = params.at("level");
+
+					if(param == "low" || param == "min" || param == "minimum"){
 						value = AudioValue::A_LO;
-					}else if(strcmp(param, "medium") == 0){
+					}else if(param == "medium"){
 						value = AudioValue::A_MEDIUM;
-					}else if(strcmp(param, "high") == 0 || strcmp(param, "max") == 0 || strcmp(param, "maximum") == 0){
+					}else if(param == "high" || param == "max" || param == "maximum"){
 						value = AudioValue::A_HI;
-					}else if(strcmp(param, "down") == 0 || strcmp(param, "decrease") == 0){
+					}else if(param == "down" || param == "decrease"){
 						value = AudioValue::A_DECREASE;
-					}else if(strcmp(param, "up") == 0 || strcmp(param, "increase") == 0){
+					}else if(param == "up" || param == "increase"){
 						value = AudioValue::A_INCREASE;
 					}
 				}
-				return new VolumeIntent(value); },
+				return new VolumeIntent(value);
+			},
 			nullptr
 	};
 
-	storage["brightness"] = {
+	storage["Brightness"] = {
 			"brightness",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				BrightnessValue value;
 				if(params.find("level") == params.end()){
 					value = BrightnessValue::B_NONE;
 				}else{
-					const char* param = params.at("level").c_str();
-					if(strcmp(param, "low") == 0 || strcmp(param, "min") == 0 || strcmp(param, "minimum") == 0){
+					std::string param = params.at("level");
+
+					if(param == "low" || param == "min" || param == "minimum"){
 						value = BrightnessValue::B_LO;
-					}else if(strcmp(param, "medium") == 0){
+					}else if(param == "medium"){
 						value = BrightnessValue::B_MEDIUM;
-					}else if(strcmp(param, "high") == 0 || strcmp(param, "max") == 0 || strcmp(param, "maximum") == 0){
+					}else if(param == "high" || param == "max" || param == "maximum"){
 						value = BrightnessValue::B_HI;
-					}else if(strcmp(param, "down") == 0 || strcmp(param, "decrease") == 0){
+					}else if(param == "down" || param == "decrease"){
 						value = BrightnessValue::B_DECREASE;
-					}else if(strcmp(param, "up") == 0 || strcmp(param, "increase") == 0){
+					}else if(param == "up" || param == "increase"){
 						value = BrightnessValue::B_INCREASE;
 					}
 				}
-				return new BrightnessIntent(value); },
+				return new BrightnessIntent(value);
+			},
 			nullptr
 	};
 

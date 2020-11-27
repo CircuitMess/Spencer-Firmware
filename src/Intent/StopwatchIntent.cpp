@@ -12,7 +12,6 @@ StopwatchIntent::StopwatchIntent()
 }
 StopwatchIntent::~StopwatchIntent()
 {
-	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 }
 void StopwatchIntent::loop(uint _time)
 {
@@ -35,7 +34,6 @@ void StopwatchIntent::loop(uint _time)
 
 	case runningState:
 		timeDiff = TimeSpan(TimeService.getTime() - start.unixtime());
-		Serial.println(timeDiff.totalseconds());
 		drawTime(timeDiff.minutes(), timeDiff.seconds());
 		if(timeDiff.hours() > 0){
 			LEDmatrix.clear();
@@ -53,6 +51,7 @@ void StopwatchIntent::loop(uint _time)
 		if(finishedTime > 3000000){
 			LEDmatrix.stopAnimation();
 			done();
+			return;
 		}
 		if(!Playback.isRunning()){
 			finishedTime+=_time;
@@ -152,5 +151,5 @@ void StopwatchIntent::enter()
 
 void StopwatchIntent::exit()
 {
-	
+	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 }

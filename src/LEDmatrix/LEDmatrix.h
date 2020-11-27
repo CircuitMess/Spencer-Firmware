@@ -63,7 +63,7 @@ private:
 	uint8_t readRegister8(uint8_t bank, uint8_t reg);
 	uint8_t _i2caddr, ///< The I2C address we expect to find the chip
 		_frame;       ///< The frame (of 8) we are currently addressing
-	uint8_t width, height, brightness, rotation, prevBrightness;
+	uint8_t width, height, brightness = 20, rotation = 2, prevBrightness = 0;
 	uint8_t *matrixBuffer = nullptr;
 	uint8_t *pastMatrixBuffer = nullptr;
 

@@ -58,7 +58,7 @@ void VolumeIntent::enter()
 	if(param != AudioValue::A_NONE){
 		Settings.get().volumeLevel = audioLevel;
 		Settings.store();
-		LEDmatrix.setBrightness(audioLevelValues[audioLevel]);
+		Playback.setVolume(audioLevelValues[audioLevel]);
 		output->add(SampleStore::load(SampleGroup::Volume, "setTo"));
 		output->add(SampleStore::load(SampleGroup::Levels, audioLevelNames[audioLevel]));
 	}

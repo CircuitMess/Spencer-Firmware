@@ -66,6 +66,8 @@ public:
 	wl_status_t getState() const;
 
 private:
+	const uint timeouts[3] = { 3000, 7000, 10000 };
+
 	const char* ssid;
 	const char* pass;
 

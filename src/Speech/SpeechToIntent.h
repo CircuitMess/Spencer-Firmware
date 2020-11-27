@@ -5,6 +5,8 @@
 #include <Sync/BinarySemaphore.h>
 #include <Sync/Mutex.h>
 #include <Util/Task.h>
+#include <string>
+#include <map>
 #include "../AsyncProcessor.hpp"
 
 struct IntentResult {
@@ -12,6 +14,7 @@ struct IntentResult {
 	char* transcript;
 	char* intent;
 	float confidence;
+	std::map<std::string, std::string> entities;
 
 	IntentResult(Error error);
 	virtual ~IntentResult();

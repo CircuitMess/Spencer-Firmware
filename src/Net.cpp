@@ -83,8 +83,10 @@ void NetImpl::loop(uint micros){
 	wl_status_t status = WiFi.status();
 
 	if(!status || status >= WL_DISCONNECTED){
+		int timeout = connectRetries >= (sizeof(timeouts) / sizeof(timeouts[0])) ? timeouts[(sizeof(timeouts) / sizeof(timeouts[0])) - 1] : timeouts[connectRetries];
+
 		// still connecting
-		if(millis() - connectTime >= 5000){ // 5 sec timeout
+		if(millis() - connectTime >= timeout){ // 5 sec timeout
 			retryConnect();
 		}
 	}else{
@@ -183,7 +185,7 @@ bool NetImpl::reconnect(){
 
 		while(WiFi.status() != WL_CONNECTED){
 			delay(500);
-			if(millis() - connectTime >= 5000) break;
+			if(millis() - connectTime >= 7000) break;
 		}
 	}
 

@@ -23,9 +23,6 @@ LEDmatrixImpl::LEDmatrixImpl(uint8_t _width, uint8_t _height)
 {
 	width = _width;
 	height = _height;
-	brightness = 255;
-	prevBrightness = 0;
-	setRotation(0);
 	matrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
 	pastMatrixBuffer = (uint8_t*)calloc(width*height, sizeof(uint8_t));
 }
@@ -74,6 +71,7 @@ bool LEDmatrixImpl::begin(uint8_t sda, uint8_t scl, uint8_t addr) {
 
 	audioSync(false);
 
+	LEDmatrix.clear();
 	return true;
 }
 

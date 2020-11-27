@@ -11,7 +11,7 @@
 
 SpeechToIntentImpl SpeechToIntent;
 
-IntentResult::IntentResult(Error error) : error(error){
+IntentResult::IntentResult(Error error) : error(error), entities({}){
 	if(error != OK){
 		intent = transcript = nullptr;
 		confidence = 0;
@@ -165,7 +165,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return new IntentResult(IntentResult::NETWORK);
 	}
 
-	const int SIZE = 2 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(6) + 200;
+	const int SIZE = JSON_ARRAY_SIZE(2) + 4 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 200;
 	DynamicJsonDocument json(SIZE);
 	DeserializationError error = deserializeJson(json, http.getStream());
 
@@ -204,6 +204,20 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	memset(result->intent, 0, intentLength+1);
 	memcpy(result->intent, intent, intentLength);
 
+	if(!json.containsKey("entities")) return result;
+
+	uint noEntities = json["entities"].size();
+	for(int i = 0; i < noEntities; i++){
+		auto entity = json["entities"].getElement(i);
+		if(!entity.containsKey("slot") || !entity.containsKey("value")) continue;
+
+		std::string slot = entity["slot"].as<std::string>();
+		std::string value = entity["value"].as<std::string>();
+
+		if(result->entities.find(slot) != result->entities.end()) continue;
+
+		result->entities.insert(std::pair<std::string, std::string>(slot, value));
+	}
 
 	return result;
 }
