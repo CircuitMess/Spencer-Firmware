@@ -76,7 +76,6 @@ void RecordingImpl::record(){
 		if((wavTotalWritten > minRecordTime * sampleRate * 2)
 		&& (wavTotalWritten > 0.5 * 2 * sampleRate + avgBufferSize*2) // don't cutoff if we didn't even begin measuring
 		&& underMax && (millis() - underMaxTime) >= cutoffTime * 1000){
-			Serial.println("cutoff");
 			// wavTotalWritten -= cutoffTime * sampleRate; // half of cutoff time
 			break;
 		}

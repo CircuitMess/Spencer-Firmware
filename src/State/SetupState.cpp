@@ -26,10 +26,18 @@ void SetupState::enter(){
 		LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
 	});
 
+
+	static bool connecting = false;
 	static auto doConnect = [](){
+		if(connecting) return;
+		connecting = true;
+
+		Playback.stopPlayback(false);
 		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
 
 		Net.connect([](wl_status_t status){
+			connecting = false;
+
 			if(status == WL_CONNECTED){
 				LocationService.fetchLocation();
 				TimeService.fetchTime();
