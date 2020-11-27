@@ -50,7 +50,7 @@ void IntentStore::fillStorage(){
 						launchParams = WeatherIntentParam::TODAY;
 					}else if(params.at("time") == "tomorrow"){
 						launchParams = WeatherIntentParam::TOMORROW;
-					}else if(params.at("time") == "this week"){
+					}else if(params.at("time") == "this week" || params.at("time") == "week" || params.at("time") == "weekly"){
 						launchParams = WeatherIntentParam::WEEK;
 					}
 				}

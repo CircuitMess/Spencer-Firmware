@@ -33,8 +33,8 @@ private:
 	void generateWeeklyDay();
 	void generateOutput(int temp, uint16_t weatherCode, bool dayNight, bool forecast = 0);
 	
-	AudioFileSource* weatherSpeak;
-	Animation* weatherAnimation;
+	AudioFileSource* weatherSpeak = nullptr;
+	Animation* weatherAnimation = nullptr;
 
 	int8_t weeklyIndex = -1;
 	int weeklyTemp[7] = {0};
