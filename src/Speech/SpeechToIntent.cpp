@@ -39,14 +39,6 @@ void SpeechToIntentImpl::doJob(const STIJob& job){
 }
 
 IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
-	const char prefix[] = "{"
-						  "'config': {"
-						  "'sampleRateHertz': 16000,"
-						  "'languageCode': 'en-US',"
-						  "'enableWordTimeOffsets': false"
-						  "}, 'audio': { 'content': '";
-	const char suffix[] = "' }}";
-
 	SerialFlashFile file = SerialFlash.open(filename);
 	if(!file){
 		Serial.println("Couldn't open file for reading");
@@ -61,24 +53,17 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	wavSize+=8;
 	file.seek(0);
 
-	uint wavSendSize = ceil((float) wavSize * (4.0f / 3.0f)) + 8;
-
-	FileReadStream fileStream(&file);
-	Base64Encode encodeStream(&fileStream);
-
 	StreamableHTTPClient http;
 	http.useHTTP10(true);
 	http.setReuse(false);
-	if(!http.begin("https://spencer.circuitmess.com:8443/stt/v1/speech:recognize", CA)){
+	if(!http.begin("https://spencer.circuitmess.com:8443/sti/speech", CA)){
 		return new IntentResult(IntentResult::NETWORK);
 	}
 
-	http.addHeader("Key", Settings.get().google_key);
-	http.addHeader("Content-Type", "application/json; charset=utf-8");
+	http.addHeader("Content-Type", "audio/wav");
 	http.addHeader("Accept-Encoding", "identity");
+	http.addHeader("Content-Length", String(wavSize));
 
-	uint length = sizeof(prefix) + sizeof(suffix) + wavSendSize + 8;
-	http.addHeader("Content-Length", String(length));
 
 	if(!http.startPOST()){
 		Serial.println("Error connecting");
@@ -88,73 +73,20 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return new IntentResult(IntentResult::NETWORK);
 	}
 
-	if(!http.send((uint8_t*) prefix, sizeof(prefix) - 1)){
-		Serial.println("Error sending prefix");
-		http.end();
-		http.getStream().stop();
-		http.getStream().flush();
-		return new IntentResult(IntentResult::NETWORK);
-	}
-
 	uint sent = 0;
-	auto sendFunc = [&http, &sent](unsigned char byte) -> bool {
-		if(!http.send(&byte, 1)){
-			Serial.println("Error sending data");
-			http.end();
-			http.getStream().stop();
-			http.getStream().flush();
-			return false;
-		}
-
-		sent += 1;
-		return true;
-	};
-
-	for(uint i = 0; i < wavSendSize; i++){
-		if(!encodeStream.available()) break;
-		if(!sendFunc(encodeStream.get())){
+	unsigned char buffer[256];
+	while(sent < wavSize){
+		uint readSize = min((uint) 256, wavSize - sent);
+		file.read(buffer, readSize);
+		if(!http.send(buffer, readSize)){
 			http.end();
 			http.getStream().stop();
 			http.getStream().flush();
 			return new IntentResult(IntentResult::NETWORK);
 		}
+		sent += readSize;
 	}
 
-	file.seek(file.size());
-	fileStream.clearBuffer();
-
-	while(encodeStream.available()){
-		if(!sendFunc(encodeStream.get())){
-			http.end();
-			http.getStream().stop();
-			http.getStream().flush();
-			return new IntentResult(IntentResult::NETWORK);
-		}
-	}
-
-	if(!http.send((uint8_t*) suffix, sizeof(suffix) - 1)){
-		Serial.println("Error sending suffix");
-		http.end();
-		http.getStream().stop();
-		http.getStream().flush();
-		return new IntentResult(IntentResult::NETWORK);
-	}
-
-	sent += sizeof(prefix) - 1;
-	sent += sizeof(suffix) - 1;
-
-	unsigned char nl = '\n';
-	while(sent < length){
-		if(!http.send(&nl, 1)){
-			Serial.println("Error sending trailer");
-			http.end();
-			http.getStream().stop();
-			http.getStream().flush();
-			return new IntentResult(IntentResult::NETWORK);
-		}
-
-		sent++;
-	}
 
 	int code = http.finish();
 	if(code != 200){
@@ -162,10 +94,10 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		http.end();
 		http.getStream().stop();
 		http.getStream().flush();
-		return new IntentResult(code == 400 ? IntentResult::KEY : IntentResult::NETWORK);
+		return new IntentResult(IntentResult::JSON);
 	}
 
-	const int SIZE = JSON_ARRAY_SIZE(2) + 4 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 200;
+	const int SIZE = JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(50) + 200;
 	DynamicJsonDocument json(SIZE);
 	DeserializationError error = deserializeJson(json, http.getStream());
 
@@ -179,40 +111,40 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 		return new IntentResult(IntentResult::JSON);
 	}
 
-	if(!json.containsKey("transcript")){
-		Serial.println("Failed recognizing speech");
+	if(!json.containsKey("text") || !json.containsKey("intents") || json["intents"].size() == 0){
 		return new IntentResult(IntentResult::INTENT);
 	}
 
-	const char* intent = json["intent"]["result"].as<const char*>();
+	const char* intent = json["intents"][0]["name"].as<const char*>();
 	if(intent[0] == '\0'){
-		Serial.println("Failed recognizing intent");
 		return new IntentResult(IntentResult::INTENT);
 	}
 
 	IntentResult* result = new IntentResult(IntentResult::OK);
-	result->confidence = json["intent"]["confidence"].as<float>();
-
-	const char* transcript = json["transcript"].as<const char*>();
-	uint32_t transcriptLength = strlen(transcript);
-	result->transcript = static_cast<char*>(malloc(transcriptLength + 1));
-	memset(result->transcript, 0, transcriptLength+1);
-	memcpy(result->transcript, transcript, transcriptLength);
+	result->confidence = json["intents"][0]["confidence"].as<float>();
 
 	uint32_t intentLength = strlen(intent);
 	result->intent = static_cast<char*>(malloc(intentLength + 1));
 	memset(result->intent, 0, intentLength+1);
 	memcpy(result->intent, intent, intentLength);
 
+	const char* transcript = json["text"].as<const char*>();
+	uint32_t transcriptLength = strlen(transcript);
+	result->transcript = static_cast<char*>(malloc(transcriptLength + 1));
+	memset(result->transcript, 0, transcriptLength+1);
+	memcpy(result->transcript, transcript, transcriptLength);
+
 	if(!json.containsKey("entities")) return result;
 
-	uint noEntities = json["entities"].size();
-	for(int i = 0; i < noEntities; i++){
-		auto entity = json["entities"].getElement(i);
-		if(!entity.containsKey("slot") || !entity.containsKey("value")) continue;
+	for(const auto& entityObj : json["entities"].as<JsonObject>()){
+		auto entityArr = entityObj.value().as<JsonArray>();
+		if(entityArr.size() == 0) continue;
+		auto entity = entityArr[0];
 
-		std::string slot = entity["slot"].as<std::string>();
-		std::string value = entity["value"].as<std::string>();
+		if(!entity.containsKey("name") || !entity.containsKey("body")) continue;
+
+		std::string slot = entity["name"].as<std::string>();
+		std::string value = entity["body"].as<std::string>();
 
 		if(result->entities.find(slot) != result->entities.end()) continue;
 
