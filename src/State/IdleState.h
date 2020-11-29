@@ -21,6 +21,7 @@ private:
 	uint8_t animationLoopCounter = 0;
 	bool animationLoopDone = 0;
 	int8_t requiredAnimationLoops = 0;
+	bool notifyingUpdate = false;
 };
 
 

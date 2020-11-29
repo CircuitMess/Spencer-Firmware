@@ -24,13 +24,16 @@ void IdleState::enter(){
 
 	LoopManager::addListener(this);
 
+	notifyingUpdate = false;
 	if(UpdateChecker.updateAvailable() && !UpdateChecker.hasNotified()){
 		UpdateChecker.notify();
+		notifyingUpdate = true;
 		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
 		Playback.playMP3(SampleStore::load(Generic, "update"));
 		Playback.setPlaybackDoneCallback([](){
 			if(instance == nullptr) return;
 			instance->startRandomAnimation();
+			instance->notifyingUpdate = false;
 		});
 	}else{
 		startRandomAnimation();
@@ -50,6 +53,7 @@ void IdleState::exit(){
 
 void IdleState::loop(uint _micros)
 {
+	if(notifyingUpdate) return;
 	if(LEDmatrix.getAnimationCompletionRate() >= 99.0 && !animationLoopDone){
 		animationLoopCounter++;
 		animationLoopDone = true;
