@@ -82,7 +82,10 @@ void SerialSetup::stop(){
 void SerialSetup::readSettings(){
 	readIntoBuffer(Settings.get().SSID, 64);
 	readIntoBuffer(Settings.get().pass, 64);
-	readIntoBuffer(Settings.get().google_key, 40);
+
+	char fahr[2];
+	readIntoBuffer(fahr, 2);
+	Settings.get().fahrenheit = fahr[0] == '1';
 
 	Settings.store();
 
@@ -102,7 +105,7 @@ void SerialSetup::printSettings(){
 	Serial.printf("SPENCER:%u%u:%s\n", upper, lower, "1.0");
 	Serial.printf("SET:%s\n", Settings.get().SSID);
 	Serial.printf("SET:%s\n", Settings.get().pass);
-	Serial.printf("SET:%s\n", Settings.get().google_key);
+	Serial.printf("SET:%d\n", Settings.get().fahrenheit);
 	Serial.println("SET:--SET");
 }
 

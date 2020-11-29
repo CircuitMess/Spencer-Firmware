@@ -57,7 +57,7 @@ const char* TextToSpeechImpl::generateSpeech(const char* text, const char* filen
 	http.useHTTP10(true);
 	http.setReuse(false);
 	http.begin("https://spencer.circuitmess.com:8443/tts/v1/text:synthesize", CA);
-	http.addHeader("Key", Settings.get().google_key);
+	http.addHeader("Key", "Foo");
 	http.addHeader("Content-Type", "application/json; charset=utf-8");
 	http.addHeader("Accept-Encoding", "identity");
 	http.addHeader("Content-Length", String(length));
