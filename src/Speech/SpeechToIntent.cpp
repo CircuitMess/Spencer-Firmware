@@ -177,8 +177,6 @@ void SpeechToIntentImpl::compress(const char* inputFilename, const char* outputF
 	input.seek(44); // wavHeaderSize
 	output.seek(44); // wavHeaderSize
 
-	Serial.printf("Compressing, file size is %d B\n", wavSize);
-
 	const uint16_t samplesPerProcess = 32 * 100;
 
 	Compression comp(16000, 10, 5, -26, 5, 5, 0.003f, 0.250f);
