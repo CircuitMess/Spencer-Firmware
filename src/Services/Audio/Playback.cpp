@@ -95,6 +95,8 @@ void PlaybackImpl::stopPlayback(bool executeCallback)
 		void (* callback)() = playbackDoneCallback;
 		playbackDoneCallback = nullptr;
 		callback();
+	}else if(playbackDoneCallback != nullptr){
+		playbackDoneCallback = nullptr;
 	}
 }
 bool PlaybackImpl::isRunning()
