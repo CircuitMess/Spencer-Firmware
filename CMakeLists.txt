@@ -4,7 +4,7 @@ set(PORT /dev/ttyUSB0)
 set(DEVICE cm:esp32:ringo)
 set(CMAKE_CXX_STANDARD 11)
 
-if(${WIN32} OR ${CYGWIN})
+if(WIN32 OR CYGWIN)
     set(Arduino15 $ENV{APPDATA}/../Local/Arduino15)
     set(ArduinoLibs $ENV{USERPROFILE}/Documents/Arduino/libraries)
 
@@ -69,16 +69,16 @@ add_definitions(-DESP32)
 
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_PROJECT_NAME}.ino PROPERTIES LANGUAGE CXX)
 
-add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.elf
-        COMMAND arduino-cli compile --fqbn ${DEVICE} -o ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.bin ${CMAKE_PROJECT_NAME}.ino
+add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf
+        COMMAND arduino-cli compile --fqbn ${DEVICE} --output-dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_PROJECT_NAME}.ino
         DEPENDS ${CMAKE_PROJECT_NAME}.ino ${SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 add_custom_target(CMBuild
-        SOURCES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.elf)
+        SOURCES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf)
 
 add_custom_target(CMUpload ALL
-        COMMAND arduino-cli upload --fqbn ${DEVICE} -p ${PORT} -i ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.bin
+        COMMAND arduino-cli upload --fqbn ${DEVICE} -p ${PORT} --input-dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         DEPENDS CMBuild
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
