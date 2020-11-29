@@ -41,7 +41,7 @@ void IntentStore::fillStorage(){
 	storage["Weather"] = {
 			"weather",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				WeatherIntentParam launchParams;
+				WeatherIntentParam launchParams = WeatherIntentParam::TODAY;
 				if(params.find("time") == params.end()){
 					launchParams = WeatherIntentParam::TODAY;
 				}else{
@@ -61,7 +61,7 @@ void IntentStore::fillStorage(){
 	storage["Volume"] = {
 			"volume",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				AudioValue value;
+				AudioValue value = AudioValue::A_NONE;
 				if(params.find("level") == params.end()){
 					value = AudioValue::A_NONE;
 				}else{
@@ -87,7 +87,7 @@ void IntentStore::fillStorage(){
 	storage["Brightness"] = {
 			"brightness",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
-				BrightnessValue value;
+				BrightnessValue value = BrightnessValue::B_NONE;
 				if(params.find("level") == params.end()){
 					value = BrightnessValue::B_NONE;
 				}else{
