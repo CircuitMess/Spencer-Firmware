@@ -15,6 +15,7 @@ ListenState::~ListenState(){
 }
 
 void ListenState::enter(){
+	Playback.stopPlayback();
 	LEDmatrix.startAnimation(new Animation("GIF-listen.gif"), true);
 	Recording.addJob({ &recordResult });
 	LoopManager::addListener(this);

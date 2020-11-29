@@ -102,7 +102,7 @@ void SerialSetup::printSettings(){
 	uint32_t lower = mac & 0xffffffff;
 
 
-	Serial.printf("SPENCER:%u%u:%s\n", upper, lower, "1.0");
+	Serial.printf("SPENCER:%u%u:%u\n", upper, lower, Settings.getVersion());
 	Serial.printf("SET:%s\n", Settings.get().SSID);
 	Serial.printf("SET:%s\n", Settings.get().pass);
 	Serial.printf("SET:%d\n", Settings.get().fahrenheit);

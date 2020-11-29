@@ -21,6 +21,7 @@
 #include "src/Net.h"
 #include "src/Services/SerialSetup.h"
 #include "src/State/StartupState.h"
+#include "src/Services/UpdateChecker.h"
 
 void setup(){
 	Serial.begin(115200);
@@ -53,10 +54,12 @@ void setup(){
 	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
+	LoopManager::addListener(&UpdateChecker);
 	LoopManager::addListener(new InputGPIO());
 
 	Net.set(Settings.get().SSID, Settings.get().pass);
 	Net.addStateListener(&TimeService);
+	Net.addStateListener(&UpdateChecker);
 
 	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 

@@ -2,6 +2,7 @@ generic firstStartup Hello! I’m Spencer, your own personal assistant! First th
 generic setupModeEntering Entering configuration mode.
 generic setupMode Hook me up to your computer and open up CircuitBlocks to configure my settings.
 generic and and
+generic update I've just checked, and it looks like I have an update pending! Connect me to your computer and open up CircuitBlocks to make me even funnier.
 error wifi Looks like I'm having some trouble connecting to a WiFi network.
 error net I'm connected to a WiFI network, but the network doesn't have a working internet connection.
 error mess Uh oh! Look's like we messed up our circuits! Get it? 'Cause we're CircuitMess! HA. HA. HA. Hilarious. Anyways, please try again in a second.

@@ -3,6 +3,8 @@
 #include "../../Spencer.hpp"
 #include "ListenState.h"
 #include "../LEDmatrix/LEDmatrix.h"
+#include "../Services/UpdateChecker.h"
+#include "../Services/Audio/Playback.h"
 #include <Loop/LoopManager.h>
 IdleState* IdleState::instance = nullptr;
 
@@ -21,7 +23,18 @@ void IdleState::enter(){
 	digitalWrite(LED_PIN, 0);
 
 	LoopManager::addListener(this);
-	startRandomAnimation();
+
+	if(UpdateChecker.updateAvailable() && !UpdateChecker.hasNotified()){
+		UpdateChecker.notify();
+		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+		Playback.playMP3(SampleStore::load(Generic, "update"));
+		Playback.setPlaybackDoneCallback([](){
+			if(instance == nullptr) return;
+			instance->startRandomAnimation();
+		});
+	}else{
+		startRandomAnimation();
+	}
 
 	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
 		if(instance == nullptr) return;

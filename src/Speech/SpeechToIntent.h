@@ -34,6 +34,7 @@ protected:
 
 private:
 	IntentResult* identifyVoice(const char* filename);
+	void compress(const char* inputFilename, const char* outputFilename);
 
 };
 
