@@ -27,8 +27,8 @@ void RecordingImpl::record(){
 	int16_t* wavBuffer = static_cast<int16_t*>(malloc(wavBufferSize));
 	const uint wavFileSize = maxRecordTime * (float) sampleRate * 2.0f;
 
-	SerialFlash.createErasable("recordingRaw.wav", wavFileSize + wavHeaderSize);
-	SerialFlashFile file = SerialFlash.open("recordingRaw.wav");
+	SerialFlash.createErasable("recording.wav", wavFileSize + wavHeaderSize);
+	SerialFlashFile file = SerialFlash.open("recording.wav");
 	file.erase();
 	file.seek(wavHeaderSize);
 
@@ -89,47 +89,20 @@ void RecordingImpl::record(){
 	free(wavBuffer);
 
 	i2s->stop();
-
-	compress("recordingRaw.wav", "recording.wav", wavTotalWritten);
+	createCompressedFile("compressed.wav", wavTotalWritten);
 }
 
-void RecordingImpl::compress(const char* inputFilename, const char* outputFilename, size_t wavSize){
-	SerialFlashFile input = SerialFlash.open(inputFilename);
-	if(!input){
-		Serial.println("Failed opening input file");
-		return;
-	}
-
-	SerialFlash.createErasable(outputFilename, maxRecordTime * (float) sampleRate * 2.0f + wavHeaderSize);
-	SerialFlashFile output = SerialFlash.open(outputFilename);
-	output.erase();
-	if(!output){
+void RecordingImpl::createCompressedFile(const char* outputFilename, size_t wavSize){
+	SerialFlash.createErasable(outputFilename, maxRecordTime * (float) sampleRate * 2.0f + (float) wavHeaderSize);
+	SerialFlashFile file = SerialFlash.open(outputFilename);
+	file.erase();
+	if(!file){
 		Serial.println("Failed opening output file");
 		return;
 	}
 
-	writeWavHeader(&output, wavSize);
-	input.seek(wavHeaderSize);
-
-	const uint16_t samplesPerProcess = 32 * 100;
-
-	Compression comp(16000, 10, 5, -26, 5, 5, 0.003f, 0.250f);
-	int16_t* inputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
-	int16_t* outputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
-
-	size_t totalProcessed = 0;
-	while(input.read(inputBuf, samplesPerProcess * sizeof(int16_t))){
-		comp.process(inputBuf, outputBuf, samplesPerProcess);
-		output.write(outputBuf, samplesPerProcess * sizeof(int16_t));
-
-		totalProcessed += samplesPerProcess * sizeof(int16_t);
-		if(totalProcessed >= wavSize) break;
-	}
-
-	input.close();
-	output.close();
-	free(inputBuf);
-	free(outputBuf);
+	writeWavHeader(&file, wavSize);
+	file.close();
 }
 
 void RecordingImpl::writeWavHeader(SerialFlashFile* file, int wavSize){

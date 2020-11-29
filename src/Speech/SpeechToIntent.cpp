@@ -2,10 +2,10 @@
 #include <ArduinoJson.h>
 #include "SpeechToIntent.h"
 #include "../Util/Base64Encode.h"
-#include "../DataStream/FileReadStream.h"
 #include "../Util/StreamableHTTPClient.h"
 #include "../Net.h"
 #include "../Settings.h"
+#include "../Services/Audio/Compression.h"
 
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 
@@ -39,7 +39,9 @@ void SpeechToIntentImpl::doJob(const STIJob& job){
 }
 
 IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
-	SerialFlashFile file = SerialFlash.open(filename);
+	compress(filename, "compressed.wav");
+
+	SerialFlashFile file = SerialFlash.open("compressed.wav");
 	if(!file){
 		Serial.println("Couldn't open file for reading");
 		return new IntentResult(IntentResult::FILE);
@@ -152,4 +154,50 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	}
 
 	return result;
+}
+
+void SpeechToIntentImpl::compress(const char* inputFilename, const char* outputFilename){
+	SerialFlashFile input = SerialFlash.open(inputFilename);
+	if(!input){
+		Serial.println("Failed opening input file");
+		return;
+	}
+
+	SerialFlashFile output = SerialFlash.open(outputFilename);
+	if(!output){
+		Serial.println("Failed opening output file");
+		return;
+	}
+
+	uint wavSize = 0;
+	input.seek(4); //skip RIFF on start of file
+	for(int8_t i = 0; i < 4; i++){
+		input.read(&(((char*)(void*)&wavSize)[i]), 1);
+	}
+	wavSize += 8;
+	wavSize -= 44;
+	input.seek(44); // wavHeaderSize
+	output.seek(44); // wavHeaderSize
+
+	Serial.printf("Compressing, file size is %d B\n", wavSize);
+
+	const uint16_t samplesPerProcess = 32 * 100;
+
+	Compression comp(16000, 10, 5, -26, 5, 5, 0.003f, 0.250f);
+	int16_t* inputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
+	int16_t* outputBuf = static_cast<int16_t*>(malloc(sizeof(int16_t) * samplesPerProcess));
+
+	size_t totalProcessed = 0;
+	while(input.read(inputBuf, samplesPerProcess * sizeof(int16_t))){
+		comp.process(inputBuf, outputBuf, samplesPerProcess);
+		output.write(outputBuf, samplesPerProcess * sizeof(int16_t));
+
+		totalProcessed += samplesPerProcess * sizeof(int16_t);
+		if(totalProcessed >= wavSize) break;
+	}
+
+	input.close();
+	output.close();
+	free(inputBuf);
+	free(outputBuf);
 }

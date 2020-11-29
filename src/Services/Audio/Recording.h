@@ -35,7 +35,7 @@ private:
 	void record(); // 16bit, monoral, 16000Hz,  linear PCM
 
 	void writeWavHeader(SerialFlashFile* file, int wavSize);
-	void compress(const char* inputFilename, const char* outputFilename, size_t wavSize);
+	void createCompressedFile(const char* outputFilename, size_t wavSize);
 };
 
 extern RecordingImpl Recording;
