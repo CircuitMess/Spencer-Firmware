@@ -12,10 +12,8 @@
 SpeechToIntentImpl SpeechToIntent;
 
 IntentResult::IntentResult(Error error) : error(error), entities({}){
-	if(error != OK){
-		intent = transcript = nullptr;
-		confidence = 0;
-	}
+	intent = transcript = nullptr;
+	confidence = 0;
 }
 
 IntentResult::~IntentResult(){
@@ -52,7 +50,7 @@ IntentResult* SpeechToIntentImpl::identifyVoice(const char* filename){
 	for(int8_t i = 0; i < 4; i++){
 		file.read(&(((char*)(void*)&wavSize)[i]), 1);
 	}
-	wavSize+=8;
+	wavSize += 8 + 44;
 	file.seek(0);
 
 	StreamableHTTPClient http;
