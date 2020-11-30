@@ -26,6 +26,18 @@ public:
 	 */
 	static void uploadSD();
 
+	/**
+	 * Silent upload with no message reporting and no erase. Flash should be rased before calling this function.
+	 *
+	 * @return Total erase and upload time in ms
+	 */
+	static uint32_t uploadSDSilent();
+
+	/**
+	 * Uploads data from the internal flash to the external flash chip.
+	 */
+	static void uploadToFlash();
+
 	static void listFiles();
 
 private:

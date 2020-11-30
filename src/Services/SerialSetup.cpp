@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include "SerialSetup.h"
 #include "../Settings.h"
+#include "../SerialID.h"
 
 SerialSetup::SerialSetup() : scanTask("SetupScan", [](Task* task){
 	SerialSetup* instance = static_cast<SerialSetup*>(task->arg);
@@ -70,6 +71,7 @@ bool SerialSetup::checkOption(const char* option){
 }
 
 void SerialSetup::start(){
+	SerialID.stop();
 	LoopManager::addListener(this);
 	Serial.println("SPENCER:SETTINGS");
 }
@@ -77,6 +79,7 @@ void SerialSetup::start(){
 void SerialSetup::stop(){
 	scanTask.stop();
 	LoopManager::removeListener(this);
+	SerialID.start();
 }
 
 void SerialSetup::readSettings(){
@@ -102,7 +105,7 @@ void SerialSetup::printSettings(){
 	uint32_t lower = mac & 0xffffffff;
 
 
-	Serial.printf("SPENCER:%u%u:%u\n", upper, lower, Settings.getVersion());
+	Serial.printf("SPENCER:%x%x:%u\n", upper, lower, Settings.getVersion());
 	Serial.printf("SET:%s\n", Settings.get().SSID);
 	Serial.printf("SET:%s\n", Settings.get().pass);
 	Serial.printf("SET:%d\n", Settings.get().fahrenheit);

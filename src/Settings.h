@@ -9,6 +9,7 @@ struct SettingsData {
 	bool fahrenheit = false;
 	uint8_t brightnessLevel = 1; //medium brightness
 	uint8_t volumeLevel = 1; //medium volume
+	bool calibrated = false;
 };
 
 class SettingsImpl {

@@ -19,9 +19,29 @@
 #include <Util/Task.h>
 #include "src/Settings.h"
 #include "src/Net.h"
+#include "src/SerialID.h"
 #include "src/Services/SerialSetup.h"
 #include "src/State/StartupState.h"
 #include "src/Services/UpdateChecker.h"
+#include "src/HardwareTest.h"
+
+
+bool checkJig(){
+	if(Settings.get().calibrated) return false;
+
+	pinMode(22, OUTPUT);
+	pinMode(21, INPUT_PULLDOWN);
+
+	digitalWrite(22, HIGH);
+	delay(10);
+	if(digitalRead(21) != HIGH) return false;
+
+	digitalWrite(22, LOW);
+	delay(10);
+	if(digitalRead(21) != LOW) return false;
+
+	return true;
+}
 
 void setup(){
 	Serial.begin(115200);
@@ -29,19 +49,28 @@ void setup(){
 	disableCore0WDT();
 	disableCore1WDT();
 
+	if(checkJig()){
+		HardwareTest test;
+		test.start();
+		for(;;);
+	}
+
 	SPIClass spi(3);
 	spi.begin(18, 19, 23, FLASH_CS_PIN);
+	SerialFlash.setSettings(SPISettings(30000000, MSBFIRST, SPI_MODE0));
 	if(!SerialFlash.begin(spi, FLASH_CS_PIN)){
 		Serial.println("Flash fail");
 		return;
 	}
 
-	pinMode(LED_PIN, OUTPUT);
-
 	if(!LEDmatrix.begin()){
-		Serial.println("couldn't start matrix");
-		for(;;);
+		Settings.begin();
+		for(;;){
+			SerialID.loop(0);
+		}
 	}
+
+	pinMode(LED_PIN, OUTPUT);
 
 	I2S* i2s = new I2S();
 	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
@@ -51,6 +80,7 @@ void setup(){
 	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
+	SerialID.start();
 	LoopManager::addListener(&Playback);
 	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
