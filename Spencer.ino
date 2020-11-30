@@ -12,6 +12,7 @@
 #include "src/Services/UpdateChecker.h"
 #include "src/HardwareTest.h"
 
+Spencer spencer;
 
 bool checkJig(){
 	if(Settings.get().calibrated) return false;
@@ -41,47 +42,20 @@ void setup(){
 		test.start();
 		for(;;);
 	}
+	spencer.begin();
 
-	SPIClass spi(3);
-	spi.begin(18, 19, 23, FLASH_CS_PIN);
-	SerialFlash.setSettings(SPISettings(30000000, MSBFIRST, SPI_MODE0));
-	if(!SerialFlash.begin(spi, FLASH_CS_PIN)){
-		Serial.println("Flash fail");
-		return;
-	}
-
-	if(!LEDmatrix.begin()){
-		Settings.begin();
-		for(;;){
-			SerialID.loop(0);
-		}
-	}
-
-	pinMode(LED_PIN, OUTPUT);
-
-	I2S* i2s = new I2S();
-	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
-	i2s->begin();
-
-	Playback.begin(i2s);
-	Recording.begin(i2s);
+	
 	IntentStore::fillStorage();
 
 	SerialID.start();
-	LoopManager::addListener(&Playback);
-	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(&UpdateChecker);
-	LoopManager::addListener(new InputGPIO());
 
-	Net.set(Settings.get().SSID, Settings.get().pass);
 	Net.addStateListener(&TimeService);
 	Net.addStateListener(&UpdateChecker);
 
 	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 
-	LoopManager::setStackSize(10240);
-	LoopManager::startTask(2, 1);
 }
 
 void loop(){
