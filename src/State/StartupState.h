@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Loop/LoopListener.h>
 #include "State.h"
-#include "../Net.h"
+#include <Net/Net.h>
 
 class StartupState : public State, public LoopListener {
 public:

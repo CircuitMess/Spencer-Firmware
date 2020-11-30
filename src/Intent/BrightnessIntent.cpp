@@ -1,7 +1,7 @@
 #include "BrightnessIntent.h"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Services/Audio/Playback.h"
-#include "../Settings.h"
+#include <LEDmatrix/LEDmatrix.h>
+#include <Audio/Playback.h>
+#include <Settings.h>
 BrightnessIntent::BrightnessIntent(BrightnessValue value)
 {
 	startingLevel = Settings.get().brightnessLevel;

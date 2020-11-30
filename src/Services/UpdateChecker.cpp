@@ -1,7 +1,7 @@
 #include <HTTPClient.h>
 #include "UpdateChecker.h"
-#include "../Net.h"
-#include "../Settings.h"
+#include <Net/Net.h>
+#include <Settings.h>
 
 UpdateCheckerImpl UpdateChecker;
 

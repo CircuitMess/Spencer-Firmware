@@ -4,7 +4,7 @@
 
 #include <Loop/LoopListener.h>
 #include "State.h"
-#include "../Speech/SpeechToIntent.h"
+#include <Speech/SpeechToIntent.h>
 
 class ProcessState : public State, public LoopListener {
 public:

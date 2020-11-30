@@ -4,11 +4,11 @@
 #include <ArduinoJson.h>
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"
-#include "../Services/Audio/Playback.h"
-#include "../LEDmatrix/LEDmatrix.h"
+#include <Audio/Playback.h>
+#include <LEDmatrix/LEDmatrix.h>
 #include <Util/Task.h>
 #include "../State/ErrorState.h"
-#include "../Settings.h"
+#include <Settings.h>
 
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 WeatherIntent* WeatherIntent::instance = nullptr;
