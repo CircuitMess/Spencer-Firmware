@@ -44,7 +44,6 @@ void setup(){
 	}
 	spencer.begin();
 
-	
 	IntentStore::fillStorage();
 
 	SerialID.start();
@@ -56,6 +55,7 @@ void setup(){
 
 	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 
+	spencer.startLoopTask();
 }
 
 void loop(){
