@@ -46,6 +46,7 @@ include_directories(${ArduinoLibs}/ESP8266Audio/src)
 include_directories(${ArduinoLibs}/SerialFlash)
 include_directories(${ArduinoLibs}/ArduinoJson/src)
 include_directories(${ArduinoLibs}/NTPClient)
+include_directories(${ArduinoLibs}/ESP32Ping)
 
 
 AUX_SOURCE_DIRECTORY(src SOURCES)
