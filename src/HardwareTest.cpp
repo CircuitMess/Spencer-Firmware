@@ -15,7 +15,7 @@ HardwareTest::HardwareTest(){
 	test = this;
 
 	tests.push_back({ HardwareTest::audio, "Audio" });
-	tests.push_back({ HardwareTest::wifi, "WiFi" });
+	// tests.push_back({ HardwareTest::wifi, "WiFi" });
 	tests.push_back({ HardwareTest::flashInit, "Flash init" });
 	tests.push_back({ HardwareTest::flashErase, "Flash erase" });
 	tests.push_back({ HardwareTest::F2FdataUpload, "Data upload" });
