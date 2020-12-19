@@ -1,6 +1,6 @@
 #include "ErrorState.h"
-#include "../Services/Audio/Playback.h"
-#include "../LEDmatrix/LEDmatrix.h"
+#include <Audio/Playback.h>
+#include <LEDmatrix/LEDmatrix.h>
 #include "IdleState.h"
 #include "SetupState.h"
 

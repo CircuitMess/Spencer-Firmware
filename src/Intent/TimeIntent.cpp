@@ -1,8 +1,8 @@
-#include "../Services/Audio/CompositeAudioFileSource.h"
+#include <Audio/CompositeAudioFileSource.h>
 #include "TimeIntent.h"
 #include "../Services/TimeService/TimeService.h"
-#include "../Services/Audio/Playback.h"
-#include "../LEDmatrix/LEDmatrix.h"
+#include <Audio/Playback.h>
+#include <LEDmatrix/LEDmatrix.h>
 TimeIntent* TimeIntent::instance = nullptr;
 TimeIntent::TimeIntent(TimeIntentType type)
 {

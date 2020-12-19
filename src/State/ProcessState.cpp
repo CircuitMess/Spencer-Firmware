@@ -1,8 +1,8 @@
 #include <Loop/LoopManager.h>
 #include "ProcessState.h"
 #include "../Intent/IntentInfo.hpp"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Services/Audio/Playback.h"
+#include <LEDmatrix/LEDmatrix.h>
+#include <Audio/Playback.h>
 #include "../Intent/IntentStore.h"
 #include "IdleState.h"
 #include "ErrorState.h"

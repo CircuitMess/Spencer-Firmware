@@ -1,7 +1,7 @@
 #include "VolumeIntent.h"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Services/Audio/Playback.h"
-#include "../Settings.h"
+#include <LEDmatrix/LEDmatrix.h>
+#include <Audio/Playback.h>
+#include <Settings.h>
 VolumeIntent::VolumeIntent(AudioValue value)
 {
 	startingLevel = Settings.get().volumeLevel;

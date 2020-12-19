@@ -1,12 +1,12 @@
 #include <Loop/LoopManager.h>
 #include "StartupState.h"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Settings.h"
+#include <LEDmatrix/LEDmatrix.h>
+#include <Settings.h>
 #include "IdleState.h"
 #include "ErrorState.h"
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"
-#include "../Services/Audio/Playback.h"
+#include <Audio/Playback.h>
 #include "SetupState.h"
 
 StartupState::StartupState(bool firstTime) : firstTime(firstTime){

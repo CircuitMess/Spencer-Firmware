@@ -1,9 +1,9 @@
 #include "StopwatchIntent.h"
 #include <Input/Input.h>
-#include "../../Spencer.hpp"
+#include <Spencer.h>
 #include "../Services/TimeService/TimeService.h"
-#include "../Services/Audio/Playback.h"
-#include "../LEDmatrix/LEDmatrix.h"
+#include <Audio/Playback.h>
+#include <LEDmatrix/LEDmatrix.h>
 StopwatchIntent* StopwatchIntent::instance = nullptr;
 StopwatchIntent::StopwatchIntent()
 {

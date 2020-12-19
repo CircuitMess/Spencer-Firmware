@@ -1,6 +1,6 @@
 #include <Loop/LoopManager.h>
 #include "SerialID.h"
-#include "Settings.h"
+#include <Settings.h>
 
 SerialIDImpl SerialID;
 

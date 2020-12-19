@@ -1,10 +1,10 @@
 #include <Input/Input.h>
 #include <Loop/LoopManager.h>
 #include "SetupState.h"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Services/Audio/Playback.h"
-#include "../../Spencer.hpp"
-#include "../Net.h"
+#include <LEDmatrix/LEDmatrix.h>
+#include <Audio/Playback.h>
+#include <Spencer.h>
+#include <Net/Net.h>
 #include "IdleState.h"
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"

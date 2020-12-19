@@ -1,7 +1,7 @@
 #include <Loop/LoopManager.h>
 #include <WiFi.h>
 #include "SerialSetup.h"
-#include "../Settings.h"
+#include <Settings.h>
 #include "../SerialID.h"
 
 SerialSetup::SerialSetup() : scanTask("SetupScan", [](Task* task){

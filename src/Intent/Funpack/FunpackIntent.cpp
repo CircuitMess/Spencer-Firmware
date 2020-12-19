@@ -1,6 +1,6 @@
 #include "FunpackIntent.h"
-#include "../../Services/Audio/Playback.h"
-#include "../../LEDmatrix/LEDmatrix.h"
+#include <Audio/Playback.h>
+#include <LEDmatrix/LEDmatrix.h>
 
 FunpackIntent::FunpackIntent(const char* responses[], uint8_t noResponses){
 	uint i = rand() % noResponses;
