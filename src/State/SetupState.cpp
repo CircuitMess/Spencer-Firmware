@@ -3,7 +3,7 @@
 #include "SetupState.h"
 #include <LEDmatrix/LEDmatrix.h>
 #include <Audio/Playback.h>
-#include <Spencer.hpp>
+#include <Spencer.h>
 #include <Net/Net.h>
 #include "IdleState.h"
 #include "../Services/LocationService/LocationService.h"

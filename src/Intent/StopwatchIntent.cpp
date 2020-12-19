@@ -1,6 +1,6 @@
 #include "StopwatchIntent.h"
 #include <Input/Input.h>
-#include <Spencer.hpp>
+#include <Spencer.h>
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
 #include <LEDmatrix/LEDmatrix.h>

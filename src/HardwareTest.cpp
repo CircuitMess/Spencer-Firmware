@@ -6,7 +6,7 @@
 #include "HardwareTest.h"
 #include <Settings.h>
 #include <Audio/I2S.h>
-#include <Spencer.hpp>
+#include <Spencer.h>
 #include "Util/FlashTools.h"
 
 HardwareTest* HardwareTest::test = nullptr;

@@ -1,6 +1,6 @@
 #include <Input/Input.h>
 #include "IdleState.h"
-#include <Spencer.hpp>
+#include <Spencer.h>
 #include "ListenState.h"
 #include <LEDmatrix/LEDmatrix.h>
 #include "../Services/UpdateChecker.h"
