@@ -1,6 +1,6 @@
 #include "JokeIntent.h"
 #include <Audio/Playback.h>
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 std::vector<uint> JokeIntent::jokeVector;
 JokeIntent::JokeIntent()
 {
@@ -20,7 +20,7 @@ void JokeIntent::loop(uint micros)
 		Playback.setPlaybackDoneCallback([](){
 			done();
 		});
-		LEDmatrix.startAnimation(new Animation(random(0, 2) ? "GIF-laugh.gif" : "GIF-smile.gif"), true);
+		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(random(0, 2) ? "GIF-laugh.gif" : "GIF-smile.gif")), true);
 		badumFlag = true;
 	}
 }
@@ -51,7 +51,7 @@ void JokeIntent::enter()
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
 	Playback.playMP3(file);
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 }
 
 void JokeIntent::exit()

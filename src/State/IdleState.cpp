@@ -2,7 +2,7 @@
 #include "IdleState.h"
 #include <Spencer.h>
 #include "ListenState.h"
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 #include "../Services/UpdateChecker.h"
 #include <Audio/Playback.h>
 #include <Loop/LoopManager.h>
@@ -28,7 +28,7 @@ void IdleState::enter(){
 	if(UpdateChecker.updateAvailable() && !UpdateChecker.hasNotified()){
 		UpdateChecker.notify();
 		notifyingUpdate = true;
-		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 		Playback.playMP3(SampleStore::load(Generic, "update"));
 		Playback.setPlaybackDoneCallback([](){
 			if(instance == nullptr) return;
@@ -93,6 +93,6 @@ void IdleState::startRandomAnimation()
 			requiredAnimationLoops = 3;
 		}
 	}
-	LEDmatrix.startAnimation(new Animation(buffer), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(buffer)), true);
 	animationLoopCounter = 0;
 }

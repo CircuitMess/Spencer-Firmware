@@ -2,7 +2,7 @@
 #include "TimeIntent.h"
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 TimeIntent* TimeIntent::instance = nullptr;
 TimeIntent::TimeIntent(TimeIntentType type)
 {
