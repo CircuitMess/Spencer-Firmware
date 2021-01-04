@@ -4,7 +4,7 @@
 #include <Spencer.h>
 #include <Audio/Playback.h>
 #include <Spencer.h>
-#include <Net/Net.h>
+#include <Network/Net.h>
 #include "IdleState.h"
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"

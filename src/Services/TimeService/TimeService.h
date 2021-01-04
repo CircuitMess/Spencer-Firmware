@@ -1,7 +1,7 @@
 #ifndef SPENCER_TIMESERVICE_H
 #define SPENCER_TIMESERVICE_H
 
-#include <Net/Net.h>
+#include <Network/Net.h>
 #include "DateTime.hpp"
 #include <Loop/LoopListener.h>
 #include <WiFiUdp.h>

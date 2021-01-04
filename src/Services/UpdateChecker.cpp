@@ -1,6 +1,6 @@
 #include <HTTPClient.h>
 #include "UpdateChecker.h"
-#include <Net/Net.h>
+#include <Network/Net.h>
 #include <Settings.h>
 
 UpdateCheckerImpl UpdateChecker;
