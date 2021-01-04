@@ -1,6 +1,6 @@
 #include "ErrorState.h"
 #include <Audio/Playback.h>
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 #include "IdleState.h"
 #include "SetupState.h"
 
@@ -31,7 +31,7 @@ void ErrorState::exit(){
 }
 
 void ErrorState::doWifi(){
-	LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-noWifi.gif")), true);
 	Playback.playMP3(SampleStore::load(Error, "wifi"));
 
 	Playback.setPlaybackDoneCallback([](){
@@ -48,7 +48,7 @@ void ErrorState::doNetwork(){
 			break;
 
 		case NetImpl::NetError::NET:
-			LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+			LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 			Playback.playMP3(SampleStore::load(Error, "net"));
 
 			Playback.setPlaybackDoneCallback([](){
@@ -57,7 +57,7 @@ void ErrorState::doNetwork(){
 			break;
 
 		case NetImpl::NetError::SERVICE:
-			LEDmatrix.startAnimation(new Animation("GIF-error.gif"), true);
+			LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-error.gif")), true);
 			Playback.playMP3(SampleStore::load(Error, "service"));
 
 			Playback.setPlaybackDoneCallback([](){
@@ -73,7 +73,7 @@ void ErrorState::doNetwork(){
 }
 
 void ErrorState::doJson(){
-	LEDmatrix.startAnimation(new Animation("GIF-error500.gif"), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-error500.gif")), true);
 	Playback.playMP3(SampleStore::load(Error, "mess"));
 
 	Playback.setPlaybackDoneCallback([](){
@@ -82,7 +82,7 @@ void ErrorState::doJson(){
 }
 
 void ErrorState::doApiKey(){
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 	Playback.playMP3(SampleStore::load(Error, "apiKey"));
 
 	Playback.setPlaybackDoneCallback([](){

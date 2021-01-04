@@ -5,7 +5,7 @@
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 #include <Util/Task.h>
 #include "../State/ErrorState.h"
 #include <Settings.h>
@@ -315,18 +315,18 @@ void WeatherIntent::generateWeeklyDay()
 			if(weeklyWeatherCode[weeklyIndex] == 800){
 				if(weeklyDayNight[weeklyIndex]){
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastClear");
-					weatherAnimation = new Animation("GIF-night.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-night.gif"));
 				}else{
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastSunny");
-					weatherAnimation = new Animation("GIF-sun.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sun.gif"));
 				}
 				//sunny/clear sky
 			}else{
 				weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastCloudy");
 				if(weeklyWeatherCode[weeklyIndex] == 801){
-					weatherAnimation = new Animation("GIF-sunClouds.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sunClouds.gif"));
 				}else{
-					weatherAnimation = new Animation("GIF-clouds.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-clouds.gif"));
 				}
 				//cloudy
 			}
@@ -335,19 +335,19 @@ void WeatherIntent::generateWeeklyDay()
 
 		case 7:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastFoggy");
-			weatherAnimation = new Animation("GIF-fog.gif");
+			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-fog.gif"));
 			//foggy
 			break;
 
 		case 6:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastSnowy");
-			weatherAnimation = new Animation("GIF-snow.gif");
+			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-snow.gif"));
 			//snowy
 			break;
 
 		default:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastRainy");
-			weatherAnimation = new Animation("GIF-rain.gif");
+			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-rain.gif"));
 			//rainy, 2 - thunderstorm, 3 - drizzle, 5 - rain
 			break;
 	}
@@ -403,18 +403,18 @@ void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight
 			if(weatherCode == 800){
 				if(dayNight){
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastClear" : "clear");
-					weatherAnimation = new Animation("GIF-night.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-night.gif"));
 				}else{
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastSunny" : "sunny");
-					weatherAnimation = new Animation("GIF-sun.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sun.gif"));
 				}
 				//sunny/clear sky
 			}else{
 				weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastCloudy" : "cloudy");
 				if(weatherCode == 801){
-					weatherAnimation = new Animation("GIF-sunClouds.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sunClouds.gif"));
 				}else{
-					weatherAnimation = new Animation("GIF-clouds.gif");
+					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-clouds.gif"));
 				}
 				//cloudy
 			}
@@ -423,19 +423,19 @@ void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight
 
 		case 7:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastFoggy" : "foggy");
-			weatherAnimation = new Animation("GIF-fog.gif");
+			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-fog.gif"));
 			//foggy
 			break;
 
 		case 6:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastSnowy" : "snowy");
-			weatherAnimation = new Animation("GIF-snow.gif");
+			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-snow.gif"));
 			//snowy
 			break;
 
 		default:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastRainy" : "rainy");
-			weatherAnimation = new Animation("GIF-rain.gif");
+			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-rain.gif"));
 			//rainy, 2 - thunderstorm, 3 - drizzle, 5 - rain
 			break;
 	}

@@ -1,10 +1,10 @@
 #include <Input/Input.h>
 #include <Loop/LoopManager.h>
 #include "SetupState.h"
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 #include <Audio/Playback.h>
 #include <Spencer.h>
-#include <Net/Net.h>
+#include <Network/Net.h>
 #include "IdleState.h"
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"
@@ -20,10 +20,10 @@ SetupState::~SetupState(){
 void SetupState::enter(){
 	setup.start();
 
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
 	Playback.setPlaybackDoneCallback([](){
-		LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
+		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-noWifi.gif")), true);
 	});
 
 
@@ -33,7 +33,7 @@ void SetupState::enter(){
 		connecting = true;
 
 		Playback.stopPlayback(false);
-		LEDmatrix.startAnimation(new Animation("GIF-wifi.gif"), true);
+		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-wifi.gif")), true);
 
 		Net.connect([](wl_status_t status){
 			connecting = false;
@@ -43,7 +43,7 @@ void SetupState::enter(){
 				TimeService.fetchTime();
 				changeState(new IdleState());
 			}else{
-				LEDmatrix.startAnimation(new Animation("GIF-noWifi.gif"), true);
+				LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-noWifi.gif")), true);
 			}
 		});
 	};

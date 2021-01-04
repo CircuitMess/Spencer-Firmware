@@ -3,7 +3,7 @@
 #include <Spencer.h>
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
-#include <LEDmatrix/LEDmatrix.h>
+#include <Spencer.h>
 StopwatchIntent* StopwatchIntent::instance = nullptr;
 StopwatchIntent::StopwatchIntent()
 {
@@ -83,7 +83,7 @@ void StopwatchIntent::drawTime(uint minutes, uint seconds)
 
 void StopwatchIntent::enter()
 {
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), 1);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 	Playback.playMP3(SampleStore::load(SampleGroup::Time, "PressToStart"));
 	Playback.setPlaybackDoneCallback([](){
 		instance->stopTalkingFlag = 1;

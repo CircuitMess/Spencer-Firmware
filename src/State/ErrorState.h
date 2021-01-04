@@ -3,7 +3,7 @@
 
 
 #include "State.h"
-#include <Net/Net.h>
+#include <Network/Net.h>
 
 enum ErrorType {
 	WIFI, NETWORK, JSON, APIKEY
