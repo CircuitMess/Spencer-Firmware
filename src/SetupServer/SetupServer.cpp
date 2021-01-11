@@ -3,7 +3,7 @@
 #include <Loop/LoopManager.h>
 #include <SerialFlash.h>
 #include <esp_wifi.h>
-#include "../Settings.h"
+#include <Settings.h>
 #include "SetupRequestHandler.h"
 
 SetupServer* SetupServer::instance = nullptr;

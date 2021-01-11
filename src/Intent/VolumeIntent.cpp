@@ -1,7 +1,7 @@
 #include "VolumeIntent.h"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Services/Audio/Playback.h"
-#include "../Settings.h"
+#include <Spencer.h>
+#include <Audio/Playback.h>
+#include <Settings.h>
 VolumeIntent::VolumeIntent(AudioValue value)
 {
 	startingLevel = Settings.get().volumeLevel;
@@ -63,7 +63,7 @@ void VolumeIntent::enter()
 		output->add(SampleStore::load(SampleGroup::Levels, audioLevelNames[audioLevel]));
 	}
 
-	LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 	Playback.playMP3(output);
 	Playback.setPlaybackDoneCallback([](){
 		done();

@@ -4,7 +4,7 @@
 
 #include <Loop/LoopListener.h>
 #include <Util/Task.h>
-#include "../Net.h"
+#include <Network/Net.h>
 
 class UpdateCheckerImpl : public LoopListener, public NetStateListener {
 public:

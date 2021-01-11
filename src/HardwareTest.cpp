@@ -4,9 +4,9 @@
 #include <SPI.h>
 #include <SerialFlash.h>
 #include "HardwareTest.h"
-#include "Settings.h"
-#include "Services/Audio/I2S.h"
-#include "../Spencer.hpp"
+#include <Settings.h>
+#include <Audio/I2S.h>
+#include <Spencer.h>
 #include "Util/FlashTools.h"
 
 HardwareTest* HardwareTest::test = nullptr;

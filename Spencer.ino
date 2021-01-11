@@ -1,30 +1,16 @@
 #include <Arduino.h>
-#include <SPI.h>
-#include <SerialFlash.h>
-#include <CircuitOS.h>
-#include <Input/InputGPIO.h>
-#include "src/Speech/SpeechToIntent.h"
-#include "src/Services/Audio/Playback.h"
-#include "Spencer.hpp"
-#include "src/LEDmatrix/LEDmatrix.h"
+#include <Spencer.h>
 #include "src/State/State.h"
+#include <Util/FlashTools.h>
 #include "src/State/IdleState.h"
-#include "src/Util/FlashTools.h"
 #include "src/Intent/IntentStore.h"
-#include <Loop/LoopManager.h>
-#include <WiFi.h>
 #include "src/Services/TimeService/TimeService.h"
 #include "src/Intent/TimeIntent.h"
-#include "src/Services/Audio/Recording.h"
-#include <Util/Task.h>
-#include "src/Settings.h"
-#include "src/Net.h"
 #include "src/SerialID.h"
 #include "src/Services/SerialSetup.h"
 #include "src/State/StartupState.h"
 #include "src/Services/UpdateChecker.h"
 #include "src/HardwareTest.h"
-
 
 bool checkJig(){
 	if(Settings.get().calibrated) return false;
@@ -54,46 +40,19 @@ void setup(){
 		test.start();
 		for(;;);
 	}
+	Spencer.begin();
 
-	SPIClass spi(3);
-	spi.begin(18, 19, 23, FLASH_CS_PIN);
-	SerialFlash.setSettings(SPISettings(30000000, MSBFIRST, SPI_MODE0));
-	if(!SerialFlash.begin(spi, FLASH_CS_PIN)){
-		Serial.println("Flash fail");
-		return;
-	}
-
-	if(!LEDmatrix.begin()){
-		Settings.begin();
-		for(;;){
-			SerialID.loop(0);
-		}
-	}
-
-	pinMode(LED_PIN, OUTPUT);
-
-	I2S* i2s = new I2S();
-	i2s_driver_uninstall(I2S_NUM_0); //revert wrong i2s config from esp8266audio
-	i2s->begin();
-
-	Playback.begin(i2s);
-	Recording.begin(i2s);
 	IntentStore::fillStorage();
 
 	SerialID.start();
-	LoopManager::addListener(&Playback);
-	LoopManager::addListener(&LEDmatrix);
 	LoopManager::addListener(&TimeService);
 	LoopManager::addListener(&UpdateChecker);
-	LoopManager::addListener(new InputGPIO());
 
-	Net.set(Settings.get().SSID, Settings.get().pass);
 	Net.addStateListener(&TimeService);
 	Net.addStateListener(&UpdateChecker);
 
 	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
 
-	LoopManager::setStackSize(10240);
 	LoopManager::startTask(2, 1);
 }
 

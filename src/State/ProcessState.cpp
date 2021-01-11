@@ -1,8 +1,8 @@
 #include <Loop/LoopManager.h>
 #include "ProcessState.h"
 #include "../Intent/IntentInfo.hpp"
-#include "../LEDmatrix/LEDmatrix.h"
-#include "../Services/Audio/Playback.h"
+#include <Spencer.h>
+#include <Audio/Playback.h>
 #include "../Intent/IntentStore.h"
 #include "IdleState.h"
 #include "ErrorState.h"
@@ -47,7 +47,7 @@ void ProcessState::processIntent(){
 		delete intentResult;
 		intentResult = nullptr;
 
-		LEDmatrix.startAnimation(new Animation("GIF-questionMark.gif"), true);
+		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-questionMark.gif")), true);
 		Playback.playMP3(SampleStore::load(Error, "noIntent"));
 
 		Playback.setPlaybackDoneCallback([](){
@@ -61,7 +61,7 @@ void ProcessState::processIntent(){
 		delete intentResult;
 		intentResult = nullptr;
 
-		LEDmatrix.startAnimation(new Animation("GIF-talk.gif"), true);
+		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
 		Playback.playMP3(SampleStore::load(Generic, "setupModeEntering"));
 
 		Playback.setPlaybackDoneCallback([](){
@@ -83,14 +83,14 @@ void ProcessState::bleep(){
 	sprintf(randomSound, "randomNoise%d", index);
 	Playback.playMP3(SampleStore::load(SampleGroup::Special, randomSound));
 	sprintf(randomSound, "GIF-random%d.gif", index);
-	LEDmatrix.startAnimation(new Animation(randomSound), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(randomSound)), true);
 }
 
 void ProcessState::enter(){
 	uint8_t loadingAnimationIndex =  random(0, 8);
 	char randomAnimation[20];
 	sprintf(randomAnimation, "GIF-loading%d.gif", loadingAnimationIndex);
-	LEDmatrix.startAnimation(new Animation(randomAnimation), true);
+	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(randomAnimation)), true);
 	SpeechToIntent.addJob({ recordingFilename, &intentResult });
 	LoopManager::addListener(this);
 	bleep();

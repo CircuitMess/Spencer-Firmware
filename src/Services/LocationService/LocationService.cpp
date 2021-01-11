@@ -1,5 +1,5 @@
 #include "LocationService.h"
-#include "../../Net.h"
+#include <Network/Net.h>
 #include <NTPClient.h>
 #include <Loop/LoopManager.h>
 #include <string>
