@@ -10,16 +10,7 @@
 #include "SetupState.h"
 
 StartupState::StartupState(bool firstTime) : firstTime(firstTime){
-	if(firstTime){
-		Settings.reset();
-		Settings.get().brightnessLevel = Settings.get().volumeLevel = 1;
-		Settings.store();
-	}
 
-	uint8_t brightnessLevelValues[3] = {5, 20, 100};
-	float audioLevelValues[3] = {0.1, 0.4, 1.0};
-	LEDmatrix.setBrightness(brightnessLevelValues[Settings.get().brightnessLevel]);
-	Playback.setVolume(audioLevelValues[Settings.get().volumeLevel]);
 }
 
 void StartupState::enter(){

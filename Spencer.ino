@@ -51,7 +51,8 @@ void setup(){
 	Net.addStateListener(&TimeService);
 	Net.addStateListener(&UpdateChecker);
 
-	State::changeState(new StartupState(!Settings.begin() || Settings.get().SSID[0] == 0));
+	bool firstTime = Spencer.loadSettings();
+	State::changeState(new StartupState(firstTime));
 
 	LoopManager::startTask(2, 1);
 }
