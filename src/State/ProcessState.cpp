@@ -65,7 +65,6 @@ void ProcessState::processIntent(){
 		Playback.playMP3(SampleStore::load(Generic, "setupModeEntering"));
 
 		Playback.setPlaybackDoneCallback([](){
-			Serial.println("set");
 			changeState(new SetupState());
 		});
 
