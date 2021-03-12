@@ -23,7 +23,7 @@ void ProcessState::processIntent(){
 
 		if(retried){
 			LoopManager::removeListener(this);
-			State::changeState(new ErrorState(ErrorType::NETWORK));
+			changeState(new ErrorState(ErrorType::NETWORK));
 			return;
 		}
 
