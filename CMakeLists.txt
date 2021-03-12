@@ -71,7 +71,7 @@ add_definitions(-DCIRCUITOS_SERIALFLASH)
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_PROJECT_NAME}.ino PROPERTIES LANGUAGE CXX)
 
 add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf
-        COMMAND arduino-cli compile --fqbn ${DEVICE} --output-dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_PROJECT_NAME}.ino
+        COMMAND arduino-cli compile --fqbn ${DEVICE} --output ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf ${CMAKE_PROJECT_NAME}.ino
         DEPENDS ${CMAKE_PROJECT_NAME}.ino ${SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
@@ -79,7 +79,7 @@ add_custom_target(CMBuild
         SOURCES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf)
 
 add_custom_target(CMUpload ALL
-        COMMAND arduino-cli upload --fqbn ${DEVICE} -p ${PORT} --input-dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND arduino-cli upload --fqbn ${DEVICE} -p ${PORT} --input ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf
         DEPENDS CMBuild
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
