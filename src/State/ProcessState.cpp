@@ -79,7 +79,7 @@ void ProcessState::bleep(){
 	if(random(0,2)) return;
 
 	uint8_t index =  random(0, 12);
-	char randomSound[18];
+	char randomSound[17];
 	sprintf(randomSound, "randomNoise%d", index);
 	Playback.playMP3(SampleStore::load(SampleGroup::Special, randomSound));
 	sprintf(randomSound, "GIF-random%d.gif", index);
@@ -88,7 +88,7 @@ void ProcessState::bleep(){
 
 void ProcessState::enter(){
 	uint8_t loadingAnimationIndex =  random(0, 8);
-	char randomAnimation[20];
+	char randomAnimation[17];
 	sprintf(randomAnimation, "GIF-loading%d.gif", loadingAnimationIndex);
 	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(randomAnimation)), true);
 	SpeechToIntent.addJob({ recordingFilename, &intentResult });
