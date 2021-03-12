@@ -32,10 +32,10 @@ bool checkJig(){
 void setup(){
 	Serial.begin(115200);
 
-	disableCore0WDT();
-	disableCore1WDT();
-
 	if(checkJig()){
+		disableCore0WDT();
+		disableCore1WDT();
+
 		HardwareTest test;
 		test.start();
 		for(;;);
