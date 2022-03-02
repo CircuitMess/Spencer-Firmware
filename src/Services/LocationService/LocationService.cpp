@@ -26,7 +26,7 @@ LocationServiceImpl::LocationServiceImpl() : fetchTask("LocationFetch", [](Task*
 		return;
 	}
 
-	const int SIZE = JSON_OBJECT_SIZE(8) + 170;
+	const int SIZE = 700;
 	DynamicJsonDocument json(SIZE);
 	DeserializationError error = deserializeJson(json, http.getStream());
 
