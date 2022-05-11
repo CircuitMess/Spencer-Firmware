@@ -4,6 +4,7 @@
 #include <Loop/LoopListener.h>
 #include "State.h"
 
+class MatrixAnimGIF;
 struct IntentResult;
 
 class ListenState : public State, public LoopListener {
@@ -18,6 +19,7 @@ public:
 
 private:
 	const char* recordResult = nullptr;
+	MatrixAnimGIF* anim = nullptr;
 
 };
 

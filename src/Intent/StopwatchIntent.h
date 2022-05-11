@@ -5,6 +5,8 @@
 #include "Intent.hpp"
 #include "../Services/TimeService/DateTime.hpp"
 
+class MatrixAnimGIF;
+
 enum StopwatchState{
 	waitingState, runningState, finishedState  
 };
@@ -29,6 +31,8 @@ private:
 	bool blinkState = 0;
 
 	void drawTime(uint minutes, uint seconds);
+
+	MatrixAnimGIF* anim = nullptr;
 };
 
 

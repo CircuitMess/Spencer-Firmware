@@ -5,6 +5,8 @@
 #include "State.h"
 #include <Network/Net.h>
 
+class MatrixAnimGIF;
+
 enum ErrorType {
 	WIFI, NETWORK, JSON, APIKEY
 };
@@ -24,6 +26,7 @@ private:
 	void doJson();
 	void doApiKey();
 
+	MatrixAnimGIF* anim = nullptr;
 };
 
 

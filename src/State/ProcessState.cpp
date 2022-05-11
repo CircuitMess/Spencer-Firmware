@@ -7,6 +7,7 @@
 #include "IdleState.h"
 #include "ErrorState.h"
 #include "SetupState.h"
+#include <Devices/Matrix/MatrixAnimGIF.h>
 
 ProcessState::ProcessState(const char* recordingFilename) : recordingFilename(recordingFilename){
 
@@ -47,7 +48,10 @@ void ProcessState::processIntent(){
 		delete intentResult;
 		intentResult = nullptr;
 
-		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-questionMark.gif")), true);
+		delete anim;
+		anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-questionMark.gif"));
+		LEDmatrix.startAnimation(anim);
+
 		Playback.playMP3(SampleStore::load(Error, "noIntent"));
 
 		Playback.setPlaybackDoneCallback([](){
@@ -61,7 +65,10 @@ void ProcessState::processIntent(){
 		delete intentResult;
 		intentResult = nullptr;
 
-		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+		delete anim;
+		anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
+		LEDmatrix.startAnimation(anim);
+
 		Playback.playMP3(SampleStore::load(Generic, "setupModeEntering"));
 
 		Playback.setPlaybackDoneCallback([](){
@@ -83,14 +90,21 @@ void ProcessState::bleep(){
 	sprintf(randomSound, "randomNoise%d", index);
 	Playback.playMP3(SampleStore::load(SampleGroup::Special, randomSound));
 	sprintf(randomSound, "GIF-random%d.gif", index);
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(randomSound)), true);
+
+	delete anim;
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter(randomSound));
+	LEDmatrix.startAnimation(anim);
 }
+
 
 void ProcessState::enter(){
 	uint8_t loadingAnimationIndex =  random(0, 8);
 	char randomAnimation[20];
 	sprintf(randomAnimation, "GIF-loading%d.gif", loadingAnimationIndex);
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(randomAnimation)), true);
+
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter(randomAnimation));
+	LEDmatrix.startAnimation(anim);
+
 	SpeechToIntent.addJob({ recordingFilename, &intentResult });
 	LoopManager::addListener(this);
 	bleep();
@@ -99,6 +113,7 @@ void ProcessState::enter(){
 void ProcessState::exit(){
 	LoopManager::removeListener(this);
 	delete intentResult;
+	delete anim;
 }
 
 void ProcessState::loop(uint micros){

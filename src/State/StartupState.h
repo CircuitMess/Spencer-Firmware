@@ -6,6 +6,8 @@
 #include "State.h"
 #include <Network/Net.h>
 
+class MatrixAnimGIF;
+
 class StartupState : public State, public LoopListener {
 public:
 	explicit StartupState(bool firstTime);
@@ -17,6 +19,7 @@ public:
 private:
 	uint32_t startupEnd;
 	bool firstTime;
+	MatrixAnimGIF* anim = nullptr;
 };
 
 

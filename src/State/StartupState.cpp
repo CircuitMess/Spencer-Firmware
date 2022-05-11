@@ -8,6 +8,7 @@
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
 #include "SetupState.h"
+#include <Devices/Matrix/MatrixAnimGIF.h>
 
 StartupState::StartupState(bool firstTime) : firstTime(firstTime){
 
@@ -15,16 +16,17 @@ StartupState::StartupState(bool firstTime) : firstTime(firstTime){
 
 void StartupState::enter(){
 	Playback.playMP3(SampleStore::load(Special, "startup"));
-	Animation* startupAnim = new Animation( new SerialFlashFileAdapter("GIF-startup.gif"));
 
-	startupEnd = millis() + startupAnim->getLoopDuration();
-	LEDmatrix.startAnimation(startupAnim, false);
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-startup.gif"));
+	anim->getGIF().setLoopMode(GIF::SINGLE);
+	startupEnd = millis() + anim->getLoopDuration();
+	LEDmatrix.startAnimation(anim);
 
 	LoopManager::addListener(this);
 }
 
 void StartupState::exit(){
-
+	delete anim;
 }
 
 void StartupState::loop(uint micros){
@@ -32,14 +34,16 @@ void StartupState::loop(uint micros){
 		LoopManager::removeListener(this);
 
 		if(firstTime){
-			LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+			anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
+			LEDmatrix.startAnimation(anim);
 			Playback.playMP3(SampleStore::load(Generic, "firstStartup"));
 
 			Playback.setPlaybackDoneCallback([](){
 				changeState(new SetupState());
 			});
 		}else{
-			LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-wifi.gif")), true);
+			anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-wifi.gif"));
+			LEDmatrix.startAnimation(anim);
 
 			Net.connect([](wl_status_t status){
 				if(status == WL_CONNECTED){

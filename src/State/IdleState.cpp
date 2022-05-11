@@ -6,6 +6,8 @@
 #include "../Services/UpdateChecker.h"
 #include <Audio/Playback.h>
 #include <Loop/LoopManager.h>
+#include <Devices/Matrix/MatrixAnimGIF.h>
+
 IdleState* IdleState::instance = nullptr;
 
 IdleState::IdleState(){
@@ -28,7 +30,10 @@ void IdleState::enter(){
 	if(UpdateChecker.updateAvailable() && !UpdateChecker.hasNotified()){
 		UpdateChecker.notify();
 		notifyingUpdate = true;
-		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+
+		delete anim;
+		anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
+		LEDmatrix.startAnimation(anim);
 		Playback.playMP3(SampleStore::load(Generic, "update"));
 		Playback.setPlaybackDoneCallback([](){
 			if(instance == nullptr) return;
@@ -49,20 +54,15 @@ void IdleState::enter(){
 void IdleState::exit(){
 	LoopManager::removeListener(this);
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
+	delete anim;
 }
 
 void IdleState::loop(uint _micros)
 {
 	if(notifyingUpdate) return;
-	if(LEDmatrix.getAnimationCompletionRate() >= 99.0 && !animationLoopDone){
-		animationLoopCounter++;
-		animationLoopDone = true;
-		if(animationLoopCounter > requiredAnimationLoops - 1){
-			startRandomAnimation();
-		}
-	}
-	if(LEDmatrix.getAnimationCompletionRate() <= 1){
-		animationLoopDone = false;
+
+	if(anim->getGIF().getLoopCount() > requiredAnimationLoops - 1){
+		startRandomAnimation();
 	}
 }
 
@@ -93,6 +93,8 @@ void IdleState::startRandomAnimation()
 			requiredAnimationLoops = 3;
 		}
 	}
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter(buffer)), true);
+	delete anim;
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter(buffer));
+	LEDmatrix.startAnimation(anim);
 	animationLoopCounter = 0;
 }

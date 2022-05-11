@@ -5,6 +5,7 @@
 #include <Spencer.h>
 #include <Audio/Recording.h>
 #include "ProcessState.h"
+#include <Devices/Matrix/MatrixAnimGIF.h>
 
 ListenState::ListenState(){
 
@@ -16,13 +17,15 @@ ListenState::~ListenState(){
 
 void ListenState::enter(){
 	Playback.stopPlayback();
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-listen.gif")), true);
+	anim = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-listen.gif"));
+	LEDmatrix.startAnimation(anim);
 	Recording.addJob({ &recordResult });
 	LoopManager::addListener(this);
 }
 
 void ListenState::exit(){
 	LoopManager::removeListener(this);
+	delete anim;
 }
 
 void ListenState::loop(uint micros){

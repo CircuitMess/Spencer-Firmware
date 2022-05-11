@@ -3,8 +3,9 @@
 
 #include <Arduino.h>
 #include "Intent.hpp"
+
 class AudioFileSource;
-class Animation;
+class MatrixAnimGIF;
 class Task;
 
 enum WeatherIntentParam{ TODAY, TOMORROW, WEEK};
@@ -34,7 +35,7 @@ private:
 	void generateOutput(int temp, uint16_t weatherCode, bool dayNight, bool forecast = 0);
 	
 	AudioFileSource* weatherSpeak = nullptr;
-	Animation* weatherAnimation = nullptr;
+	MatrixAnimGIF* weatherAnimation = nullptr;
 
 	int8_t weeklyIndex = -1;
 	int weeklyTemp[7] = {0};

@@ -1,6 +1,7 @@
 #include "FunpackIntent.h"
 #include <Audio/Playback.h>
 #include <Spencer.h>
+#include <Devices/Matrix/MatrixAnimGIF.h>
 
 FunpackIntent::FunpackIntent(const char* responses[], uint8_t noResponses){
 	uint i = rand() % noResponses;
@@ -13,13 +14,12 @@ void FunpackIntent::loop(uint micros){
 	}
 }
 
-void FunpackIntent::enter()
-{
+void FunpackIntent::enter(){
 	Playback.playMP3(filePath);
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+	anim = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-talk.gif"));
+	LEDmatrix.startAnimation(anim);
 }
 
-void FunpackIntent::exit()
-{
-	
+void FunpackIntent::exit(){
+	delete anim;
 }
