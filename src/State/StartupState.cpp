@@ -34,6 +34,7 @@ void StartupState::loop(uint micros){
 		LoopManager::removeListener(this);
 
 		if(firstTime){
+			delete anim;
 			anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
 			LEDmatrix.startAnimation(anim);
 			Playback.playMP3(SampleStore::load(Generic, "firstStartup"));
@@ -42,6 +43,7 @@ void StartupState::loop(uint micros){
 				changeState(new SetupState());
 			});
 		}else{
+			delete anim;
 			anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-wifi.gif"));
 			LEDmatrix.startAnimation(anim);
 
