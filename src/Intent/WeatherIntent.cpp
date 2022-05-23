@@ -9,6 +9,7 @@
 #include <Util/Task.h>
 #include "../State/ErrorState.h"
 #include <Settings.h>
+#include <Devices/Matrix/MatrixAnimGIF.h>
 
 #define CA "DC:03:B5:D6:0C:F1:02:F1:B1:D0:62:27:9F:3E:B4:C3:CD:C9:93:BA:20:65:6D:06:DC:5D:56:AC:CC:BA:40:20"
 WeatherIntent* WeatherIntent::instance = nullptr;
@@ -273,7 +274,7 @@ void WeatherIntent::enter()
 
 void WeatherIntent::exit()
 {
-
+	delete weatherAnimation;
 }
 
 void WeatherIntent::generateWeeklyDay()
@@ -315,18 +316,18 @@ void WeatherIntent::generateWeeklyDay()
 			if(weeklyWeatherCode[weeklyIndex] == 800){
 				if(weeklyDayNight[weeklyIndex]){
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastClear");
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-night.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-night.gif"));
 				}else{
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastSunny");
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sun.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-sun.gif"));
 				}
 				//sunny/clear sky
 			}else{
 				weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastCloudy");
 				if(weeklyWeatherCode[weeklyIndex] == 801){
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sunClouds.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-sunClouds.gif"));
 				}else{
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-clouds.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-clouds.gif"));
 				}
 				//cloudy
 			}
@@ -335,23 +336,23 @@ void WeatherIntent::generateWeeklyDay()
 
 		case 7:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastFoggy");
-			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-fog.gif"));
+			weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-fog.gif"));
 			//foggy
 			break;
 
 		case 6:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastSnowy");
-			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-snow.gif"));
+			weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-snow.gif"));
 			//snowy
 			break;
 
 		default:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, "forecastRainy");
-			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-rain.gif"));
+			weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-rain.gif"));
 			//rainy, 2 - thunderstorm, 3 - drizzle, 5 - rain
 			break;
 	}
-	LEDmatrix.stopAnimation();
+	LEDmatrix.stopAnimations();
 	LEDmatrix.clear();
 	sprintf(buff, "%d", weeklyTemp[weeklyIndex]);
 	if(weeklyTemp[weeklyIndex] >= 0 && weeklyTemp[weeklyIndex] < 10){
@@ -372,7 +373,7 @@ void WeatherIntent::generateWeeklyDay()
 			instance->weeklyIndex++;
 			instance->generateWeeklyDay();
 		});
-		LEDmatrix.startAnimation(instance->weatherAnimation, 1);
+		LEDmatrix.startAnimation(instance->weatherAnimation);
 	});
 }
 void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight, bool forecast)
@@ -403,18 +404,18 @@ void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight
 			if(weatherCode == 800){
 				if(dayNight){
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastClear" : "clear");
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-night.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-night.gif"));
 				}else{
 					weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastSunny" : "sunny");
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sun.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-sun.gif"));
 				}
 				//sunny/clear sky
 			}else{
 				weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastCloudy" : "cloudy");
 				if(weatherCode == 801){
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-sunClouds.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-sunClouds.gif"));
 				}else{
-					weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-clouds.gif"));
+					weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-clouds.gif"));
 				}
 				//cloudy
 			}
@@ -423,23 +424,23 @@ void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight
 
 		case 7:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastFoggy" : "foggy");
-			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-fog.gif"));
+			weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-fog.gif"));
 			//foggy
 			break;
 
 		case 6:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastSnowy" : "snowy");
-			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-snow.gif"));
+			weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-snow.gif"));
 			//snowy
 			break;
 
 		default:
 			weatherSpeak = SampleStore::load(SampleGroup::Weather, forecast ? "forecastRainy" : "rainy");
-			weatherAnimation = new Animation( new SerialFlashFileAdapter("GIF-rain.gif"));
+			weatherAnimation = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-rain.gif"));
 			//rainy, 2 - thunderstorm, 3 - drizzle, 5 - rain
 			break;
 	}
-	LEDmatrix.stopAnimation();
+	LEDmatrix.stopAnimations();
 	LEDmatrix.clear();
 	sprintf(buff, "%d", temp);
 	if(temp >= 0 && temp < 10){
@@ -454,7 +455,7 @@ void WeatherIntent::generateOutput(int temp, uint16_t weatherCode, bool dayNight
 	Playback.playMP3(tempSpeak);
 	Playback.setPlaybackDoneCallback([](){
 		if(instance == nullptr) return;
-		LEDmatrix.startAnimation(instance->weatherAnimation, 1);
+		LEDmatrix.startAnimation(instance->weatherAnimation);
 		Playback.playMP3(instance->weatherSpeak);
 		Playback.setPlaybackDoneCallback([](){
 			if(instance == nullptr) return;

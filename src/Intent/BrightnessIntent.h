@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include "Intent.hpp"
+
+class MatrixAnimGIF;
 class AudioFileSource;
 
 enum BrightnessValue{
@@ -21,9 +23,11 @@ private:
 	BrightnessValue param;
 	uint8_t startingLevel = 0;
 	uint8_t brightnessLevel = 0;
-	uint8_t brightnessLevelValues[3] = {5, 20, 100};
+	uint8_t brightnessLevelValues[3] = {36, 71, 160};
 	const char* brightnessLevelNames[3] = {"low", "medium", "high"};
 	bool floatEqual(float a, float b);
+
+	MatrixAnimGIF* anim = nullptr;
 };
 
 

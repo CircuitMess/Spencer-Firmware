@@ -5,6 +5,7 @@
 #include <vector>
 #include "Intent.hpp"
 
+class MatrixAnimGIF;
 class AudioFileSource;
 
 class JokeIntent: public Intent
@@ -21,7 +22,7 @@ private:
 	static std::vector<uint> jokeVector;
 	AudioFileSource *file;
 	bool badumFlag = 0;
-
+	MatrixAnimGIF *anim = nullptr;
 };
 
 

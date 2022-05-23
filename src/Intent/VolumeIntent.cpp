@@ -2,6 +2,9 @@
 #include <Spencer.h>
 #include <Audio/Playback.h>
 #include <Settings.h>
+#include <Devices/Matrix/MatrixAnimGIF.h>
+
+
 VolumeIntent::VolumeIntent(AudioValue value)
 {
 	startingLevel = Settings.get().volumeLevel;
@@ -10,7 +13,7 @@ VolumeIntent::VolumeIntent(AudioValue value)
 
 VolumeIntent::~VolumeIntent()
 {
-	
+
 }
 
 void VolumeIntent::loop(uint _time)
@@ -54,7 +57,7 @@ void VolumeIntent::enter()
 	default:
 		break;
 	}
-		
+
 	if(param != AudioValue::A_NONE){
 		Settings.get().volumeLevel = audioLevel;
 		Settings.store();
@@ -62,8 +65,8 @@ void VolumeIntent::enter()
 		output->add(SampleStore::load(SampleGroup::Volume, "setTo"));
 		output->add(SampleStore::load(SampleGroup::Levels, audioLevelNames[audioLevel]));
 	}
-
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+	anim = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-talk.gif"));
+	LEDmatrix.startAnimation(anim);
 	Playback.playMP3(output);
 	Playback.setPlaybackDoneCallback([](){
 		done();
@@ -72,5 +75,5 @@ void VolumeIntent::enter()
 
 void VolumeIntent::exit()
 {
-	
+	delete anim;
 }

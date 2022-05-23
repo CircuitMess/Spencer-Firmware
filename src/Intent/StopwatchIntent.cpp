@@ -4,6 +4,8 @@
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
 #include <Spencer.h>
+#include <Devices/Matrix/MatrixAnimGIF.h>
+
 StopwatchIntent* StopwatchIntent::instance = nullptr;
 StopwatchIntent::StopwatchIntent()
 {
@@ -49,7 +51,7 @@ void StopwatchIntent::loop(uint _time)
 			blinkTime = 0;
 		}
 		if(finishedTime > 3000000){
-			LEDmatrix.stopAnimation();
+			LEDmatrix.stopAnimations();
 			done();
 			return;
 		}
@@ -68,29 +70,31 @@ void StopwatchIntent::drawTime(uint minutes, uint seconds)
 {
 	LEDmatrix.clear();
 	if(minutes/10 + '0' != '1'){
-		LEDmatrix.drawChar(0,7,minutes/10 + '0', 255, 0);
+		LEDmatrix.drawChar(0,7,minutes/10 + '0', MatrixPixel::White);
 	}else{
-		LEDmatrix.drawChar(1,7,minutes/10 + '0', 255, 0);
+		LEDmatrix.drawChar(1,7,minutes/10 + '0', MatrixPixel::White);
 	}
-	LEDmatrix.drawChar(4,7,(minutes%10) + '0', 255, 0);
-	LEDmatrix.drawChar(9,7, seconds/10 + '0', 255, 0);
+	LEDmatrix.drawChar(4,7,(minutes%10) + '0', MatrixPixel::White);
+	LEDmatrix.drawChar(9,7, seconds/10 + '0', MatrixPixel::White);
 	if(seconds/10 == 1){
-		LEDmatrix.drawChar(12,7,(seconds%10) + '0', 255, 0);
+		LEDmatrix.drawChar(12,7,(seconds%10) + '0', MatrixPixel::White);
 	}else{
-		LEDmatrix.drawChar(13,7,(seconds%10) + '0', 255, 0);
+		LEDmatrix.drawChar(13,7,(seconds%10) + '0', MatrixPixel::White);
 	}
 }
 
 void StopwatchIntent::enter()
 {
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+	anim = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-talk.gif"));
+	LEDmatrix.startAnimation(anim);
+
 	Playback.playMP3(SampleStore::load(SampleGroup::Time, "PressToStart"));
 	Playback.setPlaybackDoneCallback([](){
 		instance->stopTalkingFlag = 1;
-		LEDmatrix.stopAnimation();
+		LEDmatrix.stopAnimations();
 	});
 	Input::getInstance()->setBtnPressCallback(BTN_PIN, [](){
-		LEDmatrix.stopAnimation();
+		LEDmatrix.stopAnimations();
 		if(Playback.isRunning()){
 			Playback.stopPlayback(); //in case spencer is still talking when pressed
 		}
@@ -151,5 +155,6 @@ void StopwatchIntent::enter()
 
 void StopwatchIntent::exit()
 {
+	delete anim;
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 }

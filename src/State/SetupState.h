@@ -6,6 +6,8 @@
 #include "../SetupServer/SetupServer.h"
 #include "../Services/SerialSetup.h"
 
+class MatrixAnimGIF;
+
 class SetupState : public State {
 public:
 	SetupState();
@@ -16,6 +18,7 @@ public:
 
 private:
 	SerialSetup setup;
+	static MatrixAnimGIF* anim;
 
 };
 

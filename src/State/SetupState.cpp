@@ -8,7 +8,9 @@
 #include "IdleState.h"
 #include "../Services/LocationService/LocationService.h"
 #include "../Services/TimeService/TimeService.h"
+#include <Devices/Matrix/MatrixAnimGIF.h>
 
+MatrixAnimGIF* SetupState::anim = nullptr;
 SetupState::SetupState(){
 
 }
@@ -20,10 +22,12 @@ SetupState::~SetupState(){
 void SetupState::enter(){
 	setup.start();
 
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
+	LEDmatrix.startAnimation(anim);
 	Playback.playMP3(SampleStore::load(SampleGroup::Generic, "setupMode"));
 	Playback.setPlaybackDoneCallback([](){
-		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-noWifi.gif")), true);
+		SetupState::anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-noWifi.gif"));
+		LEDmatrix.startAnimation(SetupState::anim);
 	});
 
 
@@ -33,7 +37,8 @@ void SetupState::enter(){
 		connecting = true;
 
 		Playback.stopPlayback(false);
-		LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-wifi.gif")), true);
+		SetupState::anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-wifi.gif"));
+		LEDmatrix.startAnimation(SetupState::anim);
 
 		Net.connect([](wl_status_t status){
 			connecting = false;
@@ -43,7 +48,8 @@ void SetupState::enter(){
 				TimeService.fetchTime();
 				changeState(new IdleState());
 			}else{
-				LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-noWifi.gif")), true);
+				SetupState::anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-noWifi.gif"));
+				LEDmatrix.startAnimation(SetupState::anim);
 			}
 		});
 	};
@@ -56,4 +62,5 @@ void SetupState::exit(){
 	Input::getInstance()->removeBtnPressCallback(BTN_PIN);
 	setup.setSettingsSetCallback(nullptr);
 	setup.stop();
+	delete anim;
 }

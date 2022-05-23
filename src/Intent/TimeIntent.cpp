@@ -3,6 +3,9 @@
 #include "../Services/TimeService/TimeService.h"
 #include <Audio/Playback.h>
 #include <Spencer.h>
+#include <Devices/Matrix/MatrixPixel.h>
+#include <Devices/Matrix/Matrix.h>
+
 TimeIntent* TimeIntent::instance = nullptr;
 TimeIntent::TimeIntent(TimeIntentType type)
 {
@@ -131,21 +134,22 @@ void TimeIntent::enter()
 	default:
 		break;
 	}
-	LEDmatrix.stopAnimation();
+	LEDmatrix.stopAnimations();
 	if(_params == TimeIntentType::TIME)
 	{
 		LEDmatrix.clear();
+		LEDmatrix.setFont(Matrix::Font::SMALL);
 		if(now.hour()/10 + '0' != '1'){
-			LEDmatrix.drawChar(0,7,now.hour()/10 + '0', 255, 0);
+			LEDmatrix.drawChar(0,7,now.hour()/10 + '0', MatrixPixel::White);
 		}else{
-			LEDmatrix.drawChar(1,7,now.hour()/10 + '0', 255, 0);
+			LEDmatrix.drawChar(1,7,now.hour()/10 + '0', MatrixPixel::White);
 		}
-		LEDmatrix.drawChar(4,7,(now.hour()%10) + '0', 255, 0);
-		LEDmatrix.drawChar(9,7,now.minute()/10 + '0', 255, 0);
+		LEDmatrix.drawChar(4,7,(now.hour()%10) + '0', MatrixPixel::White);
+		LEDmatrix.drawChar(9,7,now.minute()/10 + '0', MatrixPixel::White);
 		if(now.minute()/10 == 1){
-			LEDmatrix.drawChar(12,7,(now.minute()%10) + '0', 255, 0);
+			LEDmatrix.drawChar(12,7,(now.minute()%10) + '0', MatrixPixel::White);
 		}else{
-			LEDmatrix.drawChar(13,7,(now.minute()%10) + '0', 255, 0);
+			LEDmatrix.drawChar(13,7,(now.minute()%10) + '0', MatrixPixel::White);
 		}
 	}else{
 		strncpy(scrollingText, "DD.MMM", 8);

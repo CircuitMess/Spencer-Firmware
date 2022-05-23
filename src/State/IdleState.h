@@ -3,6 +3,9 @@
 
 #include "State.h"
 #include <Loop/LoopListener.h>
+
+class MatrixAnimGIF;
+
 class IdleState : public State, public LoopListener{
 public:
 	IdleState();
@@ -22,6 +25,8 @@ private:
 	bool animationLoopDone = 0;
 	int8_t requiredAnimationLoops = 0;
 	bool notifyingUpdate = false;
+
+	MatrixAnimGIF* anim = nullptr;
 };
 
 

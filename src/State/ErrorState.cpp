@@ -1,8 +1,10 @@
 #include "ErrorState.h"
 #include <Audio/Playback.h>
-#include <Spencer.h>
 #include "IdleState.h"
 #include "SetupState.h"
+#include <Devices/Matrix/MatrixAnimGIF.h>
+#include <Devices/SerialFlash/SerialFlashFileAdapter.h>
+#include <Spencer.h>
 
 ErrorState::ErrorState(ErrorType type) : type(type){ }
 
@@ -27,11 +29,12 @@ void ErrorState::enter(){
 }
 
 void ErrorState::exit(){
-
+	delete anim;
 }
 
 void ErrorState::doWifi(){
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-noWifi.gif")), true);
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-noWifi.gif"));
+	LEDmatrix.startAnimation(anim);
 	Playback.playMP3(SampleStore::load(Error, "wifi"));
 
 	Playback.setPlaybackDoneCallback([](){
@@ -48,7 +51,8 @@ void ErrorState::doNetwork(){
 			break;
 
 		case NetImpl::NetError::NET:
-			LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+			anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
+			LEDmatrix.startAnimation(anim);
 			Playback.playMP3(SampleStore::load(Error, "net"));
 
 			Playback.setPlaybackDoneCallback([](){
@@ -57,7 +61,8 @@ void ErrorState::doNetwork(){
 			break;
 
 		case NetImpl::NetError::SERVICE:
-			LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-error.gif")), true);
+			anim = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-error.gif"));
+			LEDmatrix.startAnimation(anim);
 			Playback.playMP3(SampleStore::load(Error, "service"));
 
 			Playback.setPlaybackDoneCallback([](){
@@ -73,7 +78,8 @@ void ErrorState::doNetwork(){
 }
 
 void ErrorState::doJson(){
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-error500.gif")), true);
+	anim = new MatrixAnimGIF(new SerialFlashFileAdapter("GIF-error500.gif"));
+	LEDmatrix.startAnimation(anim);
 	Playback.playMP3(SampleStore::load(Error, "mess"));
 
 	Playback.setPlaybackDoneCallback([](){
@@ -82,7 +88,8 @@ void ErrorState::doJson(){
 }
 
 void ErrorState::doApiKey(){
-	LEDmatrix.startAnimation(new Animation( new SerialFlashFileAdapter("GIF-talk.gif")), true);
+	anim = new MatrixAnimGIF( new SerialFlashFileAdapter("GIF-talk.gif"));
+	LEDmatrix.startAnimation(anim);
 	Playback.playMP3(SampleStore::load(Error, "apiKey"));
 
 	Playback.setPlaybackDoneCallback([](){

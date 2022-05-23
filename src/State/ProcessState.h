@@ -6,6 +6,8 @@
 #include "State.h"
 #include <Speech/SpeechToIntent.h>
 
+class MatrixAnimGIF;
+
 class ProcessState : public State, public LoopListener {
 public:
 	ProcessState(const char* recordingFilename);
@@ -24,6 +26,7 @@ private:
 
 	void bleep();
 
+	MatrixAnimGIF* anim = nullptr;
 };
 
 

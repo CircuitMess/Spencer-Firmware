@@ -5,6 +5,8 @@
 #include "Intent.hpp"
 class AudioFileSource;
 
+class MatrixAnimGIF;
+
 enum AudioValue{
 	A_LO, A_MEDIUM, A_HI, A_INCREASE, A_DECREASE, A_NONE
 };
@@ -24,6 +26,8 @@ private:
 	float audioLevelValues[3] = {0.1, 0.4, 1.0};
 	const char* audioLevelNames[3] = {"low", "medium", "high"};
 	bool floatEqual(float a, float b);
+
+	MatrixAnimGIF* anim = nullptr;
 };
 
 
