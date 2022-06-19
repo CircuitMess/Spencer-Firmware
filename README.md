@@ -22,7 +22,7 @@ Simply open Spencer.ino using Arduino IDE, set the board to Spencer, and compile
 
 To compile and upload you need to have [CMake](https://cmake.org/) and [arduino-cli](https://github.com/arduino/arduino-cli)  installed. You also need to have both of them registered in the PATH.
 
-In the CMakeLists.txt file change the port to your desired COM port (default is /dev/ttyUSB0):
+In the CMakeLists.txt file change the port to your desired COM port (default is /dev/ttyUSB0) and path to Arduino15 libraries:
 ```
 set(PORT /dev/ttyUSB0)
 ```
@@ -37,7 +37,7 @@ This will compile the binaries, and place the .bin and .elf files in the build/ 
 
 To compile the binary, and upload it according to the port set in CMakeLists.txt, run
 
-```cmake --build . --target CMBuild```
+```cmake --build . --target CMUpload```
 
 in the cmake directory.
 
