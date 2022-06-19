@@ -20,33 +20,33 @@ else()
     set(ArduinoLibs ~/Arduino/libraries)
 endif()
 
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/Wire/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/FS/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/SD/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/SPI/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/WiFi/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/SPIFFS/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/HTTPClient/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/WebServer/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/DNSServer/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/Spencer-Library/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/CircuitOS/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/TFT_eSPI)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/TFT_eSPI/Extensions)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/ESP8266Audio/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/SerialFlash)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/ArduinoJson/src)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/NTPClient)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/libraries/ESP32Ping)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/Wire/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/FS/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/SD/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/SPI/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/WiFi/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/SPIFFS/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/HTTPClient/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/WebServer/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/DNSServer/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/Spencer-Library/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/CircuitOS/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/TFT_eSPI)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/TFT_eSPI/Extensions)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/ESP8266Audio/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/SerialFlash)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/ArduinoJson/src)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/NTPClient)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/libraries/ESP32Ping)
 
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/cores/esp32)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk/include)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk/include/esp32)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk/include/freertos)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk/include/driver)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk/include/driver/driver)
-include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.0/tools/sdk/include/spi_flash)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/cores/esp32)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk/include)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk/include/esp32)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk/include/freertos)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk/include/driver)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk/include/driver/driver)
+include_directories(${Arduino15}/packages/cm/hardware/esp32/1.1.1/tools/sdk/include/spi_flash)
 
 AUX_SOURCE_DIRECTORY(src SOURCES)
 AUX_SOURCE_DIRECTORY(src/Intent SOURCES)
@@ -71,7 +71,7 @@ add_definitions(-DCIRCUITOS_SERIALFLASH)
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_PROJECT_NAME}.ino PROPERTIES LANGUAGE CXX)
 
 add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf
-        COMMAND arduino-cli compile --fqbn ${DEVICE} --output-dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_PROJECT_NAME}.ino
+        COMMAND arduino-cli compile --fqbn ${DEVICE} --output ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf ${CMAKE_PROJECT_NAME}.ino
         DEPENDS ${CMAKE_PROJECT_NAME}.ino ${SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
@@ -79,7 +79,7 @@ add_custom_target(CMBuild
         SOURCES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf)
 
 add_custom_target(CMUpload ALL
-        COMMAND arduino-cli upload --fqbn ${DEVICE} -p ${PORT} --input-dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND arduino-cli upload --fqbn ${DEVICE} -p ${PORT} --input ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME}.ino.elf
         DEPENDS CMBuild
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 

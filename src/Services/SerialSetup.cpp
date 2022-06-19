@@ -56,9 +56,8 @@ SerialSetup::Option SerialSetup::getOption(){
 		return GET;
 	}else if(checkOption("SCN")){
 		return SCN;
-	}else{
-		return NONE;
 	}
+	return NONE;
 }
 
 bool SerialSetup::checkOption(const char* option){

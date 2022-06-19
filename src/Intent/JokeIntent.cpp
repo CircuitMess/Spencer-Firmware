@@ -14,7 +14,7 @@ void JokeIntent::loop(uint micros)
 	if(!Playback.isRunning() && !badumFlag)
 	{
 		uint8_t badumNumber = random(0, 4);
-		char badum[8];
+		char badum[7];
 		sprintf(badum, "badum%d", badumNumber);
 		Playback.playMP3(SampleStore::load(SampleGroup::Special, badum));
 		Playback.setPlaybackDoneCallback([](){
@@ -47,7 +47,7 @@ void JokeIntent::enter()
 	{
 		jokeVector.erase(jokeVector.begin());
 	}
-	char buff[5] = {0};
+	char buff[4];
 	sprintf(buff, "%d", jokeIndex);
 	file = SampleStore::load(SampleGroup::Jokes, buff);
 	Playback.playMP3(file);

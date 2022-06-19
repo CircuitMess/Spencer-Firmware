@@ -42,12 +42,8 @@ void IntentStore::fillStorage(){
 			"weather",
 			[](const std::map<std::string, std::string>& params) -> Intent*{
 				WeatherIntentParam launchParams = WeatherIntentParam::TODAY;
-				if(params.find("time") == params.end()){
-					launchParams = WeatherIntentParam::TODAY;
-				}else{
-					if(params.at("time") == "today"){
-						launchParams = WeatherIntentParam::TODAY;
-					}else if(params.at("time") == "tomorrow"){
+				if(params.find("time") != params.end()){
+					if(params.at("time") == "tomorrow"){
 						launchParams = WeatherIntentParam::TOMORROW;
 					}else if(params.at("time") == "this week" || params.at("time") == "week" || params.at("time") == "weekly"){
 						launchParams = WeatherIntentParam::WEEK;

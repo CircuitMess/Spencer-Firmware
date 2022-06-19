@@ -45,7 +45,7 @@ void StartupState::loop(uint micros){
 				if(status == WL_CONNECTED){
 					LocationService.fetchLocation();
 					TimeService.fetchTime();
-					State::changeState(new IdleState());
+					changeState(new IdleState());
 				}else{
 					changeState(new ErrorState(ErrorType::WIFI));
 				}

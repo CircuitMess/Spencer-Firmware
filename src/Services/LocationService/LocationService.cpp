@@ -97,12 +97,7 @@ bool LocationServiceImpl::isSet() const{
 void LocationServiceImpl::loop(uint micros){
 	if(fetching) return;
 
-	if(set){
-		LoopManager::removeListener(this);
-		return;
-	}
-
-	if(retries++ > 2){
+	if(set || retries++ > 2){
 		LoopManager::removeListener(this);
 		return;
 	}
